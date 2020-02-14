@@ -1,0 +1,8 @@
+# Python dependencies to build the documentation
+Sphinx>=2.0.1
+setuptools>=39.2.0
+sphinx-rtd-theme
+cairosvg
+cairocffi
+sphinxcontrib-trio
+sphinxcontrib.autoyaml
