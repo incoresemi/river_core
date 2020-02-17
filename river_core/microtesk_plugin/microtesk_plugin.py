@@ -54,5 +54,37 @@ class MicroTESKPlugin(object):
 
     # generates the regress list from the generation
     @gen_hookimpl
-    def post_gen(self, regress_list):
-       print('post gen plugin')
+    def post_gen(self, gendir, regressfile):
+      test_dict = dict()
+      test_files = []
+      test_file = ''
+      ld_file = ''
+      test_dict['microtesk'] = {}
+      """
+      Overwrites the microtesk entries in the regressfile with the latest present in the gendir
+      """
+      if os.path.isdir(gendir):
+        testdirs = os.listdir(gendir)
+        test_dict['microtesk']['microtesk_testpath'] = gendir
+        for testdir in testdirs:
+          test_dict['microtesk'][testdir] = {'testname': '', 'ld': ''}
+          testpath = gendir + '/' + testdir
+          tests = os.listdir(testpath)
+          for file in tests:
+            name  = testpath + '/' + file
+            if name.endswith('.S'):
+              test_dict['microtesk'][testdir]['testname'] = file
+            elif name.endswith('.ld'):
+              test_dict['microtesk'][testdir]['ld'] = file
+
+        if os.path.isfile(regressfile):
+          with open(regressfile, 'r') as rgfile:
+            testlist = yaml.safe_load(rgfile)
+            testlist['microtesk'].update(test_dict)
+          rgfile.close()
+        
+        rgfile = open(regressfile, 'w') 
+        
+        print(test_dict)
+        yaml.safe_dump(test_dict, rgfile, default_flow_style=False)
+

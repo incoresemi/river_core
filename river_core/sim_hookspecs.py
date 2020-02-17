@@ -25,7 +25,7 @@ class RandomGeneratorSpec(object):
         """ generation step"""
 
     @gen_hookspec
-    def post_gen(self, regress_list):
+    def post_gen(self, gendir, regressfile):
         """ after generation steps """
 
 ### creation of regress list into parameterize of tests
