@@ -1,5 +1,5 @@
 global_home: /home/rise/lavanya/microtesk-riscv-0.1.0-beta-191227
-global_config_path: /home/rise/lavanya/river/river_core/river_core/microtesk_plugin/templates
+global_config_path: /home/rise/lavanya/microtesk-riscv-0.1.0-beta-191227/arch/riscv/templates
 global_command: generate.sh riscv
 global_args: --tracer-log --coverage-log --asserts-enabled --solver z3 --generate
 global_output: /home/rise/lavanya/river/river_core/workdir/microtesk

@@ -1,7 +1,7 @@
 # See LICENSE for details
 
-import riscv_config.checker as riscv_config
-from riscv_config.errors import ValidationError
+#import riscv_config.checker as riscv_config
+#from riscv_config.errors import ValidationError
 import os
 import sys
 import pluggy
@@ -49,8 +49,9 @@ class MicroTESKPlugin(object):
     def gen(self, gen_config):
         logger.debug('plugin again')
         pwd = os.getcwd()
-        pytest_file = pwd + '/gen_framework.py'
-        pytest.main(['-x', pyest_file, '-v', '--html=microtesk_gen.html', '--self-contained-html'])
+        pytest_file = pwd + '/river_core/microtesk_plugin/gen_framework.py'
+        print(pytest_file)
+        pytest.main(['-x', pytest_file, '-v', '--html=microtesk_gen.html', '--self-contained-html'])
 
     # generates the regress list from the generation
     @gen_hookimpl

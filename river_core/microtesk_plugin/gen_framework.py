@@ -5,8 +5,8 @@ import sys
 import pluggy
 import shutil
 import yaml
-from .log import logger
-from .utils import *
+from river_core.log import logger
+from river_core.utils import *
 import random
 import re
 import datetime 
@@ -62,9 +62,8 @@ def gen_cmd_list(gen_config):
         
         now = datetime.datetime.now()
         gen_prefix = '{0}_{1:04}_{2}'.format(key, gen_seed, now.strftime('%d%m%Y%H%M%S%f'))
-        
-        run_command.append('{0} {1}/{2}.rb --output-dir {3} --random-seed {4} --code-file-prefix {5} --code-file-extension S'.format(command, config_file_path, key, dirname, gen_seed, gen_prefix ))
         logger.debug(run_command)
+        run_command.append('{0} {1}/{2}.rb --output-dir {3}/{5} --random-seed {4} --code-file-prefix {5} --code-file-extension S'.format(command, config_file_path, key, dirname, gen_seed, gen_prefix ))
   return run_command
 
 #tlist = gen_cmd_list('/scratch/river_development/microtesk_templates/microtesk_gen_config.yaml')
@@ -77,7 +76,7 @@ def idfnc(val):
 
 def pytest_generate_tests(metafunc):
     if 'test_input' in metafunc.fixturenames:
-        riscv_test_list = gen_cmd_list('/scratch/river_development/microtesk_templates/microtesk_gen_config.yaml')
+        riscv_test_list = gen_cmd_list('./river_core/microtesk_plugin/microtesk_gen_config.yaml')
         metafunc.parametrize('test_input', riscv_test_list,
                 ids=idfnc,
                 indirect=True)

@@ -9,7 +9,7 @@ from river_core.log import *
 from river_core.utils import *
 from river_core.constants import *
 from river_core.__init__ import __version__
-from river_core.sim_hookspec import *
+from river_core.sim_hookspecs import *
 
 def rivercore(verbose, dir, clean, simenv):
 
@@ -22,14 +22,14 @@ def rivercore(verbose, dir, clean, simenv):
     generatorpm = pluggy.PluginManager("generator")
     generatorpm.add_hookspecs(RandomGeneratorSpec)
     
-    plugin_name = 'microtesk_plugin'
+    plugin_name = 'river_core.microtesk_plugin.microtesk_plugin'
     plugin_module = importlib.import_module(plugin_name,'.')
     generatorpm.register(plugin_module.MicroTESKPlugin())
     #generatorpm.hook.load_config(isa='',platform='')
     # TODO: path should be gendir/plugin_type/plugin_name
     generatorpm.hook.pre_gen(gendir='./workdir/microtesk')
-    generatorpm.hook.gen(gen_config='./microtesk_gen_config.yaml')
-    #generatorpm.hook.post_gen(regress_list)
+    generatorpm.hook.gen(gen_config='mirotesk_plugin/microtesk_gen_config.yaml')
+    generatorpm.hook.post_gen(gendir='./workdir/microtesk',regressfile='workdir/regresslist.yaml')
     
     ## Model plugin manager
     #modelpm = pluggy.PluginManager("model")
