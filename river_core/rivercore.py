@@ -17,20 +17,31 @@ def rivercore(verbose, dir, clean, simenv):
     logger.info('****** RiVer Core {0} *******'.format(__version__ ))
     logger.info('Copyright (c) 2020, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
-   
+
     # Generator plugin manager
     generatorpm = pluggy.PluginManager("generator")
     generatorpm.add_hookspecs(RandomGeneratorSpec)
-    
-    plugin_name = 'river_core.microtesk_plugin.microtesk_plugin'
-    plugin_module = importlib.import_module(plugin_name,'.')
-    generatorpm.register(plugin_module.MicroTESKPlugin())
-    #generatorpm.hook.load_config(isa='',platform='')
-    # TODO: path should be gendir/plugin_type/plugin_name
+
+    generatorpm_name = 'river_core.microtesk_plugin.microtesk_plugin'
+    generatorpm_module = importlib.import_module(generatorpm_name,'.')
+    generatorpm.register(generatorpm_module.MicroTESKPlugin())
     generatorpm.hook.pre_gen(gendir='./workdir/microtesk')
-    generatorpm.hook.gen(gen_config='mirotesk_plugin/microtesk_gen_config.yaml')
+    generatorpm.hook.gen(gen_config='mirotesk_plugin/microtesk_gen_config.yaml') ### TODO: this gen_config needs to go to pytyest
     generatorpm.hook.post_gen(gendir='./workdir/microtesk',regressfile='workdir/regresslist.yaml')
-    
+
+
+    # Compile plugin manager
+    compilepm = pluggy.PluginManager('compile')
+    compilepm.add_hookspecs(CompileSpec)
+
+    compilepm_name = 'river_core.compile_plugin.compile_plugin'
+    compilepm_module = importlib.import_module(compilepm_name, '.')
+    compilepm.register(compilepm_module.CompilePlugin())
+    compilepm.hook.pre_compile(compile_config='./river_core/compile_plugin/compile_config.yaml')
+    compilepm.hook.compile(regress_list='./workdir/regresslist.yaml', command_line_args='')
+#    compilepm.hook.post_compile()
+
+
     ## Model plugin manager
     #modelpm = pluggy.PluginManager("model")
     #modelpm.add_hookspecs(ModelSpec)

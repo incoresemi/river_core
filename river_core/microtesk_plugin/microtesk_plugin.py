@@ -9,8 +9,8 @@ import shutil
 import yaml
 import random
 import re
-import datetime 
-import pytest 
+import datetime
+import pytest
 
 from river_core.log import logger
 from river_core.utils import *
@@ -20,7 +20,7 @@ gen_hookimpl = pluggy.HookimplMarker("generator")
 
 class MicroTESKPlugin(object):
     """ Generator hook implementation """
-    
+
     isa = 'rv64imafdc'
 
     #@gen_hookimpl
@@ -66,7 +66,7 @@ class MicroTESKPlugin(object):
       """
       if os.path.isdir(gendir):
         testdirs = os.listdir(gendir)
-        test_dict['microtesk']['microtesk_testpath'] = gendir
+        test_dict['microtesk']['microtesk_global_testpath'] = gendir
         for testdir in testdirs:
           test_dict['microtesk'][testdir] = {'testname': '', 'ld': ''}
           testpath = gendir + '/' + testdir
@@ -83,9 +83,9 @@ class MicroTESKPlugin(object):
             testlist = yaml.safe_load(rgfile)
             testlist['microtesk'].update(test_dict)
           rgfile.close()
-        
-        rgfile = open(regressfile, 'w') 
-        
+
+        rgfile = open(regressfile, 'w')
+
         print(test_dict)
         yaml.safe_dump(test_dict, rgfile, default_flow_style=False)
 

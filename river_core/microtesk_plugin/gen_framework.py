@@ -9,13 +9,13 @@ from river_core.log import logger
 from river_core.utils import *
 import random
 import re
-import datetime 
+import datetime
 import pytest
 
 
 def gen_cmd_list(gen_config):
 
-  logger.debug('gen plugin') 
+  logger.debug('gen plugin')
   pwd = os.getcwd()
   with open(gen_config) as fh:
     gen_list = yaml.safe_load(fh)
@@ -35,7 +35,7 @@ def gen_cmd_list(gen_config):
     if key == 'global_config_path':
       config_path = gen_list[key]
     if key == 'global_command':
-      command = 'bash {0}/bin/{1}'.format(gen_list['global_home'],gen_list[key]) 
+      command = 'bash {0}/bin/{1}'.format(gen_list['global_home'],gen_list[key])
     if key == 'global_args':
       args =  gen_list[key]
     if key == 'global_output':
@@ -50,7 +50,7 @@ def gen_cmd_list(gen_config):
       jobs = gen_list[key]
     if key == 'global_count':
       count = gen_list[key]
-    
+
     if not re.search('^global_', key):
       config_file_path = config_path +  '/' + gen_list[key]['path']
       logger.debug(key)
@@ -59,7 +59,7 @@ def gen_cmd_list(gen_config):
           gen_seed = random.randint(0, 10000)
         else:
           gen_seed = gen_list['global_seed']
-        
+
         now = datetime.datetime.now()
         gen_prefix = '{0}_{1:04}_{2}'.format(key, gen_seed, now.strftime('%d%m%Y%H%M%S%f'))
         logger.debug(run_command)
@@ -80,10 +80,10 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize('test_input', riscv_test_list,
                 ids=idfnc,
                 indirect=True)
-        
+
 @pytest.fixture
 def test_input(request):
-    # compile tests 
+    # compile tests
     program = request.param
     return sys_command(program)
 

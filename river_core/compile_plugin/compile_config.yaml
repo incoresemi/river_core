@@ -1,0 +1,2 @@
+global_command: riscv64-unknown-elf-gcc
+global_args: -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -DENTROPY=0x9629af2 -std=gnu99 -O2 

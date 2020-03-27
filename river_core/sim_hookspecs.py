@@ -28,15 +28,15 @@ class RandomGeneratorSpec(object):
     def post_gen(self, gendir, regressfile):
         """ after generation steps """
 
-### creation of regress list into parameterize of tests
+### creation of regress list into parameterize of tests: D
 ### simulate_test fixture in pytest calls compilespec plugin and model plugin and dut plugin
 
 class CompileSpec(object):
     """ Program compilation specification"""
 
-    @compile_hookspec
-    def load_config(self, isa, platform):
-        """ loads riscv_config"""
+    #@compile_hookspec
+    #def load_config(self, isa, platform):
+    #    """ loads riscv_config"""
 
     @compile_hookspec
     def pre_compile(self, compile_config):

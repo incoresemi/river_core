@@ -1,22 +1,26 @@
-global_home: /home/rise/lavanya/microtesk-riscv-0.1.0-beta-191227
-global_config_path: /home/rise/lavanya/microtesk-riscv-0.1.0-beta-191227/arch/riscv/templates
+global_home: /tools/hw_tools/inc_tools/microtesk-riscv-0.1.0-beta-191227/
+global_config_path: /scratch/incore/river_framework/river_core/templates
 global_command: generate.sh riscv
 global_args: --tracer-log --coverage-log --asserts-enabled --solver z3 --generate
-global_output: /home/rise/lavanya/river/river_core/workdir/microtesk
+global_output: ./workdir/microtesk
 global_seed: random
 global_jobs: 1
-global_count: 3
+global_count: 1
 
-branch_fixed:
-  path: examples/branches
+#branch_fixed:
+#  path: examples/branches
 ###branch_merge:
 ###  path: examples/branches
 ###branch_specs:
 ###  path: examples/branches
 ###
-###selfcheck:
-###  path: examples/selfcheck
-###  args: --self-checks
+#selfcheck:
+#  path: examples/selfcheck
+#  args: --self-checks
+ld:
+  path: compliance/rv64ui
+#add:
+#  path: compliance/rv64ui
 ###
 ###register:
 ###  path: examples/registers
@@ -67,8 +71,8 @@ branch_fixed:
 ###  path: algorithms/integer
 ###int_euclid:
 ###  path: algorithms/integer
-###int_minmax:
-###  path: algorithms/integer
+#int_minmax:
+#  path: algorithms/integer
 ###int_sqrt:
 ###  path: algorithms/integer
 ###
