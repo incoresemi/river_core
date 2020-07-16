@@ -1,12 +1,17 @@
-global_home: /tools/hw_tools/inc_tools/microtesk-riscv-0.1.0-beta-191227/
-global_config_path: /scratch/incore/river_framework/river_core/templates
+global_home: /home/rise/lavanya/microtest_new/microtesk-riscv-0.1.0-beta-191227
+global_config_path: /home/rise/lavanya/gitlab/shakti/verif/iclass-verif/core_block/microtesk/templates
 global_command: generate.sh riscv
-global_args: --tracer-log --coverage-log --asserts-enabled --solver z3 --generate
-global_output: ./workdir/microtesk
+global_args: --solver z3 --generate
+global_output: ./workdir/
 global_seed: random
 global_jobs: 1
 global_count: 1
 
+rv32d_mentry_fadd_d:
+  path: floating
+
+rv32f_mentry_fadd_s:
+  path: floating
 #branch_fixed:
 #  path: examples/branches
 ###branch_merge:
@@ -17,8 +22,8 @@ global_count: 1
 #selfcheck:
 #  path: examples/selfcheck
 #  args: --self-checks
-ld:
-  path: compliance/rv64ui
+#ld:
+#  path: compliance/rv64ui
 #add:
 #  path: compliance/rv64ui
 ###
