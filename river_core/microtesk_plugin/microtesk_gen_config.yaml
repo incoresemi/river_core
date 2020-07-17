@@ -1,8 +1,8 @@
-global_home: /home/rise/lavanya/microtest_new/microtesk-riscv-0.1.0-beta-191227
-global_config_path: /home/rise/lavanya/gitlab/shakti/verif/iclass-verif/core_block/microtesk/templates
+global_home: <microtesk_home_path>/microtesk-riscv-0.1.0-beta-191227
+global_config_path: <river_path>/river_core/microtesk_plugins/templates
 global_command: generate.sh riscv
 global_args: --solver z3 --generate
-global_output: ./workdir/
+global_output: <output_path>/workdir
 global_seed: random
 global_jobs: 1
 global_count: 1

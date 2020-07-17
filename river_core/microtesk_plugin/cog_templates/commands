@@ -1,0 +1,142 @@
+#32f
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmv_s_x(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fmv_s_x.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmv_x_s(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fmv_x_s.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_s_w(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fcvt_s_w.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_s_wu(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fcvt_s_wu.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_w_s(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fcvt_w_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_wu_s(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fcvt_wu_s.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fadd_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fadd_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fsub_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fsub_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmul_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fmul_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fdiv_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fdiv_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fsqrt_s(f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fsqrt_s.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmadd_s(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fmadd_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmsub_s(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fmsub_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fnmsub_s(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fnmsub_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fnmadd_s(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fnmadd_s.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fsgnj_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fsgnj_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fsgnjn_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fsgnjn_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fsgnjx_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fsgnjx_s.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmin_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fmin_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmax_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fmax_s.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fclass_s(x(_ FREE) f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_mentry_fclass_s.rb
+
+#64f
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_s_l(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv64f_mentry_fcvt_s_l.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_s_lu(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv64f_mentry_fcvt_s_lu.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_l_s(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv64f_mentry_fcvt_l_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_lu_s(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv64f_mentry_fcvt_lu_s.rb
+
+#32d
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_d_w(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fcvt_d_w.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_d_wu(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fcvt_d_wu.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_w_d(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fcvt_w_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_wu_d(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fcvt_wu_d.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fadd_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fadd_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fsub_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fsub_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmul_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fmul_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fdiv_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fdiv_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fsqrt_d(f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fsqrt_d.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmadd_d(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fmadd_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmsub_d(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fmsub_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fnmsub_d(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fnmsub_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fnmadd_d(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fnmadd_d.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fsgnj_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fsgnj_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fsgnjn_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fsgnjn_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fsgnjx_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fsgnjx_d.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmin_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fmin_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmax_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fmax_d.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fclass_d(x(_ FREE) f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_mentry_fclass_d.rb
+
+#64d
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmv_d_x(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv64d_mentry_fmv_d_x.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fmv_x_d(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv64d_mentry_fmv_x_d.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_d_l(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv64d_mentry_fcvt_d_l.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_d_lu(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv64d_mentry_fcvt_d_lu.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_l_d(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv64d_mentry_fcvt_l_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64MF()" -D opcode="fcvt_lu_d(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv64d_mentry_fcvt_lu_d.rb
+
+#---- user
+#32f
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmv_s_x(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fmv_s_x.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmv_x_s(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fmv_x_s.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_s_w(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fcvt_s_w.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_s_wu(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fcvt_s_wu.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_w_s(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fcvt_w_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_wu_s(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fcvt_wu_s.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fadd_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fadd_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fsub_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fsub_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmul_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fmul_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fdiv_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fdiv_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fsqrt_s(f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fsqrt_s.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmadd_s(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fmadd_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmsub_s(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fmsub_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fnmsub_s(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fnmsub_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fnmadd_s(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fnmadd_s.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fsgnj_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fsgnj_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fsgnjn_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fsgnjn_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fsgnjx_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fsgnjx_s.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmin_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fmin_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmax_s(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fmax_s.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fclass_s(x(_ FREE) f(_ " floating.rb.cog  > $PWD/templates/floating/rv32f_uentry_fclass_s.rb
+
+#64f
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_s_l(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv64f_uentry_fcvt_s_l.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_s_lu(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv64f_uentry_fcvt_s_lu.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_l_s(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv64f_uentry_fcvt_l_s.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_lu_s(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv64f_uentry_fcvt_lu_s.rb
+
+#32d
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_d_w(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fcvt_d_w.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_d_wu(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fcvt_d_wu.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_w_d(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fcvt_w_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_wu_d(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fcvt_wu_d.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fadd_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fadd_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fsub_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fsub_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmul_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fmul_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fdiv_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fdiv_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fsqrt_d(f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fsqrt_d.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmadd_d(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fmadd_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmsub_d(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fmsub_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fnmsub_d(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fnmsub_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fnmadd_d(f(_ FREE), f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fnmadd_d.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fsgnj_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fsgnj_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fsgnjn_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fsgnjn_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fsgnjx_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fsgnjx_d.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmin_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fmin_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmax_d(f(_ FREE), f(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fmax_d.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fclass_d(x(_ FREE) f(_ " floating.rb.cog  > $PWD/templates/floating/rv32d_uentry_fclass_d.rb
+
+#64d
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmv_d_x(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv64d_uentry_fmv_d_x.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fmv_x_d(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv64d_uentry_fmv_x_d.rb
+
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_d_l(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv64d_uentry_fcvt_d_l.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_d_lu(f(_ FREE), x(_ " floating.rb.cog  > $PWD/templates/floating/rv64d_uentry_fcvt_d_lu.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_l_d(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv64d_uentry_fcvt_l_d.rb
+cog -d -D pre_rvtest_macro="RVTEST_RV64UF()" -D opcode="fcvt_lu_d(x(_ FREE), f(_ " floating.rb.cog  > $PWD/templates/floating/rv64d_uentry_fcvt_lu_d.rb
+
+

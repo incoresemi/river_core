@@ -1,0 +1,52 @@
+# See LICENSE for details
+
+require_relative '../riscv_base'
+
+
+class RandomTemplate < RiscVBaseTemplate
+
+  def pre_rvtest
+#[[[cog
+#   import cog
+#   pstr = '\t\t{0}'.format(pre_rvtest_macro)
+#   cog.outl('{0}'.format(pstr))
+#]]]
+#[[[end]]]
+    RVTEST_CODE_BEGIN()
+  end
+  def pre
+    super
+    data {
+      text '.align 8'
+      align 4
+      label :data
+      word rand(1, 9), rand(1, 9), rand(1, 9), rand(1, 9)
+      label :end_data
+      space 1
+    }
+  end
+
+  def run
+    int_dist = dist(range(:value => 0,                                      :bias => 5), 
+                    range(:value => -1,                                     :bias => 5), 
+                    range(:value => 1,                                     :bias => 5), 
+                    range(:value => 0x0000000000000000..0xffffffffffffFFFF, :bias => 85))
+
+    sequence {
+      li r=x(_ FREE), rand(0,4)
+      slli r, r, 5
+      fscsr x1, r
+#[[[cog
+#   import cog
+#   pstr="{0} do testdata(\'boundary\') end)) do situation(\'random_biased\',\n\t\t\t:dist => dist(range(:value=> int_dist, :bias => 80),\n\t\t\t range(:value=> [0xDEADBEEF, 0xBADF00D], :bias => 20)))".format(opcode)
+#   cog.outl('{0}'.format(pstr))
+#]]]
+#[[[end]]]
+      end
+
+      frcsr x(_ FREE)
+    }.run 10
+
+  end
+end
+
