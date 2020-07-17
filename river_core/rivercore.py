@@ -26,7 +26,7 @@ def rivercore(verbose, dir, clean, simenv):
     generatorpm_name = 'river_core.microtesk_plugin.microtesk_plugin'
     generatorpm_module = importlib.import_module(generatorpm_name,'.')
     generatorpm.register(generatorpm_module.MicroTESKPlugin())
-    generatorpm.hook.pre_gen(gendir='{0}/workdir/microtesk'.format(cwd))
+    generatorpm.hook.pre_gen(gendir='{0}/workdir/'.format(cwd))
     generatorpm.hook.gen(gen_config='mirotesk_plugin/microtesk_gen_config.yaml') 
     generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
 

@@ -76,7 +76,7 @@ class CompilePlugin(object):
         pytest_file = pwd + '/river_core/compile_plugin/gen_framework.py'
         print(pytest_file)
 
-        pytest.main(['-x', pytest_file, '-v', '--html=microtesk_gen.html', '--self-contained-html'])
+        pytest.main([pytest_file, '-n=30', '-v', '--html=microtesk_compile.html', '--self-contained-html'])
 
 
 
