@@ -51,7 +51,7 @@ class MicroTESKPlugin(object):
         pwd = os.getcwd()
         pytest_file = pwd + '/river_core/microtesk_plugin/gen_framework.py'
         print(pytest_file)
-        pytest.main([pytest_file, '-n=4', '-v', '--log-file=t.log','--html=microtesk_gen.html', '--self-contained-html'])
+        pytest.main([pytest_file, '-n=30', '-v', '--log-file=t.log','--html=microtesk_gen.html', '--self-contained-html'])
 
     # generates the regress list from the generation
     @gen_hookimpl
