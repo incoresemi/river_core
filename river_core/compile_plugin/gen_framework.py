@@ -11,7 +11,10 @@ import random
 import re
 import datetime
 import pytest
+import filecmp
 
+run_cmd_list = dict()
+pwd = os.getcwd() 
 
 def gen_cmd_list(regress_list):
 
@@ -20,7 +23,6 @@ def gen_cmd_list(regress_list):
     abi = 'lp64'
     isa = 'rv64imafdc'
     logger.debug('gen plugin')
-    pwd = os.getcwd()
     with open(regress_list, 'r') as rfile:
         rlist = yaml.safe_load(rfile)
     run_command = []
@@ -28,6 +30,7 @@ def gen_cmd_list(regress_list):
     for test in rlist['microtesk']:
         test_match = re.match('microtesk_global_testpath', test)
         if not test_match:
+            run_cmd_list[test] = dict()
             testdir = testpath + '/' + test
             ld = testdir + '/' + rlist['microtesk'][test]['ld']
             testfile = testdir + '/' + rlist['microtesk'][test]['testname']
@@ -38,11 +41,12 @@ def gen_cmd_list(regress_list):
                                                     abi, compile_args, ld,
                                                     testfile, elf)
             logger.debug(cmd)
-            run_command.append(cmd)
-            cmd = 'spike -l --isa={0} {1} &> {2}'.format(isa, elf, trace)
-            run_command.append(cmd)
+            run_cmd_list[test]['gcc'] = cmd 
+            cmd = 'spike -c --isa={0} {1}'.format(isa, elf, trace)
+            run_cmd_list[test]['spike'] = cmd 
             cmd = 'riscv64-unknown-elf-objdump -D {0} > {1}'.format(elf, disass)
-            run_command.append(cmd)
+            run_cmd_list[test]['disass'] = cmd 
+            run_command.append(test)
     return run_command
 
 #tlist = gen_cmd_list('/scratch/river_development/microtesk_templates/microtesk_gen_config.yaml')
@@ -61,8 +65,25 @@ def pytest_generate_tests(metafunc):
 @pytest.fixture
 def test_input(request):
     # compile tests
+    os.chdir(pwd)
     program = request.param
-    return sys_command(program)
+    os.chdir('{0}/workdir/{1}'.format(os.getcwd(), program))
+    sys_command(run_cmd_list[program]['gcc'])
+    sys_command(run_cmd_list[program]['spike'])
+    sys_command_file(run_cmd_list[program]['disass'], '{0}.disass'.format(program))
+    sys_command_file('elf2hex  16  131072 {0}.elf 2147483648'.format(program), 'code.mem')
+    sys_command('ln -sf {0}/out .'.format(os.environ['BIN_PATH']))
+    sys_command('ln -sf {0}/bootfile .'.format(os.environ['BIN_PATH']))
+    sys_command('./out +rtldump')
+    sys_command_file('head -n -4 rtl.dump','temp.dump')
+    sys_command('mv temp.dump rtl.dump')
+    if filecmp.cmp('rtl.dump', 'spike.dump'):
+        logger.debug('PASSED')
+        return sys_command('touch PASSED')
+    else:
+        logger.debug('FAILED')
+        sys_command('touch FAILED')
+        return sys.exit(1)
 
 def test_eval(test_input):
     assert test_input != 0
