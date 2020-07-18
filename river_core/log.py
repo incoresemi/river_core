@@ -26,7 +26,7 @@ class Log:
         logging.DEBUG:    ("debug", "dbg", "d")
     }
 
-    def __init__(self, lvl=logging.CRITICAL, format=None):
+    def __init__(self, lvl=logging.DEBUG, format=None):
         self._lvl = lvl
         if not format:
             format = "  %(log_color)s%(styledname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"

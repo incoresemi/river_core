@@ -1,17 +1,23 @@
-global_home: <microtesk_home_path>/microtesk-riscv-0.1.0-beta-191227
-global_config_path: <river_path>/river_core/microtesk_plugins/templates
+global_home: /home/rise/lavanya/microtest_new/microtesk-riscv-0.1.0-beta-191227 
+global_config_path: /home/rise/lavanya/gitlab/personal/incore_copy/river_core/river_core/microtesk_plugin/templates
 global_command: generate.sh riscv
 global_args: --solver z3 --generate
-global_output: <output_path>/workdir
+global_output: /home/rise/lavanya/gitlab/personal/incore_copy/river_core/workdir
 global_seed: random
 global_jobs: 1
 global_count: 1
 
-rv32d_mentry_fadd_d:
+rv32d_mentry_fmul_d:
   path: floating
 
-rv32f_mentry_fadd_s:
+rv32d_mentry_fsub_d:
   path: floating
+
+rv64f_uentry_fcvt_s_l:
+  path: floating
+
+#rv32f_mentry_fadd_s:
+#  path: floating
 #branch_fixed:
 #  path: examples/branches
 ###branch_merge:

@@ -53,30 +53,30 @@ def gen_cmd_list(gen_config):
         if key == 'global_count':
             count = gen_list[key]
 
-    if not re.search('^global_', key):
-        config_file_path = config_path +  '/' + gen_list[key]['path']
-        logger.debug(key)
-        config_file = config_file_path + '/' + key + '.rb'
+        if not re.search('^global_', key):
+            config_file_path = config_path +  '/' + gen_list[key]['path']
+            logger.debug(key)
+            config_file = config_file_path + '/' + key + '.rb'
 
-        logger.debug(config_file)
-        template_name = os.path.basename(config_file)
-        
-        for i in range(count):
-            if seed == 'random':
-                gen_seed = random.randint(0, 10000)
-            else:
-                gen_seed = seed
-        
-            now = datetime.datetime.now()
-            gen_prefix = '{0:04}_{1}'.format(gen_seed, now.strftime('%d%m%Y%H%M%S%f'))
-            test_prefix = 'microtesk_{0}_{1}_{2}'.format(template_name.replace('.rb', ''), gen_prefix, i)
-            testdir = '{0}/{1}'.format(dirname,test_prefix)
-            run_command.append('{0} {1} \
-                                --code-file-extension S \
-                                --output-dir {2} \
-                                --code-file-prefix {3} \
-                                --rs {4} -g \
-                                '.format(command, config_file, testdir, test_prefix, gen_seed))
+            logger.debug(config_file)
+            template_name = os.path.basename(config_file)
+            
+            for i in range(count):
+                if seed == 'random':
+                    gen_seed = random.randint(0, 10000)
+                else:
+                    gen_seed = seed
+            
+                now = datetime.datetime.now()
+                gen_prefix = '{0:04}_{1}'.format(gen_seed, now.strftime('%d%m%Y%H%M%S%f'))
+                test_prefix = 'microtesk_{0}_{1}_{2}'.format(template_name.replace('.rb', ''), gen_prefix, i)
+                testdir = '{0}/{1}'.format(dirname,test_prefix)
+                run_command.append('{0} {1} \
+                                    --code-file-extension S \
+                                    --output-dir {2} \
+                                    --code-file-prefix {3} \
+                                    --rs {4} -g \
+                                    '.format(command, config_file, testdir, test_prefix, gen_seed))
 
     return run_command
 
@@ -101,12 +101,13 @@ def test_input(request, autouse=True):
     program = request.param
     template_match = re.search('riscv (.*).rb', program)
     if os.path.isfile('{0}.rb'.format(template_match.group(1))):
-        return sys_command(program)
+        sys_command(program)
+        return 0
     else:
         logger.error('File not found {0}'.format(template_match.group(1)))
-        return sys.exit(1)
+        return 1
 
 def test_eval(test_input):
-    assert test_input != 0
+    assert test_input == 0
 
 

@@ -21,7 +21,7 @@ class RandomGeneratorSpec(object):
         """ before random generation"""
 
     @gen_hookspec
-    def gen(self, gen_config):
+    def gen(self, gen_config, jobs):
         """ generation step"""
 
     @gen_hookspec
@@ -45,7 +45,7 @@ class CompileSpec(object):
         # should set all gcc etc configs
 
     @compile_hookspec
-    def compile(regress_list, command_line_args):
+    def compile(regress_list, command_line_args, jobs):
         """ compiles all tests in the regress list"""
 
     @compile_hookspec

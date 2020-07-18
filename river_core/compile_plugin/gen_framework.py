@@ -79,13 +79,14 @@ def test_input(request):
     sys_command('mv temp.dump rtl.dump')
     if filecmp.cmp('rtl.dump', 'spike.dump'):
         logger.debug('PASSED')
-        return sys_command('touch PASSED')
+        sys_command('touch PASSED')
+        return 0
     else:
         logger.debug('FAILED')
         sys_command('touch FAILED')
-        return sys.exit(1)
+        return 1
 
 def test_eval(test_input):
-    assert test_input != 0
+    assert test_input == 0
 
 

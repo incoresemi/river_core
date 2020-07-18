@@ -70,13 +70,13 @@ class CompilePlugin(object):
             self.compile_args = cconfig['global_args']
 
     @compile_hookimpl
-    def compile(self, regress_list, command_line_args):
+    def compile(self, regress_list, command_line_args, jobs):
         logger.debug('compile')
         pwd = os.getcwd()
         pytest_file = pwd + '/river_core/compile_plugin/gen_framework.py'
         print(pytest_file)
 
-        pytest.main([pytest_file, '-n=30', '-v', '--html=microtesk_compile.html', '--self-contained-html'])
+        pytest.main([pytest_file, '-n={0}'.format(jobs), '-v', '--html=microtesk_compile.html', '--self-contained-html'])
 
 
 

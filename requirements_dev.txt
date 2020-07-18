@@ -11,3 +11,4 @@ pytest-html
 repomanager
 click
 ruamel.yaml
+ansi2html

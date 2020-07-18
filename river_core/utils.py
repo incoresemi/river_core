@@ -39,7 +39,7 @@ def sys_command(command, timeout=500):
             logger.debug(out.decode("ascii"))
         if err:
             logger.debug(err.decode("ascii"))
-    return out.decode("ascii")
+    return (x.returncode, out.decode("ascii"))
 
 def sys_command_file(command, filename, timeout=500):
     cmd = command.split(' ')
