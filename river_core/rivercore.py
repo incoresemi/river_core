@@ -11,7 +11,7 @@ from river_core.constants import *
 from river_core.__init__ import __version__
 from river_core.sim_hookspecs import *
 
-def rivercore(verbose, dir, jobs, generate, compile, clean, simenv):
+def rivercore(verbose, dir, jobs, generate, compile, clean, filter, simenv):
 
     logger.level(verbose)
     logger.info('****** RiVer Core {0} *******'.format(__version__ ))
@@ -31,7 +31,7 @@ def rivercore(verbose, dir, jobs, generate, compile, clean, simenv):
         generatorpm_module = importlib.import_module(generatorpm_name,'.')
         generatorpm.register(generatorpm_module.MicroTESKPlugin())
         generatorpm.hook.pre_gen(gendir='{0}/workdir/'.format(cwd))
-        generatorpm.hook.gen(gen_config='mirotesk_plugin/microtesk_gen_config.yaml', jobs=jobs)
+        generatorpm.hook.gen(gen_config='mirotesk_plugin/microtesk_gen_config.yaml', jobs=jobs, filter=filter)
         generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
 
     if compile:
@@ -43,7 +43,7 @@ def rivercore(verbose, dir, jobs, generate, compile, clean, simenv):
         compilepm_module = importlib.import_module(compilepm_name, '.')
         compilepm.register(compilepm_module.CompilePlugin())
         compilepm.hook.pre_compile(compile_config='{0}/river_core/compile_plugin/compile_config.yaml'.format(cwd))
-        compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), command_line_args='', jobs=jobs)
+        compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), command_line_args='', jobs=jobs, filter=filter)
         compilepm.hook.post_compile()
 
 

@@ -46,7 +46,7 @@ class MicroTESKPlugin(object):
     # gets the yaml file with list of configs; test count; parallel
     # isa is obtained from riscv_config
     @gen_hookimpl
-    def gen(self, gen_config, jobs):
+    def gen(self, gen_config, jobs, filter):
         logger.debug('plugin again')
         pwd = os.getcwd()
         pytest_file = pwd + '/river_core/microtesk_plugin/gen_framework.py'
@@ -64,27 +64,28 @@ class MicroTESKPlugin(object):
         """
         Overwrites the microtesk entries in the regressfile with the latest present in the gendir
         """
+        remove_list = dict()
         if os.path.isdir(gendir):
             gendir_list = []
             for dir,_,_ in os.walk(gendir):
                 gendir_list.extend(glob(os.path.join(dir, 'microtesk_*/*.S')))
             logger.debug('Generated S files:{0}'.format(gendir_list))
             testdir=''
-            if len(gendir_list) == 0:
-                testdir = gendir
-            else:
-                for gentest in gendir_list:
-                    testdir = os.path.dirname(gentest)
-                    testname = os.path.basename(gentest).replace('.S','')
-                    ldname = os.path.basename(testdir)
-                    test_gen_dir = '{0}/../{1}'.format(testdir, testname)
-                    os.makedirs(test_gen_dir)
-                    logger.debug('created {0}'.format(test_gen_dir))
-                    sys_command('cp {0}/{1}.ld {2}'.format(testdir, ldname, test_gen_dir))
-                    sys_command('mv {0}/{1}.log {2}'.format(testdir, testname, test_gen_dir))
-                    sys_command('mv {0}/{1}.S {2}'.format(testdir, testname, test_gen_dir))
-                    logger.debug('Removing directory: {0}'.format(testdir))
-                    shutil.rmtree(testdir)
+            for gentest in gendir_list:
+                testdir = os.path.dirname(gentest)
+                testname = os.path.basename(gentest).replace('.S','')
+                ldname = os.path.basename(testdir)
+                test_gen_dir = '{0}/../{1}'.format(testdir, testname)
+                os.makedirs(test_gen_dir)
+                logger.debug('created {0}'.format(test_gen_dir))
+                sys_command('cp {0}/{1}.ld {2}'.format(testdir, ldname, test_gen_dir))
+                sys_command('mv {0}/{1}.log {2}'.format(testdir, testname, test_gen_dir))
+                sys_command('mv {0}/{1}.S {2}'.format(testdir, testname, test_gen_dir))
+                remove_list[testdir] = 0
+            
+            for key in remove_list.keys():
+                logger.debug('Removing directory: {0}'.format(testdir))
+                shutil.rmtree(key)
 
         testdirs = os.listdir(gendir)
         test_dict['microtesk']['microtesk_global_testpath'] = gendir
