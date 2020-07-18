@@ -7,17 +7,227 @@ global_seed: random
 global_jobs: 1
 global_count: 1
 
-rv32d_mentry_fmul_d:
-  path: floating
-
+#rv64f_mentry_fcvt_l_s:
+#    path: floating
+#rv64d_uentry_fmv_x_d:
+#    path: floating
+#rv64d_uentry_fmv_d_x:
+#    path: floating
+#rv64d_uentry_fcvt_lu_d:
+#    path: floating
+#rv64d_uentry_fcvt_l_d:
+#    path: floating
+#rv64d_uentry_fcvt_d_lu:
+#    path: floating
+#rv64d_uentry_fcvt_d_l:
+#    path: floating
+#rv64d_mentry_fmv_x_d:
+#    path: floating
+#rv64d_mentry_fmv_d_x:
+#    path: floating
+#rv64d_mentry_fcvt_lu_d:
+#    path: floating
+#rv64d_mentry_fcvt_l_d:
+#    path: floating
+#rv64d_mentry_fcvt_d_lu:
+#    path: floating
+#rv64d_mentry_fcvt_d_l:
+#    path: floating
+rv32f_uentry_fsub_s:
+    path: floating
+rv32f_uentry_fsqrt_s:
+    path: floating
+rv32f_uentry_fsgnjx_s:
+    path: floating
+rv32f_uentry_fsgnj_s:
+    path: floating
+rv32f_uentry_fsgnjn_s:
+    path: floating
+rv32f_uentry_fnmsub_s:
+    path: floating
+rv32f_uentry_fnmadd_s:
+    path: floating
+rv32f_uentry_fmv_x_s:
+    path: floating
+rv32f_uentry_fmv_s_x:
+    path: floating
+rv32f_uentry_fmul_s:
+    path: floating
+rv32f_uentry_fmsub_s:
+    path: floating
+rv32f_uentry_fmin_s:
+    path: floating
+rv32f_uentry_fmax_s:
+    path: floating
+rv32f_uentry_fmadd_s:
+    path: floating
+rv32f_uentry_fdiv_s:
+    path: floating
+#rv32f_uentry_fcvt_wu_s:
+#    path: floating
+#rv32f_uentry_fcvt_w_s:
+#    path: floating
+#rv32f_uentry_fcvt_s_wu:
+#    path: floating
+#rv32f_uentry_fcvt_s_w:
+#    path: floating
+rv32f_uentry_fclass_s:
+    path: floating
+rv32f_uentry_fadd_s:
+    path: floating
+rv32f_mentry_fsub_s:
+    path: floating
+rv32f_mentry_fsqrt_s:
+    path: floating
+rv32f_mentry_fsgnjx_s:
+    path: floating
+rv32f_mentry_fsgnj_s:
+    path: floating
+rv32f_mentry_fsgnjn_s:
+    path: floating
+rv32f_mentry_fnmsub_s:
+    path: floating
+rv32f_mentry_fnmadd_s:
+    path: floating
+rv32f_mentry_fmv_x_s:
+    path: floating
+rv32f_mentry_fmv_s_x:
+    path: floating
+rv32f_mentry_fmul_s:
+    path: floating
+rv32f_mentry_fmsub_s:
+    path: floating
+rv32f_mentry_fmin_s:
+    path: floating
+rv32f_mentry_fmax_s:
+    path: floating
+rv32f_mentry_fmadd_s:
+    path: floating
+rv32f_mentry_fdiv_s:
+    path: floating
+#rv32f_mentry_fcvt_wu_s:
+#    path: floating
+#rv32f_mentry_fcvt_w_s:
+#    path: floating
+#rv32f_mentry_fcvt_s_wu:
+#    path: floating
+#rv32f_mentry_fcvt_s_w:
+#    path: floating
+#rv32f_mentry_fcvt_s_lu:
+#    path: floating
+#rv32f_mentry_fcvt_s_l:
+#    path: floating
+#rv32f_mentry_fcvt_lu_s:
+#    path: floating
+#rv32f_mentry_fcvt_l_s:
+#    path: floating
+rv32f_mentry_fclass_s:
+    path: floating
+rv32f_mentry_fadd_s:
+    path: floating
+rv32d_uentry_fsub_d:
+    path: floating
+rv32d_uentry_fsqrt_d:
+    path: floating
+rv32d_uentry_fsgnjx_d:
+    path: floating
+rv32d_uentry_fsgnjn_d:
+    path: floating
+rv32d_uentry_fsgnj_d:
+    path: floating
+rv32d_uentry_fnmsub_d:
+    path: floating
+rv32d_uentry_fnmadd_d:
+    path: floating
+rv32d_uentry_fmul_d:
+    path: floating
+rv32d_uentry_fmsub_d:
+    path: floating
+rv32d_uentry_fmin_d:
+    path: floating
+rv32d_uentry_fmax_d:
+    path: floating
+rv32d_uentry_fmadd_d:
+    path: floating
+rv32d_uentry_fdiv_d:
+    path: floating
+#rv32d_uentry_fcvt_wu_d:
+#    path: floating
+#rv32d_uentry_fcvt_w_d:
+#    path: floating
+#rv32d_uentry_fcvt_d_wu:
+#    path: floating
+#rv32d_uentry_fcvt_d_w:
+#    path: floating
+rv32d_uentry_fclass_d:
+    path: floating
+rv32d_uentry_fadd_d:
+    path: floating
 rv32d_mentry_fsub_d:
-  path: floating
+    path: floating
+rv32d_mentry_fsqrt_d:
+    path: floating
+rv32d_mentry_fsgnjx_d:
+    path: floating
+rv32d_mentry_fsgnjn_d:
+    path: floating
+rv32d_mentry_fsgnj_d:
+    path: floating
+rv32d_mentry_fnmsub_d:
+    path: floating
+rv32d_mentry_fnmadd_d:
+    path: floating
+rv32d_mentry_fmv_x_d:
+    path: floating
+rv32d_mentry_fmv_d_x:
+    path: floating
+rv32d_mentry_fmul_d:
+    path: floating
+rv32d_mentry_fmsub_d:
+    path: floating
+rv32d_mentry_fmin_d:
+    path: floating
+rv32d_mentry_fmax_d:
+    path: floating
+rv32d_mentry_fmadd_d:
+    path: floating
+rv32d_mentry_fdiv_d:
+    path: floating
+#rv32d_mentry_fcvt_wu_d:
+#    path: floating
+#rv32d_mentry_fcvt_w_d:
+#    path: floating
+#rv32d_mentry_fcvt_lu_d:
+#    path: floating
+#rv32d_mentry_fcvt_l_d:
+#    path: floating
+#rv32d_mentry_fcvt_d_wu:
+#    path: floating
+#rv32d_mentry_fcvt_d_w:
+#    path: floating
+#rv32d_mentry_fcvt_d_lu:
+#    path: floating
+#rv32d_mentry_fcvt_d_l:
+#    path: floating
+#rv32d_mentry_fclass_d:
+#    path: floating
+#rv32d_mentry_fadd_d:
+#    path: floating
+#rv64f_uentry_fcvt_s_lu:
+#    path: floating
+#rv64f_uentry_fcvt_s_l:
+#    path: floating
+#rv64f_uentry_fcvt_lu_s:
+#    path: floating
+#rv64f_uentry_fcvt_l_s:
+#    path: floating
+#rv64f_mentry_fcvt_s_lu:
+#    path: floating
+#rv64f_mentry_fcvt_s_l:
+#    path: floating
+#rv64f_mentry_fcvt_lu_s:
+#    path: floating
 
-rv64f_uentry_fcvt_s_l:
-  path: floating
-
-#rv32f_mentry_fadd_s:
-#  path: floating
 #branch_fixed:
 #  path: examples/branches
 ###branch_merge:
