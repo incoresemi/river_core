@@ -74,7 +74,7 @@ def test_input(request):
     sys_command_file('elf2hex  16  131072 {0}.elf 2147483648'.format(program), 'code.mem')
     sys_command('ln -sf {0}/out .'.format(os.environ['BIN_PATH']))
     sys_command('ln -sf {0}/bootfile .'.format(os.environ['BIN_PATH']))
-    sys_command('./out +rtldump')
+    sys_command('./out +rtldump', 60)
     sys_command_file('head -n -4 rtl.dump','temp.dump')
     sys_command('mv temp.dump rtl.dump')
     if filecmp.cmp('rtl.dump', 'spike.dump'):
