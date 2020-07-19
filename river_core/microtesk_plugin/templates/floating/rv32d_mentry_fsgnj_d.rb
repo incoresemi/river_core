@@ -37,7 +37,7 @@ fsgnj_d(f(_ FREE), f(_ FREE), f(_  do testdata('boundary') end)) do situation('r
       end
 
       frcsr x(_ FREE)
-    }.run 10
+    }.run 1000
 
   end
 end

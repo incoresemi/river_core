@@ -37,7 +37,7 @@ fmv_d_x(f(_ FREE), x(_  do testdata('boundary') end)) do situation('random_biase
       end
 
       frcsr x(_ FREE)
-    }.run 10
+    }.run 1000
 
   end
 end

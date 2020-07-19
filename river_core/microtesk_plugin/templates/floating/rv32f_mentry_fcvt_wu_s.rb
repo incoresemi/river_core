@@ -37,7 +37,7 @@ fcvt_wu_s(x(_ FREE), f(_  do testdata('boundary') end)) do situation('random_bia
       end
 
       frcsr x(_ FREE)
-    }.run 10
+    }.run 1000
 
   end
 end

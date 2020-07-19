@@ -37,7 +37,7 @@ fnmsub_s(f(_ FREE), f(_ FREE), f(_ FREE), f(_  do testdata('boundary') end)) do 
       end
 
       frcsr x(_ FREE)
-    }.run 10
+    }.run 1000
 
   end
 end
