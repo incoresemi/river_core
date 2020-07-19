@@ -79,7 +79,6 @@ class MicroTESKPlugin(object):
                 os.makedirs(test_gen_dir)
                 logger.debug('created {0}'.format(test_gen_dir))
                 sys_command('cp {0}/{1}.ld {2}'.format(testdir, ldname, test_gen_dir))
-                sys_command('mv {0}/{1}.log {2}'.format(testdir, testname, test_gen_dir))
                 sys_command('mv {0}/{1}.S {2}'.format(testdir, testname, test_gen_dir))
                 remove_list[testdir] = 0
             

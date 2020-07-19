@@ -28,7 +28,7 @@ require_relative 'seq_fpmem_rvc'
 require_relative 'seq_fpu'
 require_relative 'seq_mem'
 require_relative 'seq_mem_rvc'
-require_relative 'seq_vector'
+#require_relative 'seq_vector'
 
 require_relative 'seq_xxx_data'
 require_relative 'seq_xxx_regs'
@@ -54,18 +54,18 @@ class SeqXxxTemplate < RiscVBaseTemplate
   include SeqFpu
   include SeqMem
   include SeqMemRvc
-  include SeqVector
+  #include SeqVector
 
   include SeqXxxData
   include SeqXxxRegs
 
   # Configuration settings
-  SEQ_NUMBER = 256
-  SEQ_LENGTH = 64
+  SEQ_NUMBER = 1024
+  SEQ_LENGTH = 256
 
-  MEMSIZE = 1024
+  MEMSIZE = 4096
 
-  USE_AMO = true
+  USE_AMO = false
   USE_MUL = true
   USE_DIV = true
 
@@ -79,7 +79,7 @@ class SeqXxxTemplate < RiscVBaseTemplate
   end
 
   def pre_rvtest
-    RVTEST_RV64UF()
+    RVTEST_RV64MF()
     RVTEST_CODE_BEGIN()
   end
 
@@ -96,11 +96,11 @@ class SeqXxxTemplate < RiscVBaseTemplate
         # This register must be excluded as it is used as temp by initializers and finalizers.
         set_reserved sp, true
 
-        if is_rev('RV32V') then
-          e32 = 0b010 # standard element width = 32
-          m4 = 0b10 # the number of vector registers in a group = 4
-          vsetvli t0, a0, e32, m4
-        end
+        #if is_rev('RV32V') then
+        #  e32 = 0b010 # standard element width = 32
+        #  m4 = 0b10 # the number of vector registers in a group = 4
+        #  vsetvli t0, a0, e32, m4
+        #end
 
         j :test_start
 label :crash_backward
@@ -172,9 +172,9 @@ label :test_end
         dist_seq_mem_rvc = range(:bias =>  5, :value => lambda do seq_mem_rvc(MEMSIZE) end)
       end
 
-      if is_rev('RV32V') then
-        dist_seq_vector = range(:bias => 5, :value => lambda do seq_vector end)
-      end
+      #if is_rev('RV32V') then
+      #  dist_seq_vector = range(:bias => 5, :value => lambda do seq_vector end)
+      #end
 
       @sequence_distribution = dist(
           dist_seq_alu,
@@ -187,8 +187,8 @@ label :test_end
           dist_seq_fpmem_rvc,
           dist_seq_fpu,
           dist_seq_mem,
-          dist_seq_mem_rvc,
-          dist_seq_vector
+          dist_seq_mem_rvc
+      #    dist_seq_vector
       )
     end
     @sequence_distribution.next_value.call
