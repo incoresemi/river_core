@@ -35,7 +35,18 @@ def rivercore(verbose, dir, jobs, generate, compile, clean, filter, simenv):
         generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
 
     if compile:
+
         # Compile plugin manager
+        #compilepm = pluggy.PluginManager('compile')
+        #compilepm.add_hookspecs(CompileSpec)
+
+        #compilepm_name = 'river_core.cclass_plugin.compile_plugin'
+        #compilepm_module = importlib.import_module(compilepm_name, '.')
+        #compilepm.register(compilepm_module.CompilePlugin())
+        #compilepm.hook.pre_compile(compile_config='{0}/river_core/cclass_plugin/compile_config.yaml'.format(cwd))
+        #compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), command_line_args='', jobs=jobs, filter=filter)
+        #compilepm.hook.post_compile()
+
         compilepm = pluggy.PluginManager('compile')
         compilepm.add_hookspecs(CompileSpec)
 
@@ -45,6 +56,18 @@ def rivercore(verbose, dir, jobs, generate, compile, clean, filter, simenv):
         compilepm.hook.pre_compile(compile_config='{0}/river_core/compile_plugin/compile_config.yaml'.format(cwd))
         compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), command_line_args='', jobs=jobs, filter=filter)
         compilepm.hook.post_compile()
+
+        ## Chromite Compile plugin manager
+        #compilepm = pluggy.PluginManager('compile')
+        #compilepm.add_hookspecs(CompileSpec)
+
+        ##compilepm_name = 'river_core.compile_plugin.compile_plugin'
+        #compilepm_name = 'river_core.chromite_simlog_plugin.chromite_simlog_plugin'
+        #compilepm_module = importlib.import_module(compilepm_name, '.')
+        #compilepm.register(compilepm_module.ChromiteSimLogPlugin())
+        #compilepm.hook.pre_compile(compile_config='{0}/river_core/chromite_simlog_plugin/chromite_config.yaml'.format(cwd))
+        #compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), command_line_args='', jobs=jobs, filter=filter)
+        #compilepm.hook.post_compile()
 
 
     ## Model plugin manager
