@@ -62,8 +62,7 @@ def pytest_generate_tests(metafunc):
 #	logger.debug(metafunc.config.getoption("filter"))
 
     if 'test_input' in metafunc.fixturenames:
-        riscv_test_list = gen_cmd_list(metafunc.config.getoption("regresslist")
-                                        )
+        riscv_test_list = gen_cmd_list(metafunc.config.getoption("regresslist"))
         metafunc.parametrize('test_input', riscv_test_list,
                 ids=idfnc,
                 indirect=True)

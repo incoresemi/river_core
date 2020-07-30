@@ -25,28 +25,6 @@ class CompilePlugin(object):
     abi = 'lp64'
     compile_command = ''
     compile_args = ''
-    def pytest_addoption(parser):
-        parser.addoption("--test_input", action="append", default=[],
-            help="list of cmds to pass to pytest")
-
-
-    def idfnc(val):
-      return val
-
-    def pytest_generate_tests(metafunc):
-        if 'test_input' in metafunc.fixturenames:
-            metafunc.parametrize('test_input', cmdlist,
-                    ids=idfnc,
-                    indirect=True)
-
-    @pytest.fixture
-    def test_input(request):
-        # compile tests
-        program = request.param
-        return utils.sys_command(program)
-
-    def test_eval(test_input):
-        assert test_input != 0
 
     #@gen_hookimpl
     #def load_config(self, isa, platform):
@@ -82,8 +60,6 @@ class CompilePlugin(object):
         else:
             pytest.main([pytest_file, '-n={0}'.format(jobs), '-k={0}'.format(filter), '--regresslist={0}'.format(regress_list), '-v', '--html=microtesk_compile.html', '--self-contained-html'])
         
-
-
 
     @compile_hookimpl
     def post_compile(self):

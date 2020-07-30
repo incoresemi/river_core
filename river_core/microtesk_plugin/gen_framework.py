@@ -90,7 +90,7 @@ def idfnc(val):
 
 def pytest_generate_tests(metafunc):
     if 'test_input' in metafunc.fixturenames:
-        riscv_test_list = gen_cmd_list('./river_core/microtesk_plugin/microtesk_gen_config.yaml')
+        riscv_test_list = gen_cmd_list(metafunc.config.getoption("configlist"))
         metafunc.parametrize('test_input', riscv_test_list,
                 ids=idfnc,
                 indirect=True)
