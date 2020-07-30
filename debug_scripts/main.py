@@ -54,7 +54,7 @@ def cli(verbose,  clean, fpath):
         spike_priv = None
         spike_pc = None
         spike_reg = None
-
+        reason = None
         if rtl_match:
             rtl_priv = rtl_match.group(1)
             rtl_pc = rtl_match.group(2)
@@ -70,6 +70,8 @@ def cli(verbose,  clean, fpath):
             reason = "Value mismatch on PC "
         elif rtl_reg != spike_reg:
             reason = "Value mismatch on REG "
+        else: 
+            reason = "Undefined"
 
         if bool(re.search('EOF on rtl.dump', err)):
             reason = "RTL hang --> {0}".format(out)
