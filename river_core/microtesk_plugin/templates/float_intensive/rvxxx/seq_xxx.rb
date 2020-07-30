@@ -60,8 +60,8 @@ class SeqXxxTemplate < RiscVBaseTemplate
   include SeqXxxRegs
 
   # Configuration settings
-  SEQ_NUMBER = 1024
-  SEQ_LENGTH = 256
+  SEQ_NUMBER = 2046
+  SEQ_LENGTH = 1024
 
   MEMSIZE = 4096
 
@@ -148,14 +148,21 @@ label :test_end
         li r=x(_), rand(0,4)
         fsrm x(_), r
         dist_seq_fax = range(:bias =>  5, :value => lambda do seq_fax end)
+        frrm x(_)
       end
 
       if is_rev('RV64D') && is_rev('RV64F') then
+        li r=x(_), rand(0,4)
+        fsrm x(_), r
         dist_seq_fdiv = range(:bias =>  5, :value => lambda do seq_fdiv end)
+        frrm x(_)
       end
 
       if is_rev('RV32D') && is_rev('RV32F') then
+        li r=x(_), rand(0,4)
+        fsrm x(_), r
         dist_seq_fpmem = range(:bias =>  5, :value => lambda do seq_fpmem(MEMSIZE) end)
+        frrm x(_)
       end
 
       if is_rev('RV32FC') && is_rev('RV32DC') then
@@ -163,7 +170,10 @@ label :test_end
       end
 
       if is_rev('RV32F') then
+        li r=x(_), rand(0,4)
+        fsrm x(_), r
         dist_seq_fpu = range(:bias => 10, :value => lambda do seq_fpu end)
+        frrm x(_)
       end
 
       if is_rev('RV64A') then
@@ -183,7 +193,7 @@ label :test_end
           #dist_seq_alu_rvc,
           #dist_seq_branch,
           #dist_seq_branch_rvc,
-          dist_seq_fax
+          dist_seq_fax,
           dist_seq_fdiv,
           #dist_seq_fpmem,
           #dist_seq_fpmem_rvc,

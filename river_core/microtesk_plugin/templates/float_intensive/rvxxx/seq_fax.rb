@@ -19,8 +19,6 @@ module SeqFax
   def seq_fax
     pick_random {
      
-      seq_read_fcsr()
-
       # Intra-FPU Instructions
       seq_fax_src1('FCVT_S_D', :fregs_s, :fregs_d)
       seq_fax_src1('FCVT_D_S', :fregs_d, :fregs_s)
@@ -79,7 +77,6 @@ module SeqFax
     src1 = reg_read_any(src_pool)
     dest = reg_write(dst_pool, src1)
     instr op, dest, src1
-    frcsr x(_)
   end
 
   def seq_fax_src2(op, dst_pool, src_pool)
@@ -87,7 +84,6 @@ module SeqFax
     src2 = reg_read_any(src_pool)
     dest = reg_write(dst_pool, src1, src2)
     instr op, dest, src1, src2
-    frcsr x(_)
   end
 
 end

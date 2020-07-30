@@ -36,8 +36,7 @@ def cli(verbose,  clean, fpath):
     fail_disass = None
     fail_list = []
     for dir,_,_ in os.walk(fpath):
-        fail_list.extend(glob(os.path.join(dir, 'FAIL_*'.format(fpath))))            
-   
+        fail_list.extend(glob(os.path.join(dir, 'FAIL*'.format(fpath))))            
     for fail in fail_list:
         fail_name = os.path.dirname(fail)
         logger.debug('failname: {0}'.format(fail_name))
