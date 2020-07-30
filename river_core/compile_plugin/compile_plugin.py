@@ -70,14 +70,18 @@ class CompilePlugin(object):
             self.compile_args = cconfig['global_args']
 
     @compile_hookimpl
-    def compile(self, regress_list, command_line_args, jobs, filter):
+    def compile(self, regress_list, command_line_args, jobs, filter, norun):
         logger.debug('compile')
         pwd = os.getcwd()
         pytest_file = pwd + '/river_core/compile_plugin/gen_framework.py'
         print(pytest_file)
 
-        #pytest.main([pytest_file, '-n={0}'.format(jobs), '--addopts=--filter={0}'.format(filter), '-v', '--html=microtesk_compile.html', '--self-contained-html'])
-        pytest.main([pytest_file, '-n={0}'.format(jobs), '-v', '--html=microtesk_compile.html', '--self-contained-html'])
+        if norun:
+            # to display test items
+            pytest.main([pytest_file, '--collect-only', '-n={0}'.format(jobs), '-k={0}'.format(filter), '--regresslist={0}'.format(regress_list), '-v', '--html=microtesk_compile.html', '--self-contained-html'])
+        else:
+            pytest.main([pytest_file, '-n={0}'.format(jobs), '-k={0}'.format(filter), '--regresslist={0}'.format(regress_list), '-v', '--html=microtesk_compile.html', '--self-contained-html'])
+        
 
 
 

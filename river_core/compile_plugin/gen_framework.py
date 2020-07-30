@@ -27,7 +27,10 @@ def gen_cmd_list(regress_list):
         rlist = yaml.safe_load(rfile)
     run_command = []
     testpath = rlist['microtesk']['microtesk_global_testpath']
+    
     for test in rlist['microtesk']:
+        #filter_match = re.search(filterstring, test)
+        #if filterstring == '' or filter_match:
         test_match = re.match('microtesk_global_testpath', test)
         if not test_match:
             run_cmd_list[test] = dict()
@@ -56,8 +59,11 @@ def idfnc(val):
   return val
 
 def pytest_generate_tests(metafunc):
+#	logger.debug(metafunc.config.getoption("filter"))
+
     if 'test_input' in metafunc.fixturenames:
-        riscv_test_list = gen_cmd_list('./workdir/regresslist.yaml')
+        riscv_test_list = gen_cmd_list(metafunc.config.getoption("regresslist")
+                                        )
         metafunc.parametrize('test_input', riscv_test_list,
                 ids=idfnc,
                 indirect=True)

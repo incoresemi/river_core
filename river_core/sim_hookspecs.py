@@ -45,7 +45,7 @@ class CompileSpec(object):
         # should set all gcc etc configs
 
     @compile_hookspec
-    def compile(regress_list, command_line_args, jobs, filter):
+    def compile(regress_list, command_line_args, jobs, filter, norun):
         """ compiles all tests in the regress list"""
 
     @compile_hookspec

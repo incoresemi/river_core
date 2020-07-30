@@ -14,10 +14,11 @@ from river_core.__init__ import __version__
 @click.option('--generate','-g', is_flag='True', help='generate tests')
 @click.option('--compile','-c', is_flag='True', help='compile tests')
 @click.option('--clean','-c', is_flag='True', help='Clean builds')
-@click.option('--filter','-f', type=str, help='Filter option')
+@click.option('--norun','-nr', is_flag='True', help='Only display test list')
+@click.option('--filter','-f', type=str, default= '', help='Filter option')
 @click.option('--simenv','-s', default='simenv.yaml', type=click.File('r'), help='Repo list to be cloned')
-def cli(verbose, dir, jobs, generate, compile, clean, filter, simenv):
-    rivercore(verbose, dir, jobs, generate, compile, clean, filter, simenv)
+def cli(verbose, dir, jobs, generate, compile, clean, filter, norun, simenv):
+    rivercore(verbose, dir, jobs, generate, compile, clean, filter, norun, simenv)
 
 if __name__ == '__main__':
     cli()

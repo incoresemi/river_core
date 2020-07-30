@@ -11,7 +11,7 @@ from river_core.constants import *
 from river_core.__init__ import __version__
 from river_core.sim_hookspecs import *
 
-def rivercore(verbose, dir, jobs, generate, compile, clean, filter, simenv):
+def rivercore(verbose, dir, jobs, generate, compile, clean, filter, norun, simenv):
 
     logger.level(verbose)
     logger.info('****** RiVer Core {0} *******'.format(__version__ ))
@@ -54,7 +54,7 @@ def rivercore(verbose, dir, jobs, generate, compile, clean, filter, simenv):
         compilepm_module = importlib.import_module(compilepm_name, '.')
         compilepm.register(compilepm_module.CompilePlugin())
         compilepm.hook.pre_compile(compile_config='{0}/river_core/compile_plugin/compile_config.yaml'.format(cwd))
-        compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), command_line_args='', jobs=jobs, filter=filter)
+        compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), command_line_args='', jobs=jobs, norun=norun, filter=filter)
         compilepm.hook.post_compile()
 
         ## Chromite Compile plugin manager

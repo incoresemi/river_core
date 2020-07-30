@@ -1,38 +1,38 @@
 global_home: /home/rise/lavanya/microtest_new/microtesk-riscv-0.1.0-beta-191227 
-global_config_path: /home/rise/lavanya/gitlab/personal/incore_copy/river_core/river_core/microtesk_plugin/templates
+global_config_path: /home/rise/lavanya/gitlab/incore/river_core/river_core/microtesk_plugin/templates
 global_command: generate.sh riscv
 global_args: --solver z3 --generate
-global_output: /home/rise/lavanya/gitlab/personal/incore_copy/river_core/workdir
+global_output: /home/rise/lavanya/gitlab/incore/river_core/workdir
 global_seed: random
 global_jobs: 1
 global_count: 1
 
-#rv64f_mentry_fcvt_l_s:
-#    path: floating
-#rv64d_uentry_fmv_x_d:
-#    path: floating
-#rv64d_uentry_fmv_d_x:
-#    path: floating
-#rv64d_uentry_fcvt_lu_d:
-#    path: floating
-#rv64d_uentry_fcvt_l_d:
-#    path: floating
-#rv64d_uentry_fcvt_d_lu:
-#    path: floating
-#rv64d_uentry_fcvt_d_l:
-#    path: floating
-#rv64d_mentry_fmv_x_d:
-#    path: floating
-#rv64d_mentry_fmv_d_x:
-#    path: floating
-#rv64d_mentry_fcvt_lu_d:
-#    path: floating
-#rv64d_mentry_fcvt_l_d:
-#    path: floating
-#rv64d_mentry_fcvt_d_lu:
-#    path: floating
-#rv64d_mentry_fcvt_d_l:
-#    path: floating
+rv64f_mentry_fcvt_l_s:
+    path: floating
+rv64d_uentry_fmv_x_d:
+    path: floating
+rv64d_uentry_fmv_d_x:
+    path: floating
+rv64d_uentry_fcvt_lu_d:
+    path: floating
+rv64d_uentry_fcvt_l_d:
+    path: floating
+rv64d_uentry_fcvt_d_lu:
+    path: floating
+rv64d_uentry_fcvt_d_l:
+    path: floating
+rv64d_mentry_fmv_x_d:
+    path: floating
+rv64d_mentry_fmv_d_x:
+    path: floating
+rv64d_mentry_fcvt_lu_d:
+    path: floating
+rv64d_mentry_fcvt_l_d:
+    path: floating
+rv64d_mentry_fcvt_d_lu:
+    path: floating
+rv64d_mentry_fcvt_d_l:
+    path: floating
 rv32f_uentry_fsub_s:
     path: floating
 rv32f_uentry_fsqrt_s:
@@ -63,14 +63,14 @@ rv32f_uentry_fmadd_s:
     path: floating
 rv32f_uentry_fdiv_s:
     path: floating
-#rv32f_uentry_fcvt_wu_s:
-#    path: floating
-#rv32f_uentry_fcvt_w_s:
-#    path: floating
-#rv32f_uentry_fcvt_s_wu:
-#    path: floating
-#rv32f_uentry_fcvt_s_w:
-#    path: floating
+rv32f_uentry_fcvt_wu_s:
+    path: floating
+rv32f_uentry_fcvt_w_s:
+    path: floating
+rv32f_uentry_fcvt_s_wu:
+    path: floating
+rv32f_uentry_fcvt_s_w:
+    path: floating
 rv32f_uentry_fclass_s:
     path: floating
 rv32f_uentry_fadd_s:
@@ -105,22 +105,22 @@ rv32f_mentry_fmadd_s:
     path: floating
 rv32f_mentry_fdiv_s:
     path: floating
-#rv32f_mentry_fcvt_wu_s:
-#    path: floating
-#rv32f_mentry_fcvt_w_s:
-#    path: floating
-#rv32f_mentry_fcvt_s_wu:
-#    path: floating
-#rv32f_mentry_fcvt_s_w:
-#    path: floating
-#rv32f_mentry_fcvt_s_lu:
-#    path: floating
-#rv32f_mentry_fcvt_s_l:
-#    path: floating
-#rv32f_mentry_fcvt_lu_s:
-#    path: floating
-#rv32f_mentry_fcvt_l_s:
-#    path: floating
+rv32f_mentry_fcvt_wu_s:
+    path: floating
+rv32f_mentry_fcvt_w_s:
+    path: floating
+rv32f_mentry_fcvt_s_wu:
+    path: floating
+rv32f_mentry_fcvt_s_w:
+    path: floating
+rv32f_mentry_fcvt_s_lu:
+    path: floating
+rv32f_mentry_fcvt_s_l:
+    path: floating
+rv32f_mentry_fcvt_lu_s:
+    path: floating
+rv32f_mentry_fcvt_l_s:
+    path: floating
 rv32f_mentry_fclass_s:
     path: floating
 rv32f_mentry_fadd_s:
@@ -151,14 +151,14 @@ rv32d_uentry_fmadd_d:
     path: floating
 rv32d_uentry_fdiv_d:
     path: floating
-#rv32d_uentry_fcvt_wu_d:
-#    path: floating
-#rv32d_uentry_fcvt_w_d:
-#    path: floating
-#rv32d_uentry_fcvt_d_wu:
-#    path: floating
-#rv32d_uentry_fcvt_d_w:
-#    path: floating
+rv32d_uentry_fcvt_wu_d:
+    path: floating
+rv32d_uentry_fcvt_w_d:
+    path: floating
+rv32d_uentry_fcvt_d_wu:
+    path: floating
+rv32d_uentry_fcvt_d_w:
+    path: floating
 rv32d_uentry_fclass_d:
     path: floating
 rv32d_uentry_fadd_d:
@@ -193,168 +193,256 @@ rv32d_mentry_fmadd_d:
     path: floating
 rv32d_mentry_fdiv_d:
     path: floating
-#rv32d_mentry_fcvt_wu_d:
-#    path: floating
-#rv32d_mentry_fcvt_w_d:
-#    path: floating
-#rv32d_mentry_fcvt_lu_d:
-#    path: floating
-#rv32d_mentry_fcvt_l_d:
-#    path: floating
-#rv32d_mentry_fcvt_d_wu:
-#    path: floating
-#rv32d_mentry_fcvt_d_w:
-#    path: floating
-#rv32d_mentry_fcvt_d_lu:
-#    path: floating
-#rv32d_mentry_fcvt_d_l:
-#    path: floating
-#rv32d_mentry_fclass_d:
-#    path: floating
-#rv32d_mentry_fadd_d:
-#    path: floating
-#rv64f_uentry_fcvt_s_lu:
-#    path: floating
-#rv64f_uentry_fcvt_s_l:
-#    path: floating
-#rv64f_uentry_fcvt_lu_s:
-#    path: floating
-#rv64f_uentry_fcvt_l_s:
-#    path: floating
-#rv64f_mentry_fcvt_s_lu:
-#    path: floating
-#rv64f_mentry_fcvt_s_l:
-#    path: floating
-#rv64f_mentry_fcvt_lu_s:
-#    path: floating
+rv32d_mentry_fcvt_wu_d:
+    path: floating
+rv32d_mentry_fcvt_w_d:
+    path: floating
+rv32d_mentry_fcvt_lu_d:
+    path: floating
+rv32d_mentry_fcvt_l_d:
+    path: floating
+rv32d_mentry_fcvt_d_wu:
+    path: floating
+rv32d_mentry_fcvt_d_w:
+    path: floating
+rv32d_mentry_fcvt_d_lu:
+    path: floating
+rv32d_mentry_fcvt_d_l:
+    path: floating
+rv32d_mentry_fclass_d:
+    path: floating
+rv32d_mentry_fadd_d:
+    path: floating
+rv64f_uentry_fcvt_s_lu:
+    path: floating
+rv64f_uentry_fcvt_s_l:
+    path: floating
+rv64f_uentry_fcvt_lu_s:
+    path: floating
+rv64f_uentry_fcvt_l_s:
+    path: floating
+rv64f_mentry_fcvt_s_lu:
+    path: floating
+rv64f_mentry_fcvt_s_l:
+    path: floating
+rv64f_mentry_fcvt_lu_s:
+    path: floating
 
-#branch_fixed:
-#  path: examples/branches
-###branch_merge:
-###  path: examples/branches
-###branch_specs:
-###  path: examples/branches
-###
-#selfcheck:
-#  path: examples/selfcheck
-#  args: --self-checks
-#ld:
-#  path: compliance/rv64ui
-#add:
-#  path: compliance/rv64ui
-###
-###register:
-###  path: examples/registers
-###register_allocation:
-###  path: examples/registers
-###register_exclude_retain:
-###  path: examples/registers
-###register_reservation_auto:
-###  path: examples/registers
-###register_reservation_manual:
-###  path: examples/registers
-###
-###numeric_label:
-###  path: examples/labels
-###numeric_label_random:
-###  path: examples/labels
-###weak_symbol:
-###  path: examples/labels
-###
-###preparator:
-###  path: examples/preparators
-###
-###arithmetic:
-###  path: examples/sequences
-###atomic:
-###  path: examples/sequences
-###block:
-###  path: examples/sequences
-###group:
-###  path: examples/sequences
-###iterate:
-###  path: examples/sequences
-###nitems:
-###  path: examples/sequences
-###sequence:
-###  path: examples/sequences
-###
-###boundary_data:
-###  path: examples/testdata
-###random:
-###  path: examples/testdata
-###situation:
-###  path: examples/testdata
-###testdata:
-###  path: examples/testdata
-###
-###int_divide:
-###  path: algorithms/integer
-###int_euclid:
-###  path: algorithms/integer
-#int_minmax:
-#  path: algorithms/integer
-###int_sqrt:
-###  path: algorithms/integer
-###
-###bubblesort_byte:
-###  path: algorithms/sorting
-###bubblesort_hword:
-###  path: algorithms/sorting
-###bubblesort_word:
-###  path: algorithms/sorting
-###
-###simple_auto:
-###  path: autogen
-###boundary_auto:
-###  path: autogen
-###group_auto:
-###  path: autogen
-####sequence_auto:
+branch_fixed:
+  path: examples/branches
+branch_merge:
+  path: examples/branches
+branch_specs:
+  path: examples/branches
+
+selfcheck:
+  path: examples/selfcheck
+  args: --self-checks
+ld:
+  path: compliance/rv64ui
+add:
+  path: compliance/rv64ui
+
+register:
+  path: examples/registers
+register_allocation:
+  path: examples/registers
+register_exclude_retain:
+  path: examples/registers
+register_reservation_auto:
+  path: examples/registers
+register_reservation_manual:
+  path: examples/registers
+
+numeric_label:
+  path: examples/labels
+numeric_label_random:
+  path: examples/labels
+weak_symbol:
+  path: examples/labels
+
+preparator:
+  path: examples/preparators
+
+arithmetic:
+  path: examples/sequences
+atomic:
+  path: examples/sequences
+block:
+  path: examples/sequences
+group:
+  path: examples/sequences
+iterate:
+  path: examples/sequences
+nitems:
+  path: examples/sequences
+sequence:
+  path: examples/sequences
+
+boundary_data:
+  path: examples/testdata
+random:
+  path: examples/testdata
+situation:
+  path: examples/testdata
+testdata:
+  path: examples/testdata
+
+int_divide:
+  path: algorithms/integer
+int_euclid:
+  path: algorithms/integer
+int_minmax:
+  path: algorithms/integer
+int_sqrt:
+  path: algorithms/integer
+
+bubblesort_byte:
+  path: algorithms/sorting
+bubblesort_hword:
+  path: algorithms/sorting
+bubblesort_word:
+  path: algorithms/sorting
+
+simple_auto:
+  path: autogen
+boundary_auto:
+  path: autogen
+group_auto:
+  path: autogen
+sequence_auto:
+  path: autogen
+
+seq_xxx:
+  path: synthetics/rvxxx
+#
+##branch_fixed:
+##  path: examples/branches
+####branch_merge:
+####  path: examples/branches
+####branch_specs:
+####  path: examples/branches
+####
+##selfcheck:
+##  path: examples/selfcheck
+##  args: --self-checks
+##ld:
+##  path: compliance/rv64ui
+##add:
+##  path: compliance/rv64ui
+####
+####register:
+####  path: examples/registers
+####register_allocation:
+####  path: examples/registers
+####register_exclude_retain:
+####  path: examples/registers
+####register_reservation_auto:
+####  path: examples/registers
+####register_reservation_manual:
+####  path: examples/registers
+####
+####numeric_label:
+####  path: examples/labels
+####numeric_label_random:
+####  path: examples/labels
+####weak_symbol:
+####  path: examples/labels
+####
+####preparator:
+####  path: examples/preparators
+####
+####arithmetic:
+####  path: examples/sequences
+####atomic:
+####  path: examples/sequences
+####block:
+####  path: examples/sequences
+####group:
+####  path: examples/sequences
+####iterate:
+####  path: examples/sequences
+####nitems:
+####  path: examples/sequences
+####sequence:
+####  path: examples/sequences
+####
+####boundary_data:
+####  path: examples/testdata
+####random:
+####  path: examples/testdata
+####situation:
+####  path: examples/testdata
+####testdata:
+####  path: examples/testdata
+####
+####int_divide:
+####  path: algorithms/integer
+####int_euclid:
+####  path: algorithms/integer
+##int_minmax:
+##  path: algorithms/integer
+####int_sqrt:
+####  path: algorithms/integer
+####
+####bubblesort_byte:
+####  path: algorithms/sorting
+####bubblesort_hword:
+####  path: algorithms/sorting
+####bubblesort_word:
+####  path: algorithms/sorting
+####
+####simple_auto:
 ####  path: autogen
-###
-###debug_jalr:
-###  path: debug
-###debug_la:
-###  path: debug
-###debug_ld_sd:
-###  path: debug
-###debug_ld_sd_sv39:
-###  path: debug
-###debug_ld_sd_sv48:
-###  path: debug
-###debug_li:
-###  path: debug
-###debug_lw_sw:
-###  path: debug
-###debug_lw_sw_sv32:
-###  path: debug
-###debug_rv32a:
-###  path: debug
-###debug_rv32d:
-###  path: debug
-###debug_rv32f:
-###  path: debug
-###debug_rv32f2:
-###  path: debug
-###debug_rv32i:
-###  path: debug
-###debug_rv32m:
-###  path: debug
-###debug_rv32v:
-###  path: debug
-###debug_rv64a:
-###  path: debug
-###debug_rv64d:
-###  path: debug
-###debug_rv64f:
-###  path: debug
-###debug_rv64i:
-###  path: debug
-###debug_rv64m:
-###  path: debug
-###debug_rvc:
-###  path: debug
-###
-###seq_xxx:
-###  path: synthetics/rvxxx
+####boundary_auto:
+####  path: autogen
+####group_auto:
+####  path: autogen
+#####sequence_auto:
+#####  path: autogen
+####
+####debug_jalr:
+####  path: debug
+####debug_la:
+####  path: debug
+####debug_ld_sd:
+####  path: debug
+####debug_ld_sd_sv39:
+####  path: debug
+####debug_ld_sd_sv48:
+####  path: debug
+####debug_li:
+####  path: debug
+####debug_lw_sw:
+####  path: debug
+####debug_lw_sw_sv32:
+####  path: debug
+####debug_rv32a:
+####  path: debug
+####debug_rv32d:
+####  path: debug
+####debug_rv32f:
+####  path: debug
+####debug_rv32f2:
+####  path: debug
+####debug_rv32i:
+####  path: debug
+####debug_rv32m:
+####  path: debug
+####debug_rv32v:
+####  path: debug
+####debug_rv64a:
+####  path: debug
+####debug_rv64d:
+####  path: debug
+####debug_rv64f:
+####  path: debug
+####debug_rv64i:
+####  path: debug
+####debug_rv64m:
+####  path: debug
+####debug_rvc:
+####  path: debug
+####
+####seq_xxx:
+####  path: synthetics/rvxxx
