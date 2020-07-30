@@ -7,3 +7,7 @@ def pytest_addoption(parser):
         "--regresslist",
         action="store"
     )
+    parser.addoption(
+        "--compileconfig",
+        action="store"
+    )

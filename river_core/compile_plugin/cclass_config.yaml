@@ -1,0 +1,40 @@
+isa: rv64imafdc
+abi: lp64
+gcc:
+  command: riscv64-unknown-elf-gcc
+  args: -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -DENTROPY=0x9629af2 -std=gnu99 -O2
+spike:
+  command: 'spike -c'
+disass:
+  command: 'riscv64-unknown-elf-objdump -D'
+elf2hex:
+  command: elf2hex
+  args: [8, 4194304, 2147483648]
+  out_file: code.mem
+sim:
+  command: ./out
+  args: +rtldump
+extras_1:
+  command: 'ln -sf /home/rise/lavanya/gitlab/shakti/cores/c-class/bin/out .'
+extras_2:
+  command: 'ln -sf /home/rise/lavanya/gitlab/shakti/cores/c-class/bin/boot.LSB .'
+extras_3:
+  command: 'ln -sf /home/rise/lavanya/gitlab/shakti/cores/c-class/bin/boot.MSB .'
+extras_4:
+  command: head -n -4 rtl.dump
+  out_file: temp.dump
+extras_5:
+  command: mv temp.dump rtl.dump
+order:
+  - 'gcc'
+  - 'spike'
+  - 'disass'
+  - 'elf2hex'
+  - 'extras_1'
+  - 'extras_2'
+  - 'extras_3'
+  - 'sim'
+  - 'extras_4'
+  - 'extras_5'
+
+  

@@ -39,7 +39,7 @@ def sys_command(command, timeout=500):
             logger.debug(out.decode("ascii"))
         if err:
             logger.debug(err.decode("ascii"))
-    return (x.returncode, out.decode("ascii"))
+    return (x.returncode, out.decode("ascii"), err.decode("ascii"))
 
 def sys_command_file(command, filename, timeout=500):
     cmd = command.split(' ')
@@ -47,13 +47,15 @@ def sys_command_file(command, filename, timeout=500):
     cmd = [i for i in cmd if i] 
     logger.warning('$ {0} > {1}'.format(' '.join(cmd), filename))
     fp = open(filename, 'w')
-    out = subprocess.Popen(cmd, stdout=fp, stderr=fp)
-    timer = Timer(timeout, out.kill)
+    x = subprocess.Popen(cmd, stdout=fp, stderr=fp)
+    timer = Timer(timeout, x.kill)
     try:
         timer.start()
-        stdout, stderr = out.communicate()
+        stdout, stderr = x.communicate()
     finally:
         timer.cancel()
-
+    
     fp.close()
+
+    return (x.returncode, None, None)
 
