@@ -1,0 +1,81 @@
+toplevel: mkTbSoc
+verilog_sources:
+  - /tools/local/bsc/build/lib/Verilog/FIFO1.v
+  - /tools/local/bsc/build/lib/Verilog/FIFO2.v
+  #  - /tools/local/bsc/build/lib/Verilog/FIFO10.v
+  - /tools/local/bsc/build/lib/Verilog/FIFOL1.v
+  #  - /tools/local/bsc/build/lib/Verilog/RevertReg.v
+  - /tools/local/bsc/build/lib/Verilog/RegFile.v
+  - /tools/local/bsc/build/lib/Verilog/SizedFIFO.v
+  - /tools/local/bsc/build/lib/Verilog/Counter.v
+  - /tools/local/bsc/build/lib/Verilog/BRAM1Load.v
+  - /tools/local/bsc/build/lib/Verilog/MakeClock.v
+  - /tools/local/bsc/build/lib/Verilog/MakeReset0.v
+  - /tools/local/bsc/build/lib/Verilog/RevertReg.v
+  - /home/rise/lavanya/gitlab/incore/chromite/bsvwrappers/common_lib/bram_1rw_nc.v
+  - /home/rise/lavanya/gitlab/incore/chromite/bsvwrappers/common_lib/brambe_2rw_nc.v
+  - /home/rise/lavanya/gitlab/incore/chromite/bsvwrappers/common_lib/signedmul.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkaxi2apb_bridge.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkbootrom.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkbpu.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkbram.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkccore_axi4.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkclint.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkcombo_mul.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mk_csr_daisy.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mk_csr_grp1.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mk_csr_grp2.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mk_csr_grp3.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mk_csr_grp4.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mk_csr_grp5.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mk_csr_grp6.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mk_csr_grp7.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkcsr.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkdcache_data.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkdcache_fb_v2.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkdcache_tag.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkdcache.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkdebug_loop.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkdmem.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkfa_dtlb.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkfa_itlb.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkfpu.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkfwding.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkicache_data.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkicache_fb_v2.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkicache_tag.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkicache.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkimem.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkinstance.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkmbox.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkmulticycle_alu.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkregisterfile.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkrestoring_div.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkriscv.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mksign_dump.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkSoc.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkstage0.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkstage1.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkstage2.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkstage3.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkstage4.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkstage5.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkTbSoc.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/mkuart.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/module_address_valid.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/module_chk_interrupt.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/module_decoder_func_32.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/module_decode_word32.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/module_fn_alu.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/module_fn_csr_op.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/module_fn_decompress.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/module_fn_pmp_lookup.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/module_fn_single_div.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/module_hasCSRPermission.v
+  - /home/rise/lavanya/gitlab/incore/chromite/build/hw/verilog/module_valid_csr_access.v
+test_path: 
+  /home/rise/lavanya/gitlab/incore/river_core/river_core/compile_plugin
+model_path: 
+  /home/rise/lavanya/gitlab/shakti/verif/iclass-verif/core_block/spike
+tests:
+  - test_chromite
