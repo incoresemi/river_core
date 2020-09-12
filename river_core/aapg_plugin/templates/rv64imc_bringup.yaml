@@ -1,0 +1,74 @@
+general:
+  total_instructions: 5000
+  regs_not_use: x1,x2
+  user_trap_handler: false
+  code_start_address: 0x80000000
+  default_program_exit: true
+isa-instruction-distribution:
+  rel_sys: 0
+  rel_sys.csr: 0
+  rel_rv32i.ctrl: 5
+  rel_rv32i.compute: 10
+  rel_rv32i.data: 10
+  rel_rv32i.fence: 10
+  rel_rv64i.compute: 10
+  rel_rv64i.data: 10
+  rel_rv32m: 10
+  rel_rv64m: 10
+  rel_rv32a: 0
+  rel_rv64a: 0
+  rel_rv32f: 0
+  rel_rv64f: 0
+  rel_rv32d: 0
+  rel_rv64d: 0
+  rel_rvc.ctrl: 5
+  rel_rvc.compute: 10
+  rel_rvc.sp: 10
+  rel_rvc.data: 10
+  rel_rvc.fdata: 0
+  rel_rv32c.compute: 0
+  rel_rv32c.ctrl: 0
+  rel_rv32c.fdata: 0
+  rel_rv64c.compute: 10
+  rel_rv64c.data: 10
+branch-control:
+  backward-probability: 0.5
+recursion-options:
+  recursion-enable: false
+  recursion-depth: 10
+  recursion-calls: 5
+access-sections:
+  begin_signature: 0x80060000,0x80070000,rw
+user-functions:
+  _test: 0
+i-cache:
+  num_calls: 0
+  num_bytes_per_block: 16
+  num_blocks: 8
+  num_cycles: 10
+d-cache:
+  num_calls: 0
+  num_bytes_per_block: 16
+  num_blocks: 8
+  num_cycles: 10
+exception-generation:
+  ecause00: 0
+  ecause01: 0
+  ecause02: 0
+  ecause03: 0
+  ecause04: 0
+  ecause05: 0
+  ecause06: 0
+  ecause07: 0
+  ecause08: 0
+  ecause09: 0
+  ecause10: 0
+  ecause11: 0
+  ecause12: 0
+  ecause13: 0
+  ecause14: 0
+data-hazards:
+  raw_prob: 0.5
+  war_prob: 0.5
+  waw_prob: 0.5
+  num_regs_lookbehind: 3

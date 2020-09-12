@@ -1,0 +1,51 @@
+global_home: 
+global_config_path: /home/rise/lavanya/gitlab/incore/river_core/river_core/aapg_plugin/
+global_command: aapg gen 
+global_args:
+global_output: /home/rise/lavanya/gitlab/incore/river_core/workdir
+global_seed: random
+global_jobs: 1
+global_count: 1
+
+config1:
+  path: templates
+exceptions:
+  path: templates
+illegal:
+  path: templates
+rv32ic_bringup:
+  path: templates
+rv32imac_bringup:
+  path: templates
+rv32imaf_bringup:
+  path: templates
+rv32imafc_bringup:
+  path: templates
+rv32imc_bringup:
+  path: templates
+rv64ic_bringup:
+  path: templates
+rv64imac_bringup:
+  path: templates
+rv64imafd_bringup:
+  path: templates
+rv64imafdc_branches1:
+  path: templates
+rv64imafdc_bringup:
+  path: templates
+rv64imafdc_exceptions:
+  path: templates
+rv64imafdc_hazards:
+  path: templates
+rv64imafdc_illegal.ini:
+  path: templates
+rv64imafdc_illegal:
+  path: templates
+rv64imafdc_user:
+  path: templates
+rv64imafd_exceptions:
+  path: templates
+rv64imc_bringup:
+  path: templates
+v_bringup:
+  path: templates

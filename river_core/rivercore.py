@@ -35,15 +35,27 @@ def rivercore(verbose, dir, jobs, generate, compile, clean, filter, norun, simen
         ##generatorpm.hook.gen(gen_config='{0}/river_core/microtesk_plugin/microtesk_gen_config.yaml'.format(cwd), jobs=jobs, filter=filter, norun=norun)
         ##generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
 
-        # Generator plugin manager
+        # RISCV-DV Generator plugin manager
+        ##generatorpm = pluggy.PluginManager("generator")
+        ##generatorpm.add_hookspecs(RandomGeneratorSpec)
+
+        ##generatorpm_name = 'river_core.riscv_dv_plugin.riscv_dv_plugin'
+        ##generatorpm_module = importlib.import_module(generatorpm_name,'.')
+        ##generatorpm.register(generatorpm_module.RiscvDvPlugin())
+        ###generatorpm.hook.pre_gen(gendir='{0}/workdir/'.format(cwd))
+        ###generatorpm.hook.gen(gen_config='{0}/river_core/riscv_dv_plugin/riscv_dv_gen_config.yaml'.format(cwd), jobs=jobs, filter=filter, norun=norun)
+        ##generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
+
+
+        # AAPG Generator plugin manager
         generatorpm = pluggy.PluginManager("generator")
         generatorpm.add_hookspecs(RandomGeneratorSpec)
 
-        generatorpm_name = 'river_core.riscv_dv_plugin.riscv_dv_plugin'
+        generatorpm_name = 'river_core.aapg_plugin.aapg_plugin'
         generatorpm_module = importlib.import_module(generatorpm_name,'.')
-        generatorpm.register(generatorpm_module.RiscvDvPlugin())
-        #generatorpm.hook.pre_gen(gendir='{0}/workdir/'.format(cwd))
-        #generatorpm.hook.gen(gen_config='{0}/river_core/riscv_dv_plugin/riscv_dv_gen_config.yaml'.format(cwd), jobs=jobs, filter=filter, norun=norun)
+        generatorpm.register(generatorpm_module.AapgPlugin())
+        generatorpm.hook.pre_gen(gendir='{0}/workdir/'.format(cwd))
+        generatorpm.hook.gen(gen_config='{0}/river_core/aapg_plugin/aapg_gen_config.yaml'.format(cwd), jobs=jobs, filter=filter, norun=norun)
         generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
 
     if compile:
