@@ -56,7 +56,7 @@ def rivercore(verbose, dir, jobs, generate, compile, clean, filter, norun, simen
         generatorpm.register(generatorpm_module.AapgPlugin())
         generatorpm.hook.pre_gen(gendir='{0}/workdir/'.format(cwd))
         generatorpm.hook.gen(gen_config='{0}/river_core/aapg_plugin/aapg_gen_config.yaml'.format(cwd), jobs=jobs, filter=filter, norun=norun)
-        generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
+        #generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
 
     if compile:
 
@@ -78,7 +78,7 @@ def rivercore(verbose, dir, jobs, generate, compile, clean, filter, norun, simen
         compilepm_module = importlib.import_module(compilepm_name, '.')
         compilepm.register(compilepm_module.CompilePlugin())
         compilepm.hook.pre_compile(compile_config='{0}/river_core/compile_plugin/compile_config.yaml'.format(cwd))
-        compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), compile_config='{0}/river_core/compile_plugin/chromite_cocotb.yaml'.format(cwd), command_line_args='', jobs=jobs, norun=norun, filter=filter)
+        compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), compile_config='{0}/river_core/compile_plugin/iclass_config.yaml'.format(cwd), command_line_args='', jobs=jobs, norun=norun, filter=filter)
         compilepm.hook.post_compile()
 
         ## Chromite Compile plugin manager
