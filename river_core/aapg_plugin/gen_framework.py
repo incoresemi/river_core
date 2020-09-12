@@ -19,15 +19,16 @@ def gen_cmd_list(gen_config):
     pwd = os.getcwd()
     with open(gen_config) as fh:
         gen_list = yaml.safe_load(fh)
-
-    ## schema validator should be here
-    jobs = 1
-    count = 1
-    out = ''
-    seed = 0
-    command = ''
-    config_path = ''
-    args = ''
+    print(gen_list)
+#    ## schema validator should be here
+#    jobs = 1
+#    count = 1
+#    out = ''
+#    seed = 0
+#    command = ''
+#    config_path = ''
+#    args = ''
+    setup_dir = ''
     run_command = []
     for key, value in gen_list.items():
         if key == 'global_config_path':
@@ -42,6 +43,7 @@ def gen_cmd_list(gen_config):
                 shutil.rmtree(dirname, ignore_errors=True)
             os.makedirs(dirname)
             sys_command('aapg setup --setup_dir {0}'.format(dirname))
+            setup_dir = dirname
         if key == 'global_seed':
             if gen_list[key] != 'random':
                 seed = gen_list[key]
@@ -55,7 +57,7 @@ def gen_cmd_list(gen_config):
         if not re.search('^global_', key):
             config_file_path = config_path +  '/' + gen_list[key]['path']
             logger.debug(key)
-            config_file = config_file_path + '/' + key + '.rb'
+            config_file = config_file_path + '/' + key + '.yaml'
 
             logger.debug(config_file)
             template_name = os.path.basename(config_file)
@@ -68,14 +70,16 @@ def gen_cmd_list(gen_config):
             
                 now = datetime.datetime.now()
                 gen_prefix = '{0:04}_{1}'.format(gen_seed, now.strftime('%d%m%Y%H%M%S%f'))
-                test_prefix = 'microtesk_{0}_{1}_{2}'.format(template_name.replace('.rb', ''), gen_prefix, i)
+                test_prefix = 'aapg_{0}_{1}_{2}'.format(template_name.replace('.yaml', ''), gen_prefix, i)
                 testdir = '{0}/{1}'.format(dirname,test_prefix)
-                run_command.append('{0} {1} \
-                                    --code-file-extension S \
-                                    --output-dir {2} \
-                                    --code-file-prefix {3} \
-                                    --rs {4} -g \
-                                    '.format(command, config_file, testdir, test_prefix, gen_seed))
+                #run_command.append('aapg gen --setup_dir  --config_file {0} --output_dir {1}'.format(config_file, testdir))
+                run_command.append('aapg gen \
+                                    --config_file {0} \
+                                    --setup_dir {1} \
+                                    --output_dir {2} \
+                                    --asm_name {3} \
+                                    --seed {4}\
+                                    '.format(config_file, setup_dir, testdir, test_prefix, gen_seed))
 
     return run_command
 
@@ -83,9 +87,10 @@ def gen_cmd_list(gen_config):
 #print(tlist)
 
 def idfnc(val):
-  template_match = re.search('riscv (.*).rb', '{0}'.format(val))
+  template_match = re.search('--config_file (.*).yaml', '{0}'.format(val))
   logger.debug('0'.format(val))
-  return 'Generating {1}'.format(val, template_match.group(1))
+  return 'Generating {0}'.format(val)
+  #, template_match.group(1))
 
 def pytest_generate_tests(metafunc):
     if 'test_input' in metafunc.fixturenames:
@@ -98,8 +103,10 @@ def pytest_generate_tests(metafunc):
 def test_input(request, autouse=True):
     # compile tests
     program = request.param
-    template_match = re.search('riscv (.*).rb', program)
-    if os.path.isfile('{0}.rb'.format(template_match.group(1))):
+    template_match = re.search('--config_file (.*).yaml', program)
+    #sys_command(program)
+    #return 0
+    if os.path.isfile('{0}.yaml'.format(template_match.group(1))):
         sys_command(program)
         return 0
     else:

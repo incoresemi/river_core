@@ -5,7 +5,7 @@ global_args:
 global_output: /home/rise/lavanya/gitlab/incore/river_core/workdir
 global_seed: random
 global_jobs: 1
-global_count: 1
+global_count: 2
 
 config1:
   path: templates
@@ -36,8 +36,6 @@ rv64imafdc_bringup:
 rv64imafdc_exceptions:
   path: templates
 rv64imafdc_hazards:
-  path: templates
-rv64imafdc_illegal.ini:
   path: templates
 rv64imafdc_illegal:
   path: templates
