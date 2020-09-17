@@ -89,8 +89,7 @@ def gen_cmd_list(gen_config):
 def idfnc(val):
   template_match = re.search('--config_file (.*).yaml', '{0}'.format(val))
   logger.debug('0'.format(val))
-  return 'Generating {0}'.format(val)
-  #, template_match.group(1))
+  return 'Generating {0}'.format(template_match.group(1))
 
 def pytest_generate_tests(metafunc):
     if 'test_input' in metafunc.fixturenames:
