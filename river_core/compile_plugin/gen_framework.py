@@ -27,16 +27,25 @@ def gen_cmd_list(regress_list, compile_config):
     with open(regress_list, 'r') as rfile:
         rlist = yaml.safe_load(rfile)
     run_command = []
-    testpath = rlist['microtesk']['microtesk_global_testpath']
+
+    generator = 'aapg'
+    print(rlist)
+    gen_path = generator + '_global_testpath'
     
-    for test in rlist['microtesk']:
-        test_match = re.match('microtesk_global_testpath', test)
+    testpath = rlist[generator][gen_path]
+    
+    for test in rlist[generator]:
+        test_match = re.match(gen_path, test)
         if not test_match:
 
             run_cmd_list[test] = []
             testdir = testpath + '/' + test
-            ld = testdir + '/' + rlist['microtesk'][test]['ld']
-            testfile = testdir + '/' + rlist['microtesk'][test]['testname']
+            ld = testdir + '/' + rlist[generator][test]['ld']
+            testfile = testdir + '/' + rlist[generator][test]['testname']
+            templatefile = ''
+            if generator == 'aapg':
+                templatefile = testdir + '/' + rlist[generator][test]['template']
+
             elf = testdir + '/' + test + '.elf'
             disass = testdir + '/' + test + '.disass'
             trace = testdir + '/' + test + '.trace'
@@ -53,7 +62,11 @@ def gen_cmd_list(regress_list, compile_config):
 
             for order in clist['order']:
                 if order == 'gcc':
-                    cmd = '{0} -march={1} -mabi={2} {3} -T{4} {5} -o {6}'.format(clist['gcc']['command'], clist['isa'], 
+                    if generator == 'aapg':
+                        cmd = '{0} -march={1} -mabi={2} {3} -I{4} -T{5} ../common/crt.S {6} -o {7}'.format(clist['gcc']['command'], clist['isa'], 
+                            clist['abi'], clist['gcc']['args'], testdir, ld, testfile, elf)
+                    else:
+                        cmd = '{0} -march={1} -mabi={2} {3} -T{4} {5} -o {6}'.format(clist['gcc']['command'], clist['isa'], 
                             clist['abi'], clist['gcc']['args'], ld, testfile, elf)
                     run_cmd_list[test].append('sys_command(\'{0}\')'.format(cmd))
                 elif order == 'spike':

@@ -52,12 +52,12 @@ class CompilePlugin(object):
         logger.debug('compile')
         pwd = os.getcwd()
         pytest_file = pwd + '/river_core/compile_plugin/gen_framework.py'
-        print(pytest_file)
+        logger.debug(pytest_file)
         if norun:
             # to display test items
-            pytest.main([pytest_file, '--collect-only', '-n={0}'.format(jobs), '-k={0}'.format(filter), '--regresslist={0}'.format(regress_list), '-v', '--compileconfig={0}'.format(compile_config), '--html=microtesk_compile.html', '--self-contained-html'])
+            pytest.main([pytest_file, '--collect-only', '-n={0}'.format(jobs), '-k={0}'.format(filter), '--regresslist={0}'.format(regress_list), '-v', '--compileconfig={0}'.format(compile_config), '--html=compile.html', '--self-contained-html'])
         else:
-            pytest.main([pytest_file, '-n={0}'.format(jobs), '-k={0}'.format(filter), '--regresslist={0}'.format(regress_list), '-v', '--compileconfig={0}'.format(compile_config), '--html=microtesk_compile.html', '--self-contained-html'])
+            pytest.main([pytest_file, '-n={0}'.format(jobs), '-k={0}'.format(filter), '--regresslist={0}'.format(regress_list), '-v', '--compileconfig={0}'.format(compile_config), '--html=compile.html', '--self-contained-html'])
         
 
     @compile_hookimpl
