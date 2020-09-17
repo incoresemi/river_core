@@ -38,7 +38,7 @@ recursion-options:
   recursion-depth: 10
   recursion-calls: 5
 access-sections:
-  section1: 0x80003000,0x80004000,rw
+  begin_signature: 0x80003000,0x80004000,rw
 user-functions:
   _test: 0
 i-cache:

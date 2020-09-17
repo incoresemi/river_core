@@ -1,5 +1,5 @@
 general:
-  total_instructions: 700
+  total_instructions: 5000
   regs_not_use: x1,x2
   user_trap_handler: false
   code_start_address: 0x80000000
@@ -7,20 +7,20 @@ general:
 isa-instruction-distribution:
   rel_sys: 0
   rel_sys.csr: 0
-  rel_rv32i.ctrl: 5
+  rel_rv32i.ctrl: 2
   rel_rv32i.compute: 10
-  rel_rv32i.data: 5
-  rel_rv32i.fence: 0
-  rel_rv64i.compute: 10
-  rel_rv64i.data: 5
-  rel_rv32m: 10
-  rel_rv64m: 10
+  rel_rv32i.data: 10
+  rel_rv32i.fence: 10
+  rel_rv64i.compute: 0
+  rel_rv64i.data: 0
+  rel_rv32m: 0
+  rel_rv64m: 0
   rel_rv32a: 0
   rel_rv64a: 0
-  rel_rv32f: 10
-  rel_rv64f: 10
-  rel_rv32d: 10
-  rel_rv64d: 10
+  rel_rv32f: 0
+  rel_rv64f: 0
+  rel_rv32d: 0
+  rel_rv64d: 0
   rel_rvc.ctrl: 0
   rel_rvc.compute: 0
   rel_rvc.sp: 0
@@ -38,7 +38,7 @@ recursion-options:
   recursion-depth: 10
   recursion-calls: 5
 access-sections:
-  begin_signature: 0x8005a600,0x80060000,rw
+  begin_signature: 0x80060000,0x80070000,rw
 user-functions:
   _test: 0
 i-cache:
@@ -68,7 +68,7 @@ exception-generation:
   ecause13: 0
   ecause14: 0
 data-hazards:
-  raw_prob: 0.5
-  war_prob: 0.5
-  waw_prob: 0.5
+  raw_prob: 5 
+  war_prob: 5
+  waw_prob: 5
   num_regs_lookbehind: 3
