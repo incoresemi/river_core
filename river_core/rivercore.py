@@ -11,7 +11,7 @@ from river_core.constants import *
 from river_core.__init__ import __version__
 from river_core.sim_hookspecs import *
 
-def rivercore(verbose, dir, jobs, generate, compile, clean, filter, norun, simenv):
+def rivercore(verbose, dir, jobs, generate, compile, clean, filter, norun):
 
     logger.level(verbose)
     logger.info('****** RiVer Core {0} *******'.format(__version__ ))
@@ -22,31 +22,32 @@ def rivercore(verbose, dir, jobs, generate, compile, clean, filter, norun, simen
     if clean:
         sys_command('rm -rf workdir/*')
 
-    if generate:
+    if generate == 'microtesk':
 
-       # MicroTESK Generator plugin manager
-        ##generatorpm = pluggy.PluginManager("generator")
-        ##generatorpm.add_hookspecs(RandomGeneratorSpec)
+        # MicroTESK Generator plugin manager
+        generatorpm = pluggy.PluginManager("generator")
+        generatorpm.add_hookspecs(RandomGeneratorSpec)
 
-        ##generatorpm_name = 'river_core.microtesk_plugin.microtesk_plugin'
-        ##generatorpm_module = importlib.import_module(generatorpm_name,'.')
-        ##generatorpm.register(generatorpm_module.MicroTESKPlugin())
-        ##generatorpm.hook.pre_gen(gendir='{0}/workdir/'.format(cwd))
-        ##generatorpm.hook.gen(gen_config='{0}/river_core/microtesk_plugin/microtesk_gen_config.yaml'.format(cwd), jobs=jobs, filter=filter, norun=norun)
-        ##generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
+        generatorpm_name = 'river_core.microtesk_plugin.microtesk_plugin'
+        generatorpm_module = importlib.import_module(generatorpm_name,'.')
+        generatorpm.register(generatorpm_module.MicroTESKPlugin())
+        generatorpm.hook.pre_gen(gendir='{0}/workdir/'.format(cwd))
+        generatorpm.hook.gen(gen_config='{0}/river_core/microtesk_plugin/microtesk_gen_config.yaml'.format(cwd), jobs=jobs, filter=filter, norun=norun)
+        generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
 
+    if generate == 'dv':
         # RISCV-DV Generator plugin manager
-        ##generatorpm = pluggy.PluginManager("generator")
-        ##generatorpm.add_hookspecs(RandomGeneratorSpec)
+        generatorpm = pluggy.PluginManager("generator")
+        generatorpm.add_hookspecs(RandomGeneratorSpec)
 
-        ##generatorpm_name = 'river_core.riscv_dv_plugin.riscv_dv_plugin'
-        ##generatorpm_module = importlib.import_module(generatorpm_name,'.')
-        ##generatorpm.register(generatorpm_module.RiscvDvPlugin())
-        ###generatorpm.hook.pre_gen(gendir='{0}/workdir/'.format(cwd))
-        ###generatorpm.hook.gen(gen_config='{0}/river_core/riscv_dv_plugin/riscv_dv_gen_config.yaml'.format(cwd), jobs=jobs, filter=filter, norun=norun)
-        ##generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
+        generatorpm_name = 'river_core.riscv_dv_plugin.riscv_dv_plugin'
+        generatorpm_module = importlib.import_module(generatorpm_name,'.')
+        generatorpm.register(generatorpm_module.RiscvDvPlugin())
+        #generatorpm.hook.pre_gen(gendir='{0}/workdir/'.format(cwd))
+        #generatorpm.hook.gen(gen_config='{0}/river_core/riscv_dv_plugin/riscv_dv_gen_config.yaml'.format(cwd), jobs=jobs, filter=filter, norun=norun)
+        generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
 
-
+    if generate == 'aapg':
         # AAPG Generator plugin manager
         generatorpm = pluggy.PluginManager("generator")
         generatorpm.add_hookspecs(RandomGeneratorSpec)
@@ -58,7 +59,7 @@ def rivercore(verbose, dir, jobs, generate, compile, clean, filter, norun, simen
         generatorpm.hook.gen(gen_config='{0}/river_core/aapg_plugin/aapg_gen_config.yaml'.format(cwd), jobs=jobs, filter=filter, norun=norun)
         generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
 
-    if compile:
+    if compile != '':
 
         # Compile plugin manager
         #compilepm = pluggy.PluginManager('compile')
@@ -78,7 +79,7 @@ def rivercore(verbose, dir, jobs, generate, compile, clean, filter, norun, simen
         compilepm_module = importlib.import_module(compilepm_name, '.')
         compilepm.register(compilepm_module.CompilePlugin())
         compilepm.hook.pre_compile(compile_config='{0}/river_core/compile_plugin/compile_config.yaml'.format(cwd))
-        compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), compile_config='{0}/river_core/compile_plugin/chromite_config.yaml'.format(cwd), command_line_args='', jobs=jobs, norun=norun, filter=filter)
+        compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), compile_config='{0}'.format(compile), command_line_args='', jobs=jobs, norun=norun, filter=filter)
         compilepm.hook.post_compile()
 
         ## Chromite Compile plugin manager
