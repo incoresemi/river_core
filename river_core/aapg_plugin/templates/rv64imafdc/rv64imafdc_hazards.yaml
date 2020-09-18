@@ -1,5 +1,5 @@
 general:
-  total_instructions: 50000
+  total_instructions: 500
   regs_not_use: x1,x2,x3,x3,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14
   user_trap_handler: true
   code_start_address: 0x80000000
@@ -38,7 +38,7 @@ recursion-options:
   recursion-depth: 10
   recursion-calls: 5
 access-sections:
-  begin_signature: 0x80090000,0x800a0000,rw
+  begin_signature: 0x800e0000, 0x800f0000,rw
 user-functions:
   _test: 0
 i-cache:
@@ -68,7 +68,7 @@ exception-generation:
   ecause13: 0
   ecause14: 0
 data-hazards:
-  raw_prob: 0.9
-  war_prob: 0.9
-  waw_prob: 0.9
+  raw_prob: 10
+  war_prob: 10
+  waw_prob: 10
   num_regs_lookbehind: 3

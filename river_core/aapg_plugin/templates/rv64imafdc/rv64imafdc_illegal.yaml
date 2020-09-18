@@ -1,7 +1,7 @@
 general:
-  total_instructions: 50000
+  total_instructions: 500
   regs_not_use: x1,x2
-  user_trap_handler: false
+  user_trap_handler: true
   code_start_address: 0x80000000
   default_program_exit: true
 isa-instruction-distribution:
@@ -38,7 +38,7 @@ recursion-options:
   recursion-depth: 10
   recursion-calls: 5
 access-sections:
-  begin_signature: 0x80090000,0x800a0000,rw
+  begin_signature: 0x800e0000, 0x800f0000,rw
 user-functions:
   _test: 0
 i-cache:
@@ -54,13 +54,13 @@ d-cache:
 exception-generation:
   ecause00: 0
   ecause01: 0
-  ecause02: 10
-  ecause03: 10
-  ecause04: 10
-  ecause05: 10
-  ecause06: 10
-  ecause07: 10
-  ecause08: 10
+  ecause02: 100
+  ecause03: 0
+  ecause04: 0
+  ecause05: 0
+  ecause06: 0
+  ecause07: 0
+  ecause08: 0
   ecause09: 0
   ecause10: 0
   ecause11: 0
