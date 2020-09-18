@@ -247,25 +247,25 @@ class BoundaryGenTemplate < RiscVBaseTemplate
       xor x(_), x(_), x(_) do testdata('boundary') end      
     }.run
     
-    sequence {
-      vadd vr(_), vr(_), vr(_) do testdata('boundary') end      
-    }.run
-    
-    sequence {
-      vsub vr(_), vr(_), vr(_) do testdata('boundary') end      
-    }.run
-    
-    sequence {
-      vmul vr(_), vr(_), vr(_) do testdata('boundary') end      
-    }.run
-    
-    sequence {
-      vmulh vr(_), vr(_), vr(_) do testdata('boundary') end      
-    }.run
-    
-    sequence {
-      vdiv vr(_), vr(_), vr(_) do testdata('boundary') end      
-    }.run
+    #sequence {
+    #  vadd vr(_), vr(_), vr(_) do testdata('boundary') end      
+    #}.run
+    #
+    #sequence {
+    #  vsub vr(_), vr(_), vr(_) do testdata('boundary') end      
+    #}.run
+    #
+    #sequence {
+    #  vmul vr(_), vr(_), vr(_) do testdata('boundary') end      
+    #}.run
+    #
+    #sequence {
+    #  vmulh vr(_), vr(_), vr(_) do testdata('boundary') end      
+    #}.run
+    #
+    #sequence {
+    #  vdiv vr(_), vr(_), vr(_) do testdata('boundary') end      
+    #}.run
     
     sequence {
       fcvt_l_d x(_), f(_), _ do testdata('boundary') end      
@@ -335,28 +335,28 @@ class BoundaryGenTemplate < RiscVBaseTemplate
       remu x(_), x(_), x(_) do testdata('boundary') end      
     }.run
     
-    sequence {
-      csrrw x(_), ustatus(), x(_) do testdata('boundary') end      
-    }.run
-    
-    sequence {
-      csrrs x(_), ustatus(), x(_) do testdata('boundary') end      
-    }.run
-    
-    sequence {
-      csrrc x(_), ustatus(), x(_) do testdata('boundary') end      
-    }.run
-    
-    sequence {
-      csrrwi x(_), ustatus(), _ do testdata('boundary') end      
-    }.run
-    
-    sequence {
-      csrrsi x(_), ustatus(), _ do testdata('boundary') end      
-    }.run
-    
-    sequence {
-      csrrci x(_), ustatus(), _ do testdata('boundary') end      
-    }.run
+    #sequence {
+    #  csrrw x(_), ustatus(), x(_) do testdata('boundary') end      
+    #}.run
+    #
+    #sequence {
+    #  csrrs x(_), ustatus(), x(_) do testdata('boundary') end      
+    #}.run
+    #
+    #sequence {
+    #  csrrc x(_), ustatus(), x(_) do testdata('boundary') end      
+    #}.run
+    #
+    #sequence {
+    #  csrrwi x(_), ustatus(), _ do testdata('boundary') end      
+    #}.run
+    #
+    #sequence {
+    #  csrrsi x(_), ustatus(), _ do testdata('boundary') end      
+    #}.run
+    #
+    #sequence {
+    #  csrrci x(_), ustatus(), _ do testdata('boundary') end      
+    #}.run
   end
 end

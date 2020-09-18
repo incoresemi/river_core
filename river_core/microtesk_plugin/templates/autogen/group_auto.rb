@@ -112,173 +112,173 @@ class GroupGenTemplate < RiscVBaseTemplate
       #  STORE_OPERATIONS
       iterate {
         
-        #sequence {
-        #  la x(5), :data
-        #  amomax_w x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoand_w x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amominu_d x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amomaxu_w x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amomin_d x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoor_w x(_), x(5), x(5)
-        #}
+        sequence {
+          la x(5), :data
+          amomax_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoand_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amominu_d x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amomaxu_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amomin_d x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoor_w x(_), x(5), x(5)
+        }
         
         sequence {
           la x(5), :data
           fsw f(5), x(5), :data
         }
         
-        #sequence {
-        #  la x(5), :data
-        #  sc_d x(_), x(5), x(5)
-        #}
+        sequence {
+          la x(5), :data
+          sc_d x(_), x(5), x(5)
+        }
         
         sequence {
           la x(5), :data
           sd x(5), x(5), :data
         }
         
-        #sequence {
-        #  la x(5), :data
-        #  amomaxu_d x(_), x(5), x(5)
-        #}
+        sequence {
+          la x(5), :data
+          amomaxu_d x(_), x(5), x(5)
+        }
         
         sequence {
           la x(5), :data
           fsd f(5), x(5), :data
         }
         
+        sequence {
+          la x(5), :data
+          sc_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoswap_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoadd_d x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoand_d x(_), x(5), x(5)
+        }
+        
         #sequence {
         #  la x(5), :data
-        #  sc_w x(_), x(5), x(5)
+        #  vsw vr(5), x(5)
         #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoswap_w x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoadd_d x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoand_d x(_), x(5), x(5)
-        #}
-        #
-        ##sequence {
-        ##  la x(5), :data
-        ##  vsw vr(5), x(5)
-        ##}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amomax_d x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amominu_w x(_), x(5), x(5)
-        #}
+        
+        sequence {
+          la x(5), :data
+          amomax_d x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amominu_w x(_), x(5), x(5)
+        }
         
         sequence {
           la x(5), :data
           sh x(5), x(5), :data
         }
         
-        #sequence {
-        #  la x(5), :data
-        #  amoor_d x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amomin_w x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoadd_w x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoxor_d x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoxor_w x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  sw x(5), x(5), :data
-        #}
-        #
+        sequence {
+          la x(5), :data
+          amoor_d x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amomin_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoadd_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoxor_d x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoxor_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          sw x(5), x(5), :data
+        }
+        
         sequence {
           la x(5), :data
           sb x(5), x(5), :data
         }
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoswap_d x(_), x(5), x(5)
-        #}
+        
+        sequence {
+          la x(5), :data
+          amoswap_d x(_), x(5), x(5)
+        }
       }
       #  LOAD_OPERATIONS
       iterate {
         
-        #sequence {
-        #  la x(5), :data
-        #  amomax_w x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoand_w x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amominu_d x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amomaxu_w x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amomin_d x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoor_w x(_), x(5), x(5)
-        #}
+        sequence {
+          la x(5), :data
+          amomax_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoand_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amominu_d x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amomaxu_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amomin_d x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoor_w x(_), x(5), x(5)
+        }
         
         sequence {
           la x(5), :data
@@ -290,70 +290,70 @@ class GroupGenTemplate < RiscVBaseTemplate
           ld x(_), x(5), :data
         }
         
-        #sequence {
-        #  la x(5), :data
-        #  sc_d x(_), x(5), x(5)
-        #}
-        #
+        sequence {
+          la x(5), :data
+          sc_d x(_), x(5), x(5)
+        }
+        
         sequence {
           la x(5), :data
           sd x(5), x(5), :data
         }
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amomaxu_d x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  fsd f(5), x(5), :data
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  sc_w x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoswap_w x(_), x(5), x(5)
-        #}
-        #
+        
+        sequence {
+          la x(5), :data
+          amomaxu_d x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          fsd f(5), x(5), :data
+        }
+        
+        sequence {
+          la x(5), :data
+          sc_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoswap_w x(_), x(5), x(5)
+        }
+        
         sequence {
           la x(5), :data
           flw f(_), x(5), :data
         }
-        #
+        
+        sequence {
+          la x(5), :data
+          amoadd_d x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoand_d x(_), x(5), x(5)
+        }
+        
         #sequence {
         #  la x(5), :data
-        #  amoadd_d x(_), x(5), x(5)
+        #  vsw vr(5), x(5)
         #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoand_d x(_), x(5), x(5)
-        #}
-        #
-        ##sequence {
-        ##  la x(5), :data
-        ##  vsw vr(5), x(5)
-        ##}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  lr_d x(_), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amomax_d x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amominu_w x(_), x(5), x(5)
-        #}
+        
+        sequence {
+          la x(5), :data
+          lr_d x(_), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amomax_d x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amominu_w x(_), x(5), x(5)
+        }
         
         sequence {
           la x(5), :data
@@ -375,10 +375,10 @@ class GroupGenTemplate < RiscVBaseTemplate
           lhu x(_), x(5), :data
         }
         
-        #sequence {
-        #  la x(5), :data
-        #  lr_w x(_), x(5)
-        #}
+        sequence {
+          la x(5), :data
+          lr_w x(_), x(5)
+        }
         
         sequence {
           la x(5), :data
@@ -390,31 +390,31 @@ class GroupGenTemplate < RiscVBaseTemplate
           lb x(_), x(5), :data
         }
         
-        #sequence {
-        #  la x(5), :data
-        #  amoor_d x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amomin_w x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoadd_w x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoxor_d x(_), x(5), x(5)
-        #}
-        #
-        #sequence {
-        #  la x(5), :data
-        #  amoxor_w x(_), x(5), x(5)
-        #}
-        #
+        sequence {
+          la x(5), :data
+          amoor_d x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amomin_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoadd_w x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoxor_d x(_), x(5), x(5)
+        }
+        
+        sequence {
+          la x(5), :data
+          amoxor_w x(_), x(5), x(5)
+        }
+        
         sequence {
           la x(5), :data
           fld f(_), x(5), :data
@@ -435,10 +435,10 @@ class GroupGenTemplate < RiscVBaseTemplate
         #  vlw vr(_), x(5)
         #}
         
-        #sequence {
-        #  la x(5), :data
-        #  amoswap_d x(_), x(5), x(5)
-        #}
+        sequence {
+          la x(5), :data
+          amoswap_d x(_), x(5), x(5)
+        }
         
         sequence {
           la x(5), :data

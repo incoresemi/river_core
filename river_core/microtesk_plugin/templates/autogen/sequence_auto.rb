@@ -471,45 +471,45 @@ class SequenceGenTemplate < RiscVBaseTemplate
       xor x(_), x(_), x(_)      
     }.run
     
-    sequence {
-      vadd vr(_), vr(_), vr(_)      
-      vadd vr(_), vr(_), vr(_)      
-      vadd vr(_), vr(_), vr(_)      
-      vadd vr(_), vr(_), vr(_)      
-      vadd vr(_), vr(_), vr(_)      
-    }.run
-    
-    sequence {
-      vsub vr(_), vr(_), vr(_)      
-      vsub vr(_), vr(_), vr(_)      
-      vsub vr(_), vr(_), vr(_)      
-      vsub vr(_), vr(_), vr(_)      
-      vsub vr(_), vr(_), vr(_)      
-    }.run
-    
-    sequence {
-      vmul vr(_), vr(_), vr(_)      
-      vmul vr(_), vr(_), vr(_)      
-      vmul vr(_), vr(_), vr(_)      
-      vmul vr(_), vr(_), vr(_)      
-      vmul vr(_), vr(_), vr(_)      
-    }.run
-    
-    sequence {
-      vmulh vr(_), vr(_), vr(_)      
-      vmulh vr(_), vr(_), vr(_)      
-      vmulh vr(_), vr(_), vr(_)      
-      vmulh vr(_), vr(_), vr(_)      
-      vmulh vr(_), vr(_), vr(_)      
-    }.run
-    
-    sequence {
-      vdiv vr(_), vr(_), vr(_)      
-      vdiv vr(_), vr(_), vr(_)      
-      vdiv vr(_), vr(_), vr(_)      
-      vdiv vr(_), vr(_), vr(_)      
-      vdiv vr(_), vr(_), vr(_)      
-    }.run
+    #sequence {
+    #  vadd vr(_), vr(_), vr(_)      
+    #  vadd vr(_), vr(_), vr(_)      
+    #  vadd vr(_), vr(_), vr(_)      
+    #  vadd vr(_), vr(_), vr(_)      
+    #  vadd vr(_), vr(_), vr(_)      
+    #}.run
+    #
+    #sequence {
+    #  vsub vr(_), vr(_), vr(_)      
+    #  vsub vr(_), vr(_), vr(_)      
+    #  vsub vr(_), vr(_), vr(_)      
+    #  vsub vr(_), vr(_), vr(_)      
+    #  vsub vr(_), vr(_), vr(_)      
+    #}.run
+    #
+    #sequence {
+    #  vmul vr(_), vr(_), vr(_)      
+    #  vmul vr(_), vr(_), vr(_)      
+    #  vmul vr(_), vr(_), vr(_)      
+    #  vmul vr(_), vr(_), vr(_)      
+    #  vmul vr(_), vr(_), vr(_)      
+    #}.run
+    #
+    #sequence {
+    #  vmulh vr(_), vr(_), vr(_)      
+    #  vmulh vr(_), vr(_), vr(_)      
+    #  vmulh vr(_), vr(_), vr(_)      
+    #  vmulh vr(_), vr(_), vr(_)      
+    #  vmulh vr(_), vr(_), vr(_)      
+    #}.run
+    #
+    #sequence {
+    #  vdiv vr(_), vr(_), vr(_)      
+    #  vdiv vr(_), vr(_), vr(_)      
+    #  vdiv vr(_), vr(_), vr(_)      
+    #  vdiv vr(_), vr(_), vr(_)      
+    #  vdiv vr(_), vr(_), vr(_)      
+    #}.run
     
     sequence {
       fcvt_l_d x(_), f(_), _      
@@ -647,52 +647,52 @@ class SequenceGenTemplate < RiscVBaseTemplate
       remu x(_), x(_), x(_)      
     }.run
     
-    sequence {
-      csrrw x(_), ustatus(), x(_)      
-      csrrw x(_), ustatus(), x(_)      
-      csrrw x(_), ustatus(), x(_)      
-      csrrw x(_), ustatus(), x(_)      
-      csrrw x(_), ustatus(), x(_)      
-    }.run
-    
-    sequence {
-      csrrs x(_), ustatus(), x(_)      
-      csrrs x(_), ustatus(), x(_)      
-      csrrs x(_), ustatus(), x(_)      
-      csrrs x(_), ustatus(), x(_)      
-      csrrs x(_), ustatus(), x(_)      
-    }.run
-    
-    sequence {
-      csrrc x(_), ustatus(), x(_)      
-      csrrc x(_), ustatus(), x(_)      
-      csrrc x(_), ustatus(), x(_)      
-      csrrc x(_), ustatus(), x(_)      
-      csrrc x(_), ustatus(), x(_)      
-    }.run
-    
-    sequence {
-      csrrwi x(_), ustatus(), _      
-      csrrwi x(_), ustatus(), _      
-      csrrwi x(_), ustatus(), _      
-      csrrwi x(_), ustatus(), _      
-      csrrwi x(_), ustatus(), _      
-    }.run
-    
-    sequence {
-      csrrsi x(_), ustatus(), _      
-      csrrsi x(_), ustatus(), _      
-      csrrsi x(_), ustatus(), _      
-      csrrsi x(_), ustatus(), _      
-      csrrsi x(_), ustatus(), _      
-    }.run
-    
-    sequence {
-      csrrci x(_), ustatus(), _      
-      csrrci x(_), ustatus(), _      
-      csrrci x(_), ustatus(), _      
-      csrrci x(_), ustatus(), _      
-      csrrci x(_), ustatus(), _      
-    }.run
+    #sequence {
+    #  csrrw x(_), ustatus(), x(_)      
+    #  csrrw x(_), ustatus(), x(_)      
+    #  csrrw x(_), ustatus(), x(_)      
+    #  csrrw x(_), ustatus(), x(_)      
+    #  csrrw x(_), ustatus(), x(_)      
+    #}.run
+    #
+    #sequence {
+    #  csrrs x(_), ustatus(), x(_)      
+    #  csrrs x(_), ustatus(), x(_)      
+    #  csrrs x(_), ustatus(), x(_)      
+    #  csrrs x(_), ustatus(), x(_)      
+    #  csrrs x(_), ustatus(), x(_)      
+    #}.run
+    #
+    #sequence {
+    #  csrrc x(_), ustatus(), x(_)      
+    #  csrrc x(_), ustatus(), x(_)      
+    #  csrrc x(_), ustatus(), x(_)      
+    #  csrrc x(_), ustatus(), x(_)      
+    #  csrrc x(_), ustatus(), x(_)      
+    #}.run
+    #
+    #sequence {
+    #  csrrwi x(_), ustatus(), _      
+    #  csrrwi x(_), ustatus(), _      
+    #  csrrwi x(_), ustatus(), _      
+    #  csrrwi x(_), ustatus(), _      
+    #  csrrwi x(_), ustatus(), _      
+    #}.run
+    #
+    #sequence {
+    #  csrrsi x(_), ustatus(), _      
+    #  csrrsi x(_), ustatus(), _      
+    #  csrrsi x(_), ustatus(), _      
+    #  csrrsi x(_), ustatus(), _      
+    #  csrrsi x(_), ustatus(), _      
+    #}.run
+    #
+    #sequence {
+    #  csrrci x(_), ustatus(), _      
+    #  csrrci x(_), ustatus(), _      
+    #  csrrci x(_), ustatus(), _      
+    #  csrrci x(_), ustatus(), _      
+    #  csrrci x(_), ustatus(), _      
+    #}.run
   end
 end

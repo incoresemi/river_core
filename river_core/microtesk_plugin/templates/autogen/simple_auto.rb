@@ -337,23 +337,23 @@ class SimpleGenTemplate < RiscVBaseTemplate
     label :bgtz_label
     nop
     
-    vsetvli x(_), x(_), _, _
-    
-    vadd vr(_), vr(_), vr(_)
-    
-    vsub vr(_), vr(_), vr(_)
-    
-    vmul vr(_), vr(_), vr(_)
-    
-    vmulh vr(_), vr(_), vr(_)
-    
-    vdiv vr(_), vr(_), vr(_)
-    
-    la x(5), :data
-    vlw vr(_), x(5)
-    
-    la x(5), :data
-    vsw vr(5), x(5)
+    #vsetvli x(_), x(_), _, _
+    #
+    #vadd vr(_), vr(_), vr(_)
+    #
+    #vsub vr(_), vr(_), vr(_)
+    #
+    #vmul vr(_), vr(_), vr(_)
+    #
+    #vmulh vr(_), vr(_), vr(_)
+    #
+    #vdiv vr(_), vr(_), vr(_)
+   # 
+   # la x(5), :data
+   # vlw vr(_), x(5)
+   # 
+   # la x(5), :data
+   # vsw vr(5), x(5)
     
     fcvt_l_d x(_), f(_), _
     
@@ -477,31 +477,31 @@ class SimpleGenTemplate < RiscVBaseTemplate
     
     fence_i 
     
-    csrrw x(_), ustatus(), x(_)
-    
-    csrrs x(_), ustatus(), x(_)
-    
-    csrrc x(_), ustatus(), x(_)
-    
-    csrrwi x(_), ustatus(), _
-    
-    csrrsi x(_), ustatus(), _
-    
-    csrrci x(_), ustatus(), _
-    
-    csrw ustatus(), x(_)
-    
-    csrr x(_), ustatus()
-    
-    csrs ustatus(), x(_)
-    
-    csrc ustatus(), x(_)
-    
-    csrwi ustatus(), _
-    
-    csrsi ustatus(), _
-    
-    csrci ustatus(), _
+    #csrrw x(_), ustatus(), x(_)
+    #
+    #csrrs x(_), ustatus(), x(_)
+    #
+    #csrrc x(_), ustatus(), x(_)
+    #
+    #csrrwi x(_), ustatus(), _
+    #
+    #csrrsi x(_), ustatus(), _
+    #
+    #csrrci x(_), ustatus(), _
+    #
+    #csrw ustatus(), x(_)
+    #
+    #csrr x(_), ustatus()
+    #
+    #csrs ustatus(), x(_)
+    #
+    #csrc ustatus(), x(_)
+    #
+    #csrwi ustatus(), _
+    #
+    #csrsi ustatus(), _
+    #
+    #csrci ustatus(), _
     
     frcsr x(_)
     
