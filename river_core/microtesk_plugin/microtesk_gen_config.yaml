@@ -1,8 +1,8 @@
 global_home: ${MICROTESK_HOME} 
-global_config_path: microtesk_plugin/templates
+global_config_path: /microtesk_plugin/templates
 global_command: generate.sh riscv
 global_args: --solver z3 --generate
-global_output: ${PWD}/workdir
+global_output: ${OUTPUT_DIR}
 global_seed: random
 global_jobs: 1
 global_count: 1

@@ -7,19 +7,22 @@ import shutil
 import yaml
 from river_core.log import logger
 from river_core.utils import *
+from river_core.constants import *
 import random
 import re
 import datetime
 import pytest
-
+from envyaml import EnvYAML
 
 def gen_cmd_list(gen_config):
 
     logger.debug('gen plugin')
     pwd = os.getcwd()
+    env_gen_list = EnvYAML(gen_config)
     with open(gen_config) as fh:
         gen_list = yaml.safe_load(fh)
-
+    gen_list['global_home'] = env_gen_list['global_home']
+    gen_list['global_output'] = env_gen_list['global_output']
     ## schema validator should be here
     jobs = 1
     count = 1
@@ -30,10 +33,8 @@ def gen_cmd_list(gen_config):
     args = ''
     run_command = []
     for key, value in gen_list.items():
-        if key == 'global_home':
-            os.environ['MICROTESK_HOME'] = gen_list[key]
         if key == 'global_config_path':
-            config_path = gen_list[key]
+            config_path = root + gen_list[key]
         if key == 'global_command':
             command = 'bash {0}/bin/{1}'.format(gen_list['global_home'],gen_list[key])
         if key == 'global_args':

@@ -12,3 +12,4 @@ repomanager
 click
 ruamel.yaml
 ansi2html
+envyaml

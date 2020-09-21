@@ -51,9 +51,8 @@ class MicroTESKPlugin(object):
         logger.debug('plugin again')
         pwd = os.getcwd()
         logger.debug(root)
-        pytest_file = root + '/river_core/microtesk_plugin/gen_framework.py'
-        print(pytest_file)
-        #pytest.main([pytest_file, '-n={0}'.format(jobs), '-v', '--html=microtesk_gen.html', '--self-contained-html'])
+        pytest_file = root + '/microtesk_plugin/gen_framework.py'
+        logger.debug(pytest_file)
 
         if norun:
             # to display test items
