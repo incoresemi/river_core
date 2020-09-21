@@ -3,13 +3,18 @@
 #!/usr/bin/env python
 
 """The setup script."""
-
+import os
 from setuptools import setup, find_packages
+
+# Base directory of package
+here = os.path.abspath(os.path.dirname(__file__))
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
-requirements = ['Click>=7.0', 'colorlog']
+def read_requires():
+    with open(os.path.join(here, "requirements.txt"),"r") as reqfile:
+        return reqfile.read().splitlines()
 
 setup_requirements = [ ]
 
@@ -33,16 +38,23 @@ setup(
     description="RISC-V Core Verification Framework",
     entry_points={
         'console_scripts': [
-            'river_core=river_core.main:river_core',
+            'river_core=river_core.main:cli',
         ],
     },
-    install_requires=requirements,
+    install_requires=read_requires(),
     license="MIT license",
     long_description=readme + '\n\n',
     include_package_data=True,
     keywords='river_core',
     name='river_core',
-    packages=find_packages(include=['river_core', 'river_core.*']),
+    packages=find_packages(),
+    package_dir={'river_core': 'river_core'},
+    package_data={
+        'river_core': [
+            'requirements.txt',
+            'river_core/microtesk_plugin/*'
+            ]
+        },
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
