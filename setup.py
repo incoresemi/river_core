@@ -52,7 +52,8 @@ setup(
     package_data={
         'river_core': [
             'requirements.txt',
-            'river_core/microtesk_plugin/*'
+            'river_core/microtesk_plugin/microtesk_gen_config.yaml'
+            'river_core/microtesk_plugin/templates/*'
             ]
         },
     setup_requires=setup_requirements,
