@@ -12,8 +12,7 @@ elf2hex:
   args: [8, 4194304, 2147483648]
   out_file: code.mem
 sim:
-  command: ./chromite_core
-  args: +rtldump
+  command: ./chromite_core +rtldump
 extras_1:
   command: 'ln -sf /home/rise/lavanya/gitlab/incore/chromite/bin/chromite_core .'
 extras_2:

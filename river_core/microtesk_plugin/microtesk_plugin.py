@@ -14,6 +14,7 @@ import pytest
 from glob import glob
 from river_core.log import logger
 from river_core.utils import *
+from river_core.constants import *
 
 gen_hookimpl = pluggy.HookimplMarker("generator")
 
@@ -49,7 +50,8 @@ class MicroTESKPlugin(object):
     def gen(self, gen_config, jobs, filter, norun):
         logger.debug('plugin again')
         pwd = os.getcwd()
-        pytest_file = pwd + '/river_core/microtesk_plugin/gen_framework.py'
+        logger.debug(root)
+        pytest_file = root + '/river_core/microtesk_plugin/gen_framework.py'
         print(pytest_file)
         #pytest.main([pytest_file, '-n={0}'.format(jobs), '-v', '--html=microtesk_gen.html', '--self-contained-html'])
 

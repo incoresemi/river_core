@@ -48,12 +48,10 @@ setup(
     keywords='river_core',
     name='river_core',
     packages=find_packages(),
-    package_dir={'river_core': 'river_core'},
+    package_dir={'river_core': 'river_core/'},
     package_data={
         'river_core': [
             'requirements.txt',
-            'river_core/microtesk_plugin/microtesk_gen_config.yaml'
-            'river_core/microtesk_plugin/templates/*'
             ]
         },
     setup_requires=setup_requirements,

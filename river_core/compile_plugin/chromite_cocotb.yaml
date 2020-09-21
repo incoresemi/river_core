@@ -12,9 +12,9 @@ elf2hex:
 extras_1:
   command: 'ln -sf /home/rise/lavanya/gitlab/incore/chromite/bin/boot.mem .'
 extras_2:
-  command: 'ln -sf /home/rise/lavanya/gitlab/incore/river_core/river_core/compile_plugin/build/ .' 
+  command: 'ln -sf /home/rise/lavanya/gitlab/incore/river_core/river_core/chromite-vip/build/ .' 
 extras_3:
-  command: 'ln -sf /home/rise/lavanya/gitlab/incore/river_core/river_core/compile_plugin/sim_build/ .' 
+  command: 'ln -sf /home/rise/lavanya/gitlab/incore/river_core/river_core/chromite-vip/sim_build/ .' 
 sim:
   command: river_block --env /home/rise/lavanya/gitlab/incore/river_core/river_core/compile_plugin/mkTbSoc.yaml -t --verbose debug --noworkdir 
 order:
