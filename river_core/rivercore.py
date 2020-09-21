@@ -31,9 +31,9 @@ def rivercore(verbose, dir, jobs, generate, compile, clean, filter, norun):
         generatorpm_name = 'river_core.microtesk_plugin.microtesk_plugin'
         generatorpm_module = importlib.import_module(generatorpm_name,'.')
         generatorpm.register(generatorpm_module.MicroTESKPlugin())
-        generatorpm.hook.pre_gen(gendir='{0}/workdir/'.format(cwd))
+        generatorpm.hook.pre_gen(gendir='{0}'.format(os.environ['OUTPUT_DIR']))
         generatorpm.hook.gen(gen_config='{0}/microtesk_plugin/microtesk_gen_config.yaml'.format(root), jobs=jobs, filter=filter, norun=norun)
-        generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
+        generatorpm.hook.post_gen(gendir='{0}'.format(os.environ['OUTPUT_DIR']),regressfile='{0}/regresslist.yaml'.format(os.environ['OUTPUT_DIR']))
 
     if generate == 'dv':
         # RISCV-DV Generator plugin manager

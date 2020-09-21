@@ -71,6 +71,8 @@ class MicroTESKPlugin(object):
         """
         Overwrites the microtesk entries in the regressfile with the latest present in the gendir
         """
+        logger.debug(gendir)
+        logger.debug(regressfile)
         remove_list = dict()
         if os.path.isdir(gendir):
             gendir_list = []
