@@ -56,9 +56,9 @@ class MicroTESKPlugin(object):
 
         if norun:
             # to display test items
-            pytest.main([pytest_file, '--collect-only', '-n={0}'.format(jobs), '-k={0}'.format(filter), '--configlist={0}'.format(gen_config), '-v', '--html=microtesk_gen.html', '--self-contained-html'])
+            pytest.main([pytest_file, '--collect-only', '-n={0}'.format(jobs), '-k={0}'.format(filter), '--configlist {0}'.format(gen_config), '-v', '--html=microtesk_gen.html', '--self-contained-html'])
         else:
-            pytest.main([pytest_file, '-n={0}'.format(jobs), '-k={0}'.format(filter), '--configlist={0}'.format(gen_config), '-v', '--html=microtesk_gen.html', '--self-contained-html'])
+            pytest.main([pytest_file, '-n={0}'.format(jobs), '-k={0}'.format(filter), '--configlist {0}'.format(gen_config), '-v', '--html=microtesk_gen.html', '--self-contained-html'])
 
     # generates the regress list from the generation
     @gen_hookimpl

@@ -7,19 +7,23 @@ import shutil
 import yaml
 from river_core.log import logger
 from river_core.utils import *
+from river_core.constants import *
 import random
 import re
 import datetime
 import pytest
+from envyaml import EnvYAML
 
 
 def gen_cmd_list(gen_config):
 
     logger.debug('gen plugin')
     pwd = os.getcwd()
+    env_gen_list = EnvYAML(gen_config)
     with open(gen_config) as fh:
         gen_list = yaml.safe_load(fh)
-    print(gen_list)
+    gen_list['global_home'] = env_gen_list['global_home']
+    gen_list['global_output'] = env_gen_list['global_output']
 #    ## schema validator should be here
 #    jobs = 1
 #    count = 1
@@ -32,7 +36,7 @@ def gen_cmd_list(gen_config):
     run_command = []
     for key, value in gen_list.items():
         if key == 'global_config_path':
-            config_path = gen_list[key]
+            config_path = root + gen_list[key]
         if key == 'global_command':
             command = 'bash {0}/bin/{1}'.format(gen_list['global_home'],gen_list[key])
         if key == 'global_args':
@@ -106,8 +110,8 @@ def test_input(request, autouse=True):
     #sys_command(program)
     #return 0
     if os.path.isfile('{0}.yaml'.format(template_match.group(1))):
-        sys_command(program)
-        return 0
+        (ret, out, err) = sys_command(program)
+        return ret 
     else:
         logger.error('File not found {0}'.format(template_match.group(1)))
         return 1

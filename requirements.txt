@@ -13,3 +13,5 @@ click
 ruamel.yaml
 ansi2html
 envyaml
+riscv_config
+aapg

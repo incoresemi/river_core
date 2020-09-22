@@ -9,6 +9,9 @@ global_count: 1
 
 rv64f_mentry_fcvt_l_s:
     path: floating
+    check:
+      - check ISA:=regex(.*64.*)
+      - check ISA:=regex(.*F.*)
 rv64d_uentry_fmv_x_d:
     path: floating
 rv64d_uentry_fmv_d_x:

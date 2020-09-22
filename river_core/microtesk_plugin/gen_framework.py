@@ -15,6 +15,7 @@ import pytest
 from envyaml import EnvYAML
 
 def gen_cmd_list(gen_config):
+    
 
     logger.debug('gen plugin')
     pwd = os.getcwd()
@@ -102,8 +103,8 @@ def test_input(request, autouse=True):
     program = request.param
     template_match = re.search('riscv (.*).rb', program)
     if os.path.isfile('{0}.rb'.format(template_match.group(1))):
-        sys_command(program)
-        return 0
+        (ret, out, err) = sys_command(program)
+        return ret
     else:
         logger.error('File not found {0}'.format(template_match.group(1)))
         return 1

@@ -1,8 +1,8 @@
 global_home: 
-global_config_path: /home/rise/lavanya/gitlab/incore/river_core/river_core/aapg_plugin/
+global_config_path: /aapg_plugin/
 global_command: aapg gen 
 global_args:
-global_output: /home/rise/lavanya/gitlab/incore/river_core/workdir
+global_output: ${OUTPUT_DIR}/aapg
 global_seed: random
 global_jobs: 1
 global_count: 2
