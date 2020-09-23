@@ -14,6 +14,7 @@ import pytest
 
 from river_core.log import logger
 from river_core.utils import *
+from river_core.root import *
 
 compile_hookimpl = pluggy.HookimplMarker('compile')
 
@@ -51,7 +52,7 @@ class CompilePlugin(object):
     def compile(self, suite, regress_list, compile_config, command_line_args, jobs, filter, norun):
         logger.debug('compile')
         pwd = os.getcwd()
-        pytest_file = pwd + '/river_core/compile_plugin/gen_framework.py'
+        pytest_file = root + '/compile_plugin/gen_framework.py'
         logger.debug(pytest_file)
         if norun:
             # to display test items
