@@ -14,66 +14,49 @@ import riscv_config.checker as riscv_config
 from riscv_config.errors import ValidationError
 from envyaml import EnvYAML
 
-def rivercore(verbose, dir, env, jobs, suite, generate, compile, clean, filter, norun):
+def rivercore(verbose, dir, env, jobs, suite, generate, compile, clean, filter, seed, count, norun):
 
     logger.level(verbose)
     logger.info('****** RiVer Core {0} *******'.format(__version__ ))
     logger.info('Copyright (c) 2020, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
     logger.info('*****************************'.format(__version__ ))
-    cwd = os.getcwd()
     
+    cwd = os.getcwd()
+    output_dir = os.environ['OUTPUT_DIR']
+
+    #logger.info('Validating DUT Spec using RISCV_CONFIG')
     #env_yaml = EnvYAML(env)
     #with open(env) as fh:
     #    env_list = yaml.safe_load(fh)
     #try:
     #    isa_file, platform_file = riscv_config.check_specs(
-    #        env_yaml['isa'], env_yaml['platform'], os.environ['OUTPUT_DIR'], True)
-    #    logger.info('Checking the DUT Spec')
+    #        env_yaml['isa'], env_yaml['platform'], output_dir, True)
+    #    logger.info('Checking DUT Spec Successful!')
     #except ValidationError as msg:
     #    print(msg)
     #    return 1
 
     if clean:
-        sys_command('rm -rf workdir/*')
+        sys_command('rm -rf {0}/{1}/*'.format(output_dir, suite))
 
     if generate:
+        generatorpm = pluggy.PluginManager("generator")
+        generatorpm.add_hookspecs(RandomGeneratorSpec)
+
+        generatorpm_name = 'river_core.{0}_plugin.{0}_plugin'.format(suite)
+        generatorpm_module = importlib.import_module(generatorpm_name,'{0}'.format(root))
+        
         if suite == 'microtesk':
-
-            # MicroTESK Generator plugin manager
-            generatorpm = pluggy.PluginManager("generator")
-            generatorpm.add_hookspecs(RandomGeneratorSpec)
-
-            generatorpm_name = 'river_core.microtesk_plugin.microtesk_plugin'
-            generatorpm_module = importlib.import_module(generatorpm_name,'.')
             generatorpm.register(generatorpm_module.MicroTESKPlugin())
-            generatorpm.hook.pre_gen(gendir='{0}/microtesk'.format(os.environ['OUTPUT_DIR']))
-            generatorpm.hook.gen(gen_config='{0}/microtesk_plugin/microtesk_gen_config.yaml'.format(root), jobs=jobs, filter=filter, norun=norun)
-            generatorpm.hook.post_gen(gendir='{0}/microtesk'.format(os.environ['OUTPUT_DIR']),regressfile='{0}/microtesk/regresslist.yaml'.format(os.environ['OUTPUT_DIR']))
-
-        if suite == 'dv':
-            # RISCV-DV Generator plugin manager
-            generatorpm = pluggy.PluginManager("generator")
-            generatorpm.add_hookspecs(RandomGeneratorSpec)
-
-            generatorpm_name = 'river_core.riscv_dv_plugin.riscv_dv_plugin'
-            generatorpm_module = importlib.import_module(generatorpm_name,'{0}'.format(root))
-            generatorpm.register(generatorpm_module.RiscvDvPlugin())
-            #generatorpm.hook.pre_gen(gendir='{0}/workdir/'.format(cwd))
-            #generatorpm.hook.gen(gen_config='{0}/river_core/riscv_dv_plugin/riscv_dv_gen_config.yaml'.format(cwd), jobs=jobs, filter=filter, norun=norun)
-            generatorpm.hook.post_gen(gendir='{0}/workdir'.format(cwd),regressfile='{0}/workdir/regresslist.yaml'.format(cwd))
-
         if suite == 'aapg':
-            # AAPG Generator plugin manager
-            generatorpm = pluggy.PluginManager("generator")
-            generatorpm.add_hookspecs(RandomGeneratorSpec)
-
-            generatorpm_name = 'river_core.aapg_plugin.aapg_plugin'
-            generatorpm_module = importlib.import_module(generatorpm_name,'{0}'.format(root))
             generatorpm.register(generatorpm_module.AapgPlugin())
-            generatorpm.hook.pre_gen(gendir='{0}/aapg'.format(os.environ['OUTPUT_DIR']))
-            generatorpm.hook.gen(gen_config='{0}/aapg_plugin/aapg_gen_config.yaml'.format(root), jobs=jobs, filter=filter, norun=norun)
-            generatorpm.hook.post_gen(gendir='{0}/aapg'.format(os.environ['OUTPUT_DIR']),regressfile='{0}/aapg/regresslist.yaml'.format(os.environ['OUTPUT_DIR']))
+        if suite == 'dv':
+            generatorpm.register(generatorpm_module.RiscvDvPlugin())
+            
+        generatorpm.hook.pre_gen(gendir='{0}/{1}'.format(output_dir, suite))
+        generatorpm.hook.gen(gen_config='{0}/{1}_plugin/{1}_gen_config.yaml'.format(root, suite), jobs=jobs, filter=filter, seed=seed, count=count, norun=norun)
+        generatorpm.hook.post_gen(gendir='{0}/{1}'.format(output_dir, suite),regressfile='{0}/{1}/regresslist.yaml'.format(output_dir, suite))
 
     if compile != '':
 
@@ -95,7 +78,7 @@ def rivercore(verbose, dir, env, jobs, suite, generate, compile, clean, filter, 
         compilepm_module = importlib.import_module(compilepm_name, '{0}'.format(root))
         compilepm.register(compilepm_module.CompilePlugin())
         compilepm.hook.pre_compile(compile_config='{0}/compile_plugin/compile_config.yaml'.format(root))
-        compilepm.hook.compile(suite=suite, regress_list='{0}/{1}/regresslist.yaml'.format(os.environ['OUTPUT_DIR'], suite), compile_config='{0}'.format(compile), command_line_args='', jobs=jobs, norun=norun, filter=filter)
+        compilepm.hook.compile(suite=suite, regress_list='{0}/{1}/regresslist.yaml'.format(output_dir, suite), compile_config='{0}'.format(compile), command_line_args='', jobs=jobs, norun=norun, filter=filter)
         compilepm.hook.post_compile()
 
         ## Chromite Compile plugin manager
@@ -111,16 +94,4 @@ def rivercore(verbose, dir, env, jobs, suite, generate, compile, clean, filter, 
         #compilepm.hook.post_compile()
 
 
-    ## Model plugin manager
-    #modelpm = pluggy.PluginManager("model")
-    #modelpm.add_hookspecs(ModelSpec)
-    #
-    #plugin_name = 'spike_plugin'
-    #plugin_module = importlib.import_module(plugin_name,'.')
-    #modelpm.register(plugin_module.SpikePlugin())
-    ##modelpm.hook.load_config(isa='',platform='')
-    #modelpm.hook.load_elf(test_elf='/scratch/lavanya/gitlab/shakti/verification_environment/cclass-verif/sim/output/test_0000.elf')
-    #modelpm.hook.get_state()
-    #modelpm.hook.step(count=10)
-    #modelpm.hook.get_state()
 

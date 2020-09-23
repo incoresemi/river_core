@@ -14,21 +14,16 @@ import datetime
 import pytest
 from envyaml import EnvYAML
 
-def gen_cmd_list(gen_config):
+def gen_cmd_list(gen_config, seed, count):
     
-
     logger.debug('gen plugin')
     pwd = os.getcwd()
     env_gen_list = EnvYAML(gen_config)
     with open(gen_config) as fh:
         gen_list = yaml.safe_load(fh)
     gen_list['global_home'] = env_gen_list['global_home']
-    gen_list['global_output'] = env_gen_list['global_output']
     ## schema validator should be here
-    jobs = 1
-    count = 1
     out = ''
-    seed = 0
     command = ''
     config_path = ''
     args = ''
@@ -40,21 +35,7 @@ def gen_cmd_list(gen_config):
             command = 'bash {0}/bin/{1}'.format(gen_list['global_home'],gen_list[key])
         if key == 'global_args':
             args =  gen_list[key]
-        if key == 'global_output':
-            dirname = gen_list[key]
-            if(os.path.isdir(dirname)):
-                shutil.rmtree(dirname, ignore_errors=True)
-            os.makedirs(dirname)
-        if key == 'global_seed':
-            if gen_list[key] != 'random':
-                seed = gen_list[key]
-            else:
-                seed = 'random'
-        if key == 'global_jobs':
-            jobs = gen_list[key]
-        if key == 'global_count':
-            count = gen_list[key]
-
+        dirname = os.environ['OUTPUT_DIR'] + '/microtesk'
         if not re.search('^global_', key):
             config_file_path = config_path +  '/' + gen_list[key]['path']
             logger.debug(key)
@@ -62,16 +43,16 @@ def gen_cmd_list(gen_config):
 
             logger.debug(config_file)
             template_name = os.path.basename(config_file)
-            
-            for i in range(count):
+           
+            for i in range(int(count)):
                 if seed == 'random':
-                    gen_seed = random.randint(0, 10000)
+                    gen_seed = random.randint(0, 1000000)
                 else:
-                    gen_seed = seed
+                    gen_seed = int(seed)
             
                 now = datetime.datetime.now()
-                gen_prefix = '{0:04}_{1}'.format(gen_seed, now.strftime('%d%m%Y%H%M%S%f'))
-                test_prefix = 'microtesk_{0}_{1}_{2}'.format(template_name.replace('.rb', ''), gen_prefix, i)
+                gen_prefix = '{0:06}_{1}'.format(gen_seed, now.strftime('%d%m%Y%H%M%S%f'))
+                test_prefix = 'microtesk_{0}_{1}_{2:05}'.format(template_name.replace('.rb', ''), gen_prefix, i)
                 testdir = '{0}/{1}'.format(dirname,test_prefix)
                 run_command.append('{0} {1} \
                                     --code-file-extension S \
@@ -82,8 +63,6 @@ def gen_cmd_list(gen_config):
 
     return run_command
 
-#tlist = gen_cmd_list('/scratch/river_development/microtesk_templates/microtesk_gen_config.yaml')
-#print(tlist)
 
 def idfnc(val):
   template_match = re.search('riscv (.*).rb', '{0}'.format(val))
@@ -92,7 +71,11 @@ def idfnc(val):
 
 def pytest_generate_tests(metafunc):
     if 'test_input' in metafunc.fixturenames:
-        test_list = gen_cmd_list(metafunc.config.getoption("configlist"))
+        test_list = gen_cmd_list(
+                                    metafunc.config.getoption("configlist"),
+                                    metafunc.config.getoption("seed"),
+                                    metafunc.config.getoption("count")
+                                )
         metafunc.parametrize('test_input', test_list,
                 ids=idfnc,
                 indirect=True)

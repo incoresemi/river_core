@@ -21,7 +21,7 @@ class RandomGeneratorSpec(object):
         """ before random generation"""
 
     @gen_hookspec
-    def gen(self, gen_config, jobs, filter, norun):
+    def gen(self, gen_config, jobs, filter, seed, count, norun):
         """ generation step"""
 
     @gen_hookspec

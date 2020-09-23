@@ -2,16 +2,12 @@ global_home: ${MICROTESK_HOME}
 global_config_path: /microtesk_plugin/templates
 global_command: generate.sh riscv
 global_args: --solver z3 --generate
-global_output: ${OUTPUT_DIR}
-global_seed: random
-global_jobs: 1
-global_count: 1
 
 rv64f_mentry_fcvt_l_s:
     path: floating
-    check:
-      - check ISA:=regex(.*64.*)
-      - check ISA:=regex(.*F.*)
+#    check:
+#      - check ISA:=regex(.*64.*)
+#      - check ISA:=regex(.*F.*)
 rv64d_uentry_fmv_x_d:
     path: floating
 rv64d_uentry_fmv_d_x:

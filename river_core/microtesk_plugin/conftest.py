@@ -7,3 +7,13 @@ def pytest_addoption(parser):
         "--configlist",
         action="store"
     )
+
+    parser.addoption(
+        "--seed",
+        action="store"
+    )
+
+    parser.addoption(
+        "--count",
+        action="store"
+    )

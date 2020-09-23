@@ -47,7 +47,7 @@ class AapgPlugin(object):
     # gets the yaml file with list of configs; test count; parallel
     # isa is obtained from riscv_config
     @gen_hookimpl
-    def gen(self, gen_config, jobs, filter, norun):
+    def gen(self, gen_config, jobs, filter, seed, count, norun):
         logger.debug('plugin again')
         pwd = os.getcwd()
         pytest_file = root + '/aapg_plugin/gen_framework.py'
@@ -55,9 +55,9 @@ class AapgPlugin(object):
 
         if norun:
             # to display test items
-            pytest.main([pytest_file, '--collect-only', '-n={0}'.format(jobs), '-k={0}'.format(filter), '--configlist={0}'.format(gen_config), '-v', '--html=aapg_gen.html', '--self-contained-html'])
+            pytest.main([pytest_file, '--collect-only', '-n={0}'.format(jobs), '-k={0}'.format(filter), '--configlist={0}'.format(gen_config), '-v',  '--seed={0}'.format(seed), '--count={0}'.format(count), '--html=aapg_gen.html', '--self-contained-html'])
         else:
-            pytest.main([pytest_file, '-n={0}'.format(jobs), '-k={0}'.format(filter), '--configlist={0}'.format(gen_config), '-v', '--html=aapg_gen.html', '--self-contained-html'])
+            pytest.main([pytest_file, '-n={0}'.format(jobs), '-k={0}'.format(filter), '--configlist={0}'.format(gen_config), '-v',  '--seed={0}'.format(seed), '--count={0}'.format(count), '--html=aapg_gen.html', '--self-contained-html'])
 
     # generates the regress list from the generation
     @gen_hookimpl
