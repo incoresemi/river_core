@@ -16,9 +16,12 @@ import glob
 
 run_cmd_list = dict()
 pwd = os.getcwd() 
+gen = ''
 
-def gen_cmd_list(regress_list, compile_config):
+def gen_cmd_list(regress_list, compile_config, generator):
     
+    global gen
+    gen = generator 
     clist = dict()
     with open(compile_config, 'r') as cfile:
         clist = yaml.safe_load(cfile)
@@ -28,7 +31,6 @@ def gen_cmd_list(regress_list, compile_config):
         rlist = yaml.safe_load(rfile)
     run_command = []
 
-    generator = 'aapg'
     print(rlist)
     gen_path = generator + '_global_testpath'
     
@@ -104,14 +106,16 @@ def pytest_generate_tests(metafunc):
     if 'test_input' in metafunc.fixturenames:
         test_list = gen_cmd_list(
                                         metafunc.config.getoption("regresslist"),
-                                        metafunc.config.getoption("compileconfig")
+                                        metafunc.config.getoption("compileconfig"),
+                                        metafunc.config.getoption("tsuite")
                                     )
         metafunc.parametrize('test_input', test_list,
                 ids=idfnc,
                 indirect=True)
 
-def  run_list(cmd_list):
+def  run_list(cmd_list, program):
     result = 0
+    os.chdir('{0}/{1}/{2}'.format(os.environ['OUTPUT_DIR'], gen, program))
     for i in range(len(cmd_list)):
         result, out, err = eval(cmd_list[i])
         if result:
@@ -130,8 +134,7 @@ def test_input(request):
     # compile tests
     os.chdir(pwd)
     program = request.param
-    os.chdir('{0}/workdir/{1}'.format(os.getcwd(), program))
-    if not run_list(run_cmd_list[program]):
+    if not run_list(run_cmd_list[program], program):
         logger.debug('PASSED')
         sys_command('touch STATUS_PASSED')
         return 0

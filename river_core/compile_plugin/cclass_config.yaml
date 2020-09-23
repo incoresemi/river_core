@@ -12,8 +12,7 @@ elf2hex:
   args: [8, 4194304, 2147483648]
   out_file: code.mem
 sim:
-  command: ./out
-  args: +rtldump
+  command: ./out +rtldump
 extras_1:
   command: 'ln -sf /home/rise/lavanya/gitlab/shakti/cores/c-class/bin/out .'
 extras_2:

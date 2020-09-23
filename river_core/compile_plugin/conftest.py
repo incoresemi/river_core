@@ -14,6 +14,10 @@ def pytest_addoption(parser):
         "--compileconfig",
         action="store"
     )
+    parser.addoption(
+        "--tsuite",
+        action="store"
+    )
 
 @pytest.mark.optionalhook
 def pytest_html_results_table_header(cells):
