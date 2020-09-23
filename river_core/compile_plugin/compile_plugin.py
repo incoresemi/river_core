@@ -14,7 +14,7 @@ import pytest
 
 from river_core.log import logger
 from river_core.utils import *
-from river_core.root import *
+from river_core.constants import *
 
 compile_hookimpl = pluggy.HookimplMarker('compile')
 
