@@ -23,16 +23,16 @@ def rivercore(verbose, dir, env, jobs, generate, compile, clean, filter, norun):
     logger.info('*****************************'.format(__version__ ))
     cwd = os.getcwd()
     
-    env_yaml = EnvYAML(env)
-    with open(env) as fh:
-        env_list = yaml.safe_load(fh)
-    try:
-        isa_file, platform_file = riscv_config.check_specs(
-            env_yaml['isa'], env_yaml['platform'], os.environ['OUTPUT_DIR'], True)
-        logger.info('Checking the DUT Spec')
-    except ValidationError as msg:
-        print(msg)
-        return 1
+    #env_yaml = EnvYAML(env)
+    #with open(env) as fh:
+    #    env_list = yaml.safe_load(fh)
+    #try:
+    #    isa_file, platform_file = riscv_config.check_specs(
+    #        env_yaml['isa'], env_yaml['platform'], os.environ['OUTPUT_DIR'], True)
+    #    logger.info('Checking the DUT Spec')
+    #except ValidationError as msg:
+    #    print(msg)
+    #    return 1
 
     if clean:
         sys_command('rm -rf workdir/*')
