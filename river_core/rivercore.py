@@ -57,7 +57,7 @@ def rivercore(verbose, dir, env, jobs, suite, generate, compile, clean, filter, 
             generatorpm.add_hookspecs(RandomGeneratorSpec)
 
             generatorpm_name = 'river_core.riscv_dv_plugin.riscv_dv_plugin'
-            generatorpm_module = importlib.import_module(generatorpm_name,'.')
+            generatorpm_module = importlib.import_module(generatorpm_name,'{0}'.format(root))
             generatorpm.register(generatorpm_module.RiscvDvPlugin())
             #generatorpm.hook.pre_gen(gendir='{0}/workdir/'.format(cwd))
             #generatorpm.hook.gen(gen_config='{0}/river_core/riscv_dv_plugin/riscv_dv_gen_config.yaml'.format(cwd), jobs=jobs, filter=filter, norun=norun)
@@ -69,7 +69,7 @@ def rivercore(verbose, dir, env, jobs, suite, generate, compile, clean, filter, 
             generatorpm.add_hookspecs(RandomGeneratorSpec)
 
             generatorpm_name = 'river_core.aapg_plugin.aapg_plugin'
-            generatorpm_module = importlib.import_module(generatorpm_name,'.')
+            generatorpm_module = importlib.import_module(generatorpm_name,'{0}'.format(root))
             generatorpm.register(generatorpm_module.AapgPlugin())
             generatorpm.hook.pre_gen(gendir='{0}/aapg'.format(os.environ['OUTPUT_DIR']))
             generatorpm.hook.gen(gen_config='{0}/aapg_plugin/aapg_gen_config.yaml'.format(root), jobs=jobs, filter=filter, norun=norun)
@@ -92,7 +92,7 @@ def rivercore(verbose, dir, env, jobs, suite, generate, compile, clean, filter, 
         compilepm.add_hookspecs(CompileSpec)
 
         compilepm_name = 'river_core.compile_plugin.compile_plugin'
-        compilepm_module = importlib.import_module(compilepm_name, '.')
+        compilepm_module = importlib.import_module(compilepm_name, '{0}'.format(root))
         compilepm.register(compilepm_module.CompilePlugin())
         compilepm.hook.pre_compile(compile_config='{0}/compile_plugin/compile_config.yaml'.format(root))
         compilepm.hook.compile(suite=suite, regress_list='{0}/{1}/regresslist.yaml'.format(os.environ['OUTPUT_DIR'], suite), compile_config='{0}'.format(compile), command_line_args='', jobs=jobs, norun=norun, filter=filter)
