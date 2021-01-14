@@ -14,15 +14,16 @@ import riscv_config.checker as riscv_config
 from riscv_config.errors import ValidationError
 from envyaml import EnvYAML
 
+
 def rivercore_clean(verbose, suite):
 
     logger.level(verbose)
-    logger.info('****** RiVer Core {0} *******'.format(__version__ ))
+    logger.info('****** RiVer Core {0} *******'.format(__version__))
     logger.info('****** Cleaning Mode ****** ')
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
-    logger.info('*****************************'.format(__version__ ))
-    
+    logger.info('*****************************'.format(__version__))
+
     output_dir = os.environ['OUTPUT_DIR']
 
     sys_command('rm -rf {0}/{1}/*'.format(output_dir, suite))
@@ -38,43 +39,54 @@ def rivercore_clean(verbose, suite):
     #    print(msg)
     #    return 1
 
+
 def rivercore_generate(verbose, jobs, suite, filter, seed, count, norun):
 
     logger.level(verbose)
-    logger.info('****** RiVer Core {0} *******'.format(__version__ ))
+    logger.info('****** RiVer Core {0} *******'.format(__version__))
     logger.info('****** Compilation Mode ****** ')
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
-    logger.info('*****************************'.format(__version__ ))
-    
+    logger.info('*****************************'.format(__version__))
+
     output_dir = os.environ['OUTPUT_DIR']
 
     generatorpm = pluggy.PluginManager("generator")
     generatorpm.add_hookspecs(RandomGeneratorSpec)
 
     generatorpm_name = 'river_core.{0}_plugin.{0}_plugin'.format(suite)
-    generatorpm_module = importlib.import_module(generatorpm_name,'{0}'.format(root))
-    
+    generatorpm_module = importlib.import_module(generatorpm_name,
+                                                 '{0}'.format(root))
+
     if suite == 'microtesk':
         generatorpm.register(generatorpm_module.MicroTESKPlugin())
     if suite == 'aapg':
         generatorpm.register(generatorpm_module.AapgPlugin())
     if suite == 'dv':
         generatorpm.register(generatorpm_module.RiscvDvPlugin())
-        
+
     generatorpm.hook.pre_gen(gendir='{0}/{1}'.format(output_dir, suite))
-    generatorpm.hook.gen(gen_config='{0}/{1}_plugin/{1}_gen_config.yaml'.format(root, suite), jobs=jobs, filter=filter, seed=seed, count=count, norun=norun)
-    generatorpm.hook.post_gen(gendir='{0}/{1}'.format(output_dir, suite),regressfile='{0}/{1}/regresslist.yaml'.format(output_dir, suite))
+    generatorpm.hook.gen(gen_config='{0}/{1}_plugin/{1}_gen_config.yaml'.format(
+        root, suite),
+                         jobs=jobs,
+                         filter=filter,
+                         seed=seed,
+                         count=count,
+                         norun=norun)
+    generatorpm.hook.post_gen(gendir='{0}/{1}'.format(output_dir, suite),
+                              regressfile='{0}/{1}/regresslist.yaml'.format(
+                                  output_dir, suite))
+
 
 def rivercore_compile(verbose, jobs, suite, filter, seed, count, norun):
-    
+
     logger.level(verbose)
-    logger.info('****** RiVer Core {0} *******'.format(__version__ ))
+    logger.info('****** RiVer Core {0} *******'.format(__version__))
     logger.info('****** Generation Mode ****** ')
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
-    logger.info('*****************************'.format(__version__ ))
-    
+    logger.info('*****************************'.format(__version__))
+
     logger.info('****** Compilation Mode ****** ')
     # Compile plugin manager
     #compilepm = pluggy.PluginManager('compile')
@@ -91,10 +103,19 @@ def rivercore_compile(verbose, jobs, suite, filter, seed, count, norun):
     compilepm.add_hookspecs(CompileSpec)
 
     compilepm_name = 'river_core.compile_plugin.compile_plugin'
-    compilepm_module = importlib.import_module(compilepm_name, '{0}'.format(root))
+    compilepm_module = importlib.import_module(compilepm_name,
+                                               '{0}'.format(root))
     compilepm.register(compilepm_module.CompilePlugin())
-    compilepm.hook.pre_compile(compile_config='{0}/compile_plugin/compile_config.yaml'.format(root))
-    compilepm.hook.compile(suite=suite, regress_list='{0}/{1}/regresslist.yaml'.format(output_dir, suite), compile_config='{0}'.format(compile), command_line_args='', jobs=jobs, norun=norun, filter=filter)
+    compilepm.hook.pre_compile(
+        compile_config='{0}/compile_plugin/compile_config.yaml'.format(root))
+    compilepm.hook.compile(suite=suite,
+                           regress_list='{0}/{1}/regresslist.yaml'.format(
+                               output_dir, suite),
+                           compile_config='{0}'.format(compile),
+                           command_line_args='',
+                           jobs=jobs,
+                           norun=norun,
+                           filter=filter)
     compilepm.hook.post_compile()
 
     ## Chromite Compile plugin manager
@@ -108,6 +129,3 @@ def rivercore_compile(verbose, jobs, suite, filter, seed, count, norun):
     #compilepm.hook.pre_compile(compile_config='{0}/river_core/chromite_simlog_plugin/chromite_config.yaml'.format(cwd))
     #compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), command_line_args='', jobs=jobs, filter=filter)
     #compilepm.hook.post_compile()
-
-
-
