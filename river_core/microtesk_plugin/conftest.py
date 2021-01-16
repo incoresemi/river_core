@@ -17,3 +17,8 @@ def pytest_addoption(parser):
         "--count",
         action="store"
     )
+
+    parser.addoption(
+        "--outputdir",
+        action="store"
+    )

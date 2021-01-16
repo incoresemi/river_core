@@ -48,7 +48,7 @@ class MicroTESKPlugin(object):
     # gets the yaml file with list of configs; test count; parallel
     # isa is obtained from riscv_config
     @gen_hookimpl
-    def gen(self, gen_config, jobs, filter, seed, count, norun):
+    def gen(self, gen_config, jobs, filter, seed, count, outputdir):
         logger.debug('Microtesk Gen Stage')
         logger.debug('plugin again')
         pwd = os.getcwd()
@@ -56,11 +56,11 @@ class MicroTESKPlugin(object):
         pytest_file = root + '/microtesk_plugin/gen_framework.py'
         logger.debug(pytest_file)
 
-        if norun:
-            # to display test items
-            pytest.main([pytest_file, '--collect-only', '-n={0}'.format(jobs), '-k={0}'.format(filter), '--configlist={0}'.format(gen_config), '-v', '--seed={0}'.format(seed), '--count={0}'.format(count),'--html=microtesk_gen.html', '--self-contained-html'])
-        else:
-            pytest.main([pytest_file, '-n={0}'.format(jobs), '-k={0}'.format(filter), '--configlist={0}'.format(gen_config), '-v',  '--seed={0}'.format(seed), '--count={0}'.format(count), '--html=microtesk_gen.html', '--self-contained-html'])
+        # if norun:
+        #     # to display test items
+        #     pytest.main([pytest_file, '--collect-only', '-n={0}'.format(jobs), '-k={0}'.format(filter), '--configlist={0}'.format(gen_config), '-v', '--seed={0}'.format(seed), '--count={0}'.format(count),'--html=microtesk_gen.html', '--self-contained-html'])
+        # else:
+        pytest.main([pytest_file, '-n={0}'.format(jobs), '-k={0}'.format(filter), '--configlist={0}'.format(gen_config), '-v',  '--seed={0}'.format(seed), '--count={0}'.format(count), '--html=microtesk_gen.html', '--self-contained-html','--outputdir={0}'.format(outputdir)])
 
     # generates the regress list from the generation
     @gen_hookimpl

@@ -14,7 +14,7 @@ import datetime
 import pytest
 from envyaml import EnvYAML
 
-def gen_cmd_list(gen_config, seed, count):
+def gen_cmd_list(gen_config, seed, count, outputdir):
     
     logger.debug('gen plugin')
     pwd = os.getcwd()
@@ -35,7 +35,7 @@ def gen_cmd_list(gen_config, seed, count):
             command = 'bash {0}/bin/{1}'.format(gen_list['global_home'],gen_list[key])
         if key == 'global_args':
             args =  gen_list[key]
-        dirname = os.environ['OUTPUT_DIR'] + '/microtesk'
+        dirname = outputdir + '/microtesk'
         if not re.search('^global_', key):
             config_file_path = config_path +  '/' + gen_list[key]['path']
             logger.debug(key)
@@ -74,7 +74,8 @@ def pytest_generate_tests(metafunc):
         test_list = gen_cmd_list(
                                     metafunc.config.getoption("configlist"),
                                     metafunc.config.getoption("seed"),
-                                    metafunc.config.getoption("count")
+                                    metafunc.config.getoption("count"),
+                                    metafunc.config.getoption("outputdir")
                                 )
         metafunc.parametrize('test_input', test_list,
                 ids=idfnc,
