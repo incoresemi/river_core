@@ -4,6 +4,7 @@ import os
 import shutil
 import yaml
 import importlib
+import configparser
 
 from river_core.log import *
 from river_core.utils import *
@@ -15,18 +16,19 @@ from riscv_config.errors import ValidationError
 from envyaml import EnvYAML
 
 
-def rivercore_clean(verbose, suite):
+def rivercore_clean(config_file, outputdir):
 
+    config = configparser.ConfigParser()
+    config.read(config_file)
+    verbose = config['default']['verbosity']
     logger.level(verbose)
     logger.info('****** RiVer Core {0} *******'.format(__version__))
     logger.info('****** Cleaning Mode ****** ')
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
-    logger.info('*****************************'.format(__version__))
 
-    output_dir = os.environ['OUTPUT_DIR']
 
-    sys_command('rm -rf {0}/{1}/*'.format(output_dir, suite))
+    # sys_command('rm -rf {0}/{1}/*'.format(output_dir, suite))
     #logger.info('Validating DUT Spec using RISCV_CONFIG')
     #env_yaml = EnvYAML(env)
     #with open(env) as fh:
@@ -40,52 +42,66 @@ def rivercore_clean(verbose, suite):
     #    return 1
 
 
-def rivercore_generate(verbose, jobs, suite, filter, seed, count, norun):
+def rivercore_generate(config_file, outputdir):
 
-    logger.level(verbose)
-    logger.info('****** RiVer Core {0} *******'.format(__version__))
-    logger.info('****** Compilation Mode ****** ')
-    logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
-    logger.info('All Rights Reserved.')
-    logger.info('*****************************'.format(__version__))
-
-    output_dir = os.environ['OUTPUT_DIR']
-
-    generatorpm = pluggy.PluginManager("generator")
-    generatorpm.add_hookspecs(RandomGeneratorSpec)
-
-    generatorpm_name = 'river_core.{0}_plugin.{0}_plugin'.format(suite)
-    generatorpm_module = importlib.import_module(generatorpm_name,
-                                                 '{0}'.format(root))
-
-    if suite == 'microtesk':
-        generatorpm.register(generatorpm_module.MicroTESKPlugin())
-    if suite == 'aapg':
-        generatorpm.register(generatorpm_module.AapgPlugin())
-    if suite == 'dv':
-        generatorpm.register(generatorpm_module.RiscvDvPlugin())
-
-    generatorpm.hook.pre_gen(gendir='{0}/{1}'.format(output_dir, suite))
-    generatorpm.hook.gen(gen_config='{0}/{1}_plugin/{1}_gen_config.yaml'.format(
-        root, suite),
-                         jobs=jobs,
-                         filter=filter,
-                         seed=seed,
-                         count=count,
-                         norun=norun)
-    generatorpm.hook.post_gen(gendir='{0}/{1}'.format(output_dir, suite),
-                              regressfile='{0}/{1}/regresslist.yaml'.format(
-                                  output_dir, suite))
-
-
-def rivercore_compile(verbose, jobs, suite, filter, seed, count, norun):
+    config = configparser.ConfigParser()
+    print(config.read(config_file))
+    verbose = config['default']['verbosity']
 
     logger.level(verbose)
     logger.info('****** RiVer Core {0} *******'.format(__version__))
     logger.info('****** Generation Mode ****** ')
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
-    logger.info('*****************************'.format(__version__))
+
+    # TODO Test multiple plugin cases
+    # Current implementation is using for loop, which might be a bad idea for parallel processing.
+
+    suite_list = config['default']['suite'].split(',')
+    for suite in suite_list:
+
+    # output_dir = os.environ['OUTPUT_DIR']
+
+        generatorpm = pluggy.PluginManager("generator")
+        generatorpm.add_hookspecs(RandomGeneratorSpec)
+
+        generatorpm_name = 'river_core.{0}_plugin.{0}_plugin'.format(suite)
+        generatorpm_module = importlib.import_module(generatorpm_name,
+                                                    '{0}'.format(root))
+
+        if suite == 'microtesk':
+            generatorpm.register(generatorpm_module.MicroTESKPlugin())
+        if suite == 'aapg':
+            generatorpm.register(generatorpm_module.AapgPlugin())
+        if suite == 'dv':
+            generatorpm.register(generatorpm_module.RiscvDvPlugin())
+
+        # Plugin specific details
+        jobs = config[suite]['jobs']
+        seed = config[suite]['seed']
+        count = config[suite]['count']
+        filter = config[suite]['filter']
+
+
+        generatorpm.hook.pre_gen(gendir='{0}/{1}'.format(outputdir, suite))
+        generatorpm.hook.gen(gen_config='{0}/{1}_plugin/{1}_gen_config.yaml'.format(
+            root, suite),
+                            jobs=jobs,
+                            filter=filter,
+                            seed=seed,
+                            count=count,
+                            outputdir=outputdir)
+        generatorpm.hook.post_gen(gendir='{0}/{1}'.format(outputdir, suite),
+                                regressfile='{0}/{1}/regresslist.yaml'.format(
+                                    outputdir, suite))
+
+
+def rivercore_compile(config, outputdir):
+
+    logger.level(verbose)
+    logger.info('****** RiVer Core {0} *******'.format(__version__))
+    logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
+    logger.info('All Rights Reserved.')
 
     logger.info('****** Compilation Mode ****** ')
     # Compile plugin manager
@@ -110,7 +126,7 @@ def rivercore_compile(verbose, jobs, suite, filter, seed, count, norun):
         compile_config='{0}/compile_plugin/compile_config.yaml'.format(root))
     compilepm.hook.compile(suite=suite,
                            regress_list='{0}/{1}/regresslist.yaml'.format(
-                               output_dir, suite),
+                               outputdir, suite),
                            compile_config='{0}'.format(compile),
                            command_line_args='',
                            jobs=jobs,

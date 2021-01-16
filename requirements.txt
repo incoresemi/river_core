@@ -8,6 +8,7 @@ pytest
 pytest-runner
 pytest-xdist
 pytest-html
+configparser
 repomanager
 click
 ruamel.yaml

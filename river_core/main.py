@@ -15,82 +15,68 @@ def cli():
         See LICENSE for details
         \b
 
-        Use the --help flag with the command to learn more
-        about the configuration options
+        Is your config/config.ini ready? Configure RiVer Core there!
     """
 
-
 @click.version_option(version=__version__)
-@click.option('--verbose',
-              '-v',
-              default='error',
-              help='Set verbosity level for the framework')
-@click.option('--suite', '-ts', default='', help='Suite name to remove')
-@cli.command()  # @cli, not @click!
-def clean(verbose, suite):
+@click.option(
+    '-c', '--config',
+    type         = click.Path(dir_okay=False),
+    help         = 'Read option defaults from the specified INI file',
+    show_default = True,
+)
+@click.option('--outputdir',
+              '-o',
+              default='',
+              required=True,
+              type=click.Path(),
+              help='Output Dir <!>')
+@cli.command()
+def clean(config, outputdir):
     """
     subcommand to clean generated programs.
     """
-    rivercore_clean(verbose, suite)
-
+    rivercore_clean(config, outputdir)
 
 @click.version_option(version=__version__)
-@click.option('--verbose',
-              '-v',
-              default='error',
-              help='Set verbosity level for the framework')
-@click.option('--jobs',
-              '-j',
-              default=1,
-              help='Number of jobs to use for generation')
-@click.option('--suite',
-              '-ts',
+@click.option(
+    '-c', '--config',
+    type         = click.Path(dir_okay=False),
+    help         = 'Read option defaults from the specified INI file',
+    show_default = True,
+)
+@click.option('--outputdir',
+              '-o',
               default='',
-              help='Suite name to generate programs')
-@click.option('--filter', '-f', type=str, default='', help='Filter option')
-@click.option('--seed', '-s', default='random', help='Seed value')
-@click.option('--count',
-              '-n',
-              default=1,
-              type=int,
-              help='No. of tests per template')
-@click.option('--norun', '-nr', is_flag='True', help='Only display test list')
-@cli.command()  # @cli, not @click!
-def generate(verbose, jobs, suite, filter, seed, count, norun):
+              required=True,
+              type=click.Path(),
+              help='Output Dir <!>')
+@cli.command()
+def compile(config, outputdir):
+    """
+    subcommand to compile generated programs.
+    """
+    rivercore_compile(config, outputdir)
+
+@click.version_option(version=__version__)
+@click.option(
+    '-c', '--config',
+    type         = click.Path(dir_okay=False),
+    help         = 'Read option defaults from the specified INI file',
+    show_default = True,
+)
+@click.option('--outputdir',
+              '-o',
+              default='',
+              required=True,
+              type=click.Path(),
+              help='Output Dir <!>')
+@cli.command()
+def generate(config, outputdir):
     """
     subcommand to generate programs.
     """
-    rivercore_generate(verbose, jobs, suite, filter, seed, count, norun)
-
-
-@click.version_option(version=__version__)
-@click.option('--verbose',
-              '-v',
-              default='error',
-              help='Set verbosity level for the framework')
-@click.option('--jobs',
-              '-j',
-              default=1,
-              help='Number of jobs to use for compilation')
-@click.option('--suite',
-              '-ts',
-              default='',
-              help='Suite from which the programs are compiled')
-@click.option('--filter', '-f', type=str, default='', help='Filter option')
-@click.option('--seed', '-s', default='random', help='Seed value')
-@click.option('--count',
-              '-n',
-              default=1,
-              type=int,
-              help='No. of tests per template')
-@click.option('--norun', '-nr', is_flag='True', help='Only display test list')
-@cli.command()  # @cli, not @click!
-def compile(verbose, jobs, suite, filter, seed, count, norun):
-    """
-    subcommand to compile the generated programs.
-    """
-    rivercore_compile(verbose, jobs, suite, filter, seed, count, norun)
-
+    rivercore_generate(config, outputdir)
 
 if __name__ == '__main__':
     cli()
