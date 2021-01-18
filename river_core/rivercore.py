@@ -45,7 +45,8 @@ def rivercore_clean(config_file, outputdir):
 def rivercore_generate(config_file, outputdir):
 
     config = configparser.ConfigParser()
-    print(config.read(config_file))
+    config.read(config_file)
+    logger.debug('Read file from {0}'.format(config_file))
     verbose = config['default']['verbosity']
 
     logger.level(verbose)
@@ -65,9 +66,21 @@ def rivercore_generate(config_file, outputdir):
         generatorpm = pluggy.PluginManager("generator")
         generatorpm.add_hookspecs(RandomGeneratorSpec)
 
-        generatorpm_name = 'river_core.{0}_plugin.{0}_plugin'.format(suite)
-        generatorpm_module = importlib.import_module(generatorpm_name,
-                                                    '{0}'.format(root))
+        path_to_module = config['default']['path_to_suite']
+        plugin_suite = suite+'_plugin'
+        # Using spec and exec_module as it allows usage of full path
+        # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly 
+        abs_location_module = path_to_module+'/'+plugin_suite+'/'+plugin_suite+'.py'
+        logger.debug("Loading module from {0}".format(abs_location_module))
+        # generatorpm_name = 'river_core.{0}_plugin.{0}_plugin'.format(suite)
+        try:
+            generatorpm_spec=importlib.util.spec_from_file_location(plugin_suite,abs_location_module)
+            generatorpm_module = importlib.util.module_from_spec(generatorpm_spec)
+            generatorpm_spec.loader.exec_module(generatorpm_module)
+
+        except FileNotFoundError as txt:
+            logger.error(suite+" not found at : "+path_to_module+".\n"+str(txt))
+            raise SystemExit
 
         if suite == 'microtesk':
             generatorpm.register(generatorpm_module.MicroTESKPlugin())
@@ -85,12 +98,13 @@ def rivercore_generate(config_file, outputdir):
 
         generatorpm.hook.pre_gen(gendir='{0}/{1}'.format(outputdir, suite))
         generatorpm.hook.gen(gen_config='{0}/{1}_plugin/{1}_gen_config.yaml'.format(
-            root, suite),
+            path_to_module, suite),
                             jobs=jobs,
                             filter=filter,
                             seed=seed,
                             count=count,
-                            outputdir=outputdir)
+                            outputdir=outputdir,
+                            moduledir=path_to_module)
         generatorpm.hook.post_gen(gendir='{0}/{1}'.format(outputdir, suite),
                                 regressfile='{0}/{1}/regresslist.yaml'.format(
                                     outputdir, suite))
