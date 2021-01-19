@@ -25,18 +25,18 @@ def cli():
     help         = 'Read option defaults from the specified INI file',
     show_default = True,
 )
-@click.option('--outputdir',
+@click.option('--output_dir',
               '-o',
               default='',
               required=True,
               type=click.Path(),
               help='Output Dir <!>')
 @cli.command()
-def clean(config, outputdir):
+def clean(config, output_dir):
     """
     subcommand to clean generated programs.
     """
-    rivercore_clean(config, outputdir)
+    rivercore_clean(config, output_dir)
 
 @click.version_option(version=__version__)
 @click.option(
@@ -45,18 +45,18 @@ def clean(config, outputdir):
     help         = 'Read option defaults from the specified INI file',
     show_default = True,
 )
-@click.option('--outputdir',
+@click.option('--output_dir',
               '-o',
               default='',
               required=True,
               type=click.Path(),
               help='Output Dir <!>')
 @cli.command()
-def compile(config, outputdir):
+def compile(config, output_dir):
     """
     subcommand to compile generated programs.
     """
-    rivercore_compile(config, outputdir)
+    rivercore_compile(config, output_dir)
 
 @click.version_option(version=__version__)
 @click.option(
@@ -65,18 +65,18 @@ def compile(config, outputdir):
     help         = 'Read option defaults from the specified INI file',
     show_default = True,
 )
-@click.option('--outputdir',
+@click.option('--output_dir',
               '-o',
               default='',
               required=True,
               type=click.Path(),
               help='Output Dir <!>')
 @cli.command()
-def generate(config, outputdir):
+def generate(config, output_dir):
     """
     subcommand to generate programs.
     """
-    rivercore_generate(config, outputdir)
+    rivercore_generate(config, output_dir)
 
 if __name__ == '__main__':
     cli()

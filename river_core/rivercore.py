@@ -16,7 +16,7 @@ from riscv_config.errors import ValidationError
 from envyaml import EnvYAML
 
 
-def rivercore_clean(config_file, outputdir):
+def rivercore_clean(config_file, output_dir):
 
     config = configparser.ConfigParser()
     config.read(config_file)
@@ -42,7 +42,7 @@ def rivercore_clean(config_file, outputdir):
     #    return 1
 
 
-def rivercore_generate(config_file, outputdir):
+def rivercore_generate(config_file, output_dir):
 
     config = configparser.ConfigParser()
     config.read(config_file)
@@ -68,6 +68,7 @@ def rivercore_generate(config_file, outputdir):
 
         path_to_module = config['default']['path_to_suite']
         plugin_suite = suite+'_plugin'
+        logger.info('Now loading {0} Suite'.format(suite))
         # Using spec and exec_module as it allows usage of full path
         # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly 
         abs_location_module = path_to_module+'/'+plugin_suite+'/'+plugin_suite+'.py'
@@ -96,21 +97,21 @@ def rivercore_generate(config_file, outputdir):
         filter = config[suite]['filter']
 
 
-        generatorpm.hook.pre_gen(gendir='{0}/{1}'.format(outputdir, suite))
+        generatorpm.hook.pre_gen(gendir='{0}/{1}'.format(output_dir, suite))
         generatorpm.hook.gen(gen_config='{0}/{1}_plugin/{1}_gen_config.yaml'.format(
             path_to_module, suite),
                             jobs=jobs,
                             filter=filter,
                             seed=seed,
                             count=count,
-                            outputdir=outputdir,
-                            moduledir=path_to_module)
-        generatorpm.hook.post_gen(gendir='{0}/{1}'.format(outputdir, suite),
+                            output_dir=output_dir,
+                            module_dir=path_to_module)
+        generatorpm.hook.post_gen(gendir='{0}/{1}'.format(output_dir, suite),
                                 regressfile='{0}/{1}/regresslist.yaml'.format(
-                                    outputdir, suite))
+                                    output_dir, suite))
 
 
-def rivercore_compile(config, outputdir):
+def rivercore_compile(config, output_dir):
 
     logger.level(verbose)
     logger.info('****** RiVer Core {0} *******'.format(__version__))
@@ -140,7 +141,7 @@ def rivercore_compile(config, outputdir):
         compile_config='{0}/compile_plugin/compile_config.yaml'.format(root))
     compilepm.hook.compile(suite=suite,
                            regress_list='{0}/{1}/regresslist.yaml'.format(
-                               outputdir, suite),
+                               output_dir, suite),
                            compile_config='{0}'.format(compile),
                            command_line_args='',
                            jobs=jobs,
