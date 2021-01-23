@@ -110,25 +110,16 @@ def rivercore_generate(config_file, output_dir, verbosity):
         if suite == 'dv':
             generatorpm.register(generatorpm_module.RiscvDvPlugin())
 
-        # Plugin specific details
-        jobs = config[suite]['jobs']
-        seed = config[suite]['seed']
-        count = config[suite]['count']
-        filter = config[suite]['filter']
-
-        generatorpm.hook.pre_gen(gendir='{0}/{1}'.format(output_dir, suite))
+        generatorpm.hook.pre_gen(output_dir='{0}/{1}'.format(output_dir, suite))
         generatorpm.hook.gen(
             gen_config='{0}/{1}_plugin/{1}_gen_config.yaml'.format(
                 path_to_module, suite),
-            jobs=jobs,
-            filter=filter,
-            seed=seed,
-            count=count,
-            output_dir=output_dir,
-            module_dir=path_to_module)
-        generatorpm.hook.post_gen(gendir='{0}/{1}'.format(output_dir, suite),
-                                  regressfile='{0}/{1}/regresslist.yaml'.format(
-                                      output_dir, suite))
+            spec_config=config[suite],
+            module_dir=path_to_module,
+            output_dir=output_dir)
+        generatorpm.hook.post_gen(
+            output_dir='{0}/{1}'.format(output_dir, suite),
+            regressfile='{0}/{1}/regresslist.yaml'.format(output_dir, suite))
 
 
 def rivercore_compile(config, output_dir):
