@@ -18,16 +18,26 @@ class RandomGeneratorSpec(object):
     #        """ loads riscv_config"""
 
     @gen_hookspec
-    def pre_gen(self, output_dir):
-        """ before random generation"""
+    def pre_gen(self, spec_config, output_dir):
+        """ before random generation
+            spec_config -> config specific to the suite
+            output_dir -> Output directory for the generated test cases
+        """
 
     @gen_hookspec
-    def gen(self, gen_config, spec_config, module_dir, output_dir):
-        """ generation step"""
+    def gen(self, gen_config, module_dir, output_dir):
+        """ generation step
+            gen_config -> config file for the plugin
+            module_dir -> path to module
+            output_dir -> Output dir for generated test cases
+        """
 
     @gen_hookspec
     def post_gen(self, output_dir, regressfile):
-        """ after generation steps """
+        """ after generation steps
+            output_dir -> Output dir for generated test cases
+            regressfile -> Regress yaml file
+        """
 
 
 ### creation of regress list into parameterize of tests: D

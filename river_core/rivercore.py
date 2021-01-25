@@ -110,11 +110,11 @@ def rivercore_generate(config_file, output_dir, verbosity):
         if suite == 'dv':
             generatorpm.register(generatorpm_module.RiscvDvPlugin())
 
-        generatorpm.hook.pre_gen(output_dir='{0}/{1}'.format(output_dir, suite))
+        generatorpm.hook.pre_gen(spec_config=config[suite],
+                                 output_dir='{0}/{1}'.format(output_dir, suite))
         generatorpm.hook.gen(
             gen_config='{0}/{1}_plugin/{1}_gen_config.yaml'.format(
                 path_to_module, suite),
-            spec_config=config[suite],
             module_dir=path_to_module,
             output_dir=output_dir)
         generatorpm.hook.post_gen(
