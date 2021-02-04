@@ -52,14 +52,15 @@ class CompileSpec(object):
     #    """ loads riscv_config"""
 
     @compile_hookspec
-    def pre_compile(self, compile_config):
+    def pre_compile(self, ini_config, yaml_config, output_dir):
         """ gets tool chain config from yaml"""
         # should create test dir
         # should set all gcc etc configs
 
     @compile_hookspec
-    def compile(suite, regress_list, compile_config, command_line_args, jobs,
-                filter, norun):
+    def compile(self, compile_config, module_dir, output_dir, asm_dir):
+        # def compile(suite, regress_list, compile_config, command_line_args, jobs,
+        # filter, norun):
         """ compiles all tests in the regress list"""
 
     @compile_hookspec

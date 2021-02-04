@@ -122,19 +122,36 @@ def rivercore_generate(config_file, output_dir, verbosity):
             regressfile='{0}/{1}/regresslist.yaml'.format(output_dir, suite))
 
 
-def rivercore_compile(config, output_dir):
+def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
     '''
-        Alpha
         Work in Progress
 
+        Function to compile generated assembly programs using the plugin as configured in the config.ini.
+
+        :param config_file: Config.ini file for generation
+
+        :param output_dir: Output directory for programs generated
+
+        :param verbosity: Verbosity level for the framework
+
+        :type config_file: click.Path
+
+        :type output_dir: click.Path
+
+        :type verbosity: str
     '''
 
-    logger.level(verbose)
+    logger.level(verbosity)
+    config = configparser.ConfigParser()
+    config.read(config_file)
+    logger.debug('Read file from {0}'.format(config_file))
+
     logger.info('****** RiVer Core {0} *******'.format(__version__))
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
 
     logger.info('****** Compilation Mode ****** ')
+
     # Compile plugin manager
     #compilepm = pluggy.PluginManager('compile')
     #compilepm.add_hookspecs(CompileSpec)
@@ -146,33 +163,66 @@ def rivercore_compile(config, output_dir):
     #compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), command_line_args='', jobs=jobs, filter=filter)
     #compilepm.hook.post_compile()
 
-    compilepm = pluggy.PluginManager('compile')
-    compilepm.add_hookspecs(CompileSpec)
+    # TODO Test multiple plugin cases
+    # Current implementation is using for loop, which might be a bad idea for parallel processing.
 
-    compilepm_name = 'river_core.compile_plugin.compile_plugin'
-    compilepm_module = importlib.import_module(compilepm_name,
-                                               '{0}'.format(root))
-    compilepm.register(compilepm_module.CompilePlugin())
-    compilepm.hook.pre_compile(
-        compile_config='{0}/compile_plugin/compile_config.yaml'.format(root))
-    compilepm.hook.compile(suite=suite,
-                           regress_list='{0}/{1}/regresslist.yaml'.format(
-                               output_dir, suite),
-                           compile_config='{0}'.format(compile),
-                           command_line_args='',
-                           jobs=jobs,
-                           norun=norun,
-                           filter=filter)
-    compilepm.hook.post_compile()
+    target_list = config['default']['target'].split(',')
+    for target in target_list:
 
-    ## Chromite Compile plugin manager
-    #compilepm = pluggy.PluginManager('compile')
-    #compilepm.add_hookspecs(CompileSpec)
+        compilepm = pluggy.PluginManager('compile')
+        compilepm.add_hookspecs(CompileSpec)
 
-    ##compilepm_name = 'river_core.compile_plugin.compile_plugin'
-    #compilepm_name = 'river_core.chromite_simlog_plugin.chromite_simlog_plugin'
-    #compilepm_module = importlib.import_module(compilepm_name, '.')
-    #compilepm.register(compilepm_module.ChromiteSimLogPlugin())
-    #compilepm.hook.pre_compile(compile_config='{0}/river_core/chromite_simlog_plugin/chromite_config.yaml'.format(cwd))
-    #compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), command_line_args='', jobs=jobs, filter=filter)
-    #compilepm.hook.post_compile()
+        path_to_module = config['default']['path_to_target']
+        plugin_target = target + '_plugin'
+        logger.info('Now loading {0}-target'.format(target))
+
+        abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
+        logger.debug("Loading module from {0}".format(abs_location_module))
+
+        compilepm_spec = importlib.util.spec_from_file_location(
+            plugin_target, abs_location_module)
+        compilepm_module = importlib.util.module_from_spec(compilepm_spec)
+        compilepm_spec.loader.exec_module(compilepm_module)
+
+        if target == 'chromite':
+            compilepm.register(compilepm_module.ChromitePlugin())
+            # Add more plugins here :)
+        else:
+            logger.error("Sorry, requested plugin is not really supported ATM")
+            raise SystemExit
+
+        compilepm.hook.pre_compile(ini_config=config[target],
+                                   yaml_config=path_to_module + '/' +
+                                   plugin_target + '/' + 'config.yaml',
+                                   output_dir=output_dir)
+        # NOTE (Add to documentation)
+        # The config files should be saved as config.yaml in the plugin repo
+        compilepm.hook.compile(compile_config=path_to_module + '/' +
+                               plugin_target + '/' + 'config.yaml',
+                               module_dir=path_to_module,
+                               output_dir=output_dir,
+                               asm_dir=asm_dir)
+        # regress_list='{0}/{1}/regresslist.yaml'.format(
+        # output_dir, suite),
+        # command_line_args='',
+        # jobs=jobs,
+        # norun=norun,
+        # filter=filter)
+        compilepm.hook.post_compile()
+
+        # except FileNotFoundError as txt:
+        #     logger.error(target + " not found at : " + path_to_module + ".\n" +
+        #                  str(txt))
+        #     raise SystemExit
+
+        ## Chromite Compile plugin manager
+        #compilepm = pluggy.PluginManager('compile')
+        #compilepm.add_hookspecs(CompileSpec)
+
+        ##compilepm_name = 'river_core.compile_plugin.compile_plugin'
+        #compilepm_name = 'river_core.chromite_simlog_plugin.chromite_simlog_plugin'
+        #compilepm_module = importlib.import_module(compilepm_name, '.')
+        #compilepm.register(compilepm_module.ChromiteSimLogPlugin())
+        #compilepm.hook.pre_compile(compile_config='{0}/river_core/chromite_simlog_plugin/chromite_config.yaml'.format(cwd))
+        #compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), command_line_args='', jobs=jobs, filter=filter)
+        #compilepm.hook.post_compile()
