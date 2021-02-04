@@ -4,11 +4,13 @@ import logging
 import colorlog
 
 # a theme is just a dict of strings to represent each level
-THEME = {logging.CRITICAL: "    critical ",
-         logging.ERROR:    "       error ",
-         logging.WARNING:  "     command ",
-         logging.INFO:     "        info ",
-         logging.DEBUG:    "       debug "}
+THEME = {
+    logging.CRITICAL: "    critical ",
+    logging.ERROR: "       error ",
+    logging.WARNING: "     command ",
+    logging.INFO: "        info ",
+    logging.DEBUG: "       debug "
+}
 
 
 class Log:
@@ -20,10 +22,10 @@ class Log:
 
     aliases = {
         logging.CRITICAL: ("critical", "crit", "c", "fatal"),
-        logging.ERROR:    ("error", "err", "e"),
-        logging.WARNING:  ("warning", "warn", "w"),
-        logging.INFO:     ("info", "inf", "nfo", "i"),
-        logging.DEBUG:    ("debug", "dbg", "d")
+        logging.ERROR: ("error", "err", "e"),
+        logging.WARNING: ("warning", "warn", "w"),
+        logging.INFO: ("info", "inf", "nfo", "i"),
+        logging.DEBUG: ("debug", "dbg", "d")
     }
 
     def __init__(self, lvl=logging.DEBUG, format=None):
@@ -48,37 +50,49 @@ class Log:
     # we also create our convenience methods here
     def critical(self, message, *args, **kwargs):
         for line in str(message).splitlines():
-            self.logger.critical(line,
-                                 extra={"styledname": self.theme[logging.CRITICAL]},
-                                 *args, **kwargs)
+            self.logger.critical(
+                line,
+                extra={"styledname": self.theme[logging.CRITICAL]},
+                *args,
+                **kwargs)
+
     crit = c = fatal = critical
 
     def error(self, message, *args, **kwargs):
         for line in str(message).splitlines():
             self.logger.error(line,
                               extra={"styledname": self.theme[logging.ERROR]},
-                              *args, **kwargs)
+                              *args,
+                              **kwargs)
+
     err = e = error
 
     def warn(self, message, *args, **kwargs):
         for line in str(message).splitlines():
-            self.logger.warning(line,
-                             extra={"styledname": self.theme[logging.WARNING]},
-                             *args, **kwargs)
+            self.logger.warning(
+                line,
+                extra={"styledname": self.theme[logging.WARNING]},
+                *args,
+                **kwargs)
+
     warning = w = warn
 
     def info(self, message, *args, **kwargs):
         for line in str(message).splitlines():
             self.logger.info(line,
                              extra={"styledname": self.theme[logging.INFO]},
-                             *args, **kwargs)
+                             *args,
+                             **kwargs)
+
     inf = nfo = i = info
 
     def debug(self, message, *args, **kwargs):
         for line in str(message).splitlines():
             self.logger.debug(line,
                               extra={"styledname": self.theme[logging.DEBUG]},
-                              *args, **kwargs)
+                              *args,
+                              **kwargs)
+
     dbg = d = debug
 
     # other convenience functions to set the global logging level
@@ -96,4 +110,6 @@ class Log:
         self.stream.setLevel(self._lvl)
         self.logger.setLevel(self._lvl)
         logging.root.setLevel(self._lvl)
+
+
 logger = Log()
