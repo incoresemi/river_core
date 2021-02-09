@@ -8,6 +8,7 @@ import pluggy
 gen_hookspec = pluggy.HookspecMarker("generator")
 compile_hookspec = pluggy.HookspecMarker("compile")
 model_hookspec = pluggy.HookspecMarker("model")
+dut_hookspec = pluggy.HookspecMarker("dut")
 
 
 class RandomGeneratorSpec(object):
@@ -58,7 +59,7 @@ class CompileSpec(object):
         # should set all gcc etc configs
 
     @compile_hookspec
-    def compile(self, compile_config, module_dir, output_dir, asm_dir):
+    def compile(self, module_dir, asm_dir, asm_gen):
         # def compile(suite, regress_list, compile_config, command_line_args, jobs,
         # filter, norun):
         """ compiles all tests in the regress list"""
@@ -86,3 +87,23 @@ class ModelSpec(object):
     @model_hookspec
     def step(self, count=1):
         """ step count instructions"""
+
+# DUT Class Specification
+class DuT_spec(object):
+        """ DuT plugin specification"""
+
+    @dut_hookspec
+    def init(self,jabber, jabber):
+        """ Gets everything up and ready """
+
+    @dut_hookspec
+    def build(self, jabber, jibber):
+        """ Alright, let's get this running; Basically get things compiled and ready to be loaded onto the core """
+
+    @dut_hookspec
+    def run(self, run, args):
+        """ The moment of truth, getting things tested on the core """
+
+    @dut_hookspec
+    def post_run(self, run, habber):
+        """ Just to check something if required """
