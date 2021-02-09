@@ -165,12 +165,14 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
 
     # TODO Test multiple plugin cases
     # Current implementation is using for loop, which might be a bad idea for parallel processing.
-
+    asm_gen = config['default']['generator']
     target_list = config['default']['target'].split(',')
     for target in target_list:
 
-        compilepm = pluggy.PluginManager('compile')
-        compilepm.add_hookspecs(CompileSpec)
+        # compilepm = pluggy.PluginManager('compile')
+        dutpm = pluggy.PluginManager('dut')
+        # compilepm.add_hookspecs(CompileSpec)
+        dutpm.add_hookspecs(DuTSpec)
 
         path_to_module = config['default']['path_to_target']
         plugin_target = target + '_plugin'
@@ -179,36 +181,33 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
         abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
         logger.debug("Loading module from {0}".format(abs_location_module))
 
-        compilepm_spec = importlib.util.spec_from_file_location(
+        dutpm_spec = importlib.util.spec_from_file_location(
             plugin_target, abs_location_module)
-        compilepm_module = importlib.util.module_from_spec(compilepm_spec)
-        compilepm_spec.loader.exec_module(compilepm_module)
+        dutpm_module = importlib.util.module_from_spec(dutpm_spec)
+        dutpm_spec.loader.exec_module(dutpm_module)
 
         if target == 'chromite':
-            compilepm.register(compilepm_module.ChromitePlugin())
+            dutpm.register(dutpm_module.ChromitePlugin())
             # Add more plugins here :)
         else:
             logger.error("Sorry, requested plugin is not really supported ATM")
             raise SystemExit
 
-        compilepm.hook.pre_compile(ini_config=config[target],
-                                   yaml_config=path_to_module + '/' +
-                                   plugin_target + '/' + 'config.yaml',
-                                   output_dir=output_dir)
+        dutpm.hook.init(ini_config=config[target],
+                        yaml_config=path_to_module + '/' + plugin_target + '/' +
+                        'config.yaml',
+                        output_dir=output_dir)
         # NOTE (Add to documentation)
         # The config files should be saved as config.yaml in the plugin repo
-        compilepm.hook.compile(compile_config=path_to_module + '/' +
-                               plugin_target + '/' + 'config.yaml',
-                               module_dir=path_to_module,
-                               output_dir=output_dir,
-                               asm_dir=asm_dir)
+        dutpm.hook.build(asm_dir=asm_dir, asm_gen=asm_gen)
         # regress_list='{0}/{1}/regresslist.yaml'.format(
         # output_dir, suite),
         # command_line_args='',
         # jobs=jobs,
         # norun=norun,
         # filter=filter)
-        compilepm.hook.post_compile()
+        dutpm.hook.run(module_dir=path_to_module, asm_dir=asm_dir)
+        dutpm.hook.post_run()
 
         # except FileNotFoundError as txt:
         #     logger.error(target + " not found at : " + path_to_module + ".\n" +

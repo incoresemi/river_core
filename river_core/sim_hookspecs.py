@@ -88,22 +88,23 @@ class ModelSpec(object):
     def step(self, count=1):
         """ step count instructions"""
 
+
 # DUT Class Specification
-class DuT_spec(object):
-        """ DuT plugin specification"""
+class DuTSpec(object):
+    """ DuT plugin specification"""
 
     @dut_hookspec
-    def init(self,jabber, jabber):
+    def init(self, ini_config, yaml_config, output_dir):
         """ Gets everything up and ready """
 
     @dut_hookspec
-    def build(self, jabber, jibber):
+    def build(self, asm_dir, asm_gen):
         """ Alright, let's get this running; Basically get things compiled and ready to be loaded onto the core """
 
     @dut_hookspec
-    def run(self, run, args):
+    def run(self, module_dir, asm_dir):
         """ The moment of truth, getting things tested on the core """
 
     @dut_hookspec
-    def post_run(self, run, habber):
+    def post_run(self):
         """ Just to check something if required """
