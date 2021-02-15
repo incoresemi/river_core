@@ -314,7 +314,8 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
         # Check if the logs are same number
         try:
 
-            if len(ref_log) == len(target_log):
+            if len(ref_log) == len(
+                    target_log) or not ref_log[0] or not target_log[0]:
                 for i in range(len(ref_log)):
                     # NOTE This is absolutely strange! Why is a double list is created
                     status, result = compare_signature(ref_log[0][i],
@@ -323,9 +324,9 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
                         ref_log[i], target_log[i], status))
             else:
                 logger.info(
-                    'Something is not right with the logs, manual inspection is now suggested.'
+                    'Something is not right with the logs, manual inspection is now reccomended.'
                 )
                 raise SystemExit
         except SystemExit as err:
-            print("Some thing went wrong :|")
+            print("Some thing went wrong with looking at logs :|")
             raise
