@@ -7,6 +7,7 @@ twine==1.14.0
 pytest
 pytest-runner
 pytest-xdist
+pytest-reportlog
 pytest-html
 configparser
 repomanager
@@ -14,5 +15,5 @@ click
 ruamel.yaml
 ansi2html
 envyaml
-riscv_config
+# riscv_config
 aapg
