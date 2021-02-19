@@ -11,7 +11,7 @@ from ruamel.yaml import YAML
 from threading import Timer
 
 
-def sys_command(command, timeout=30):
+def sys_command(command, timeout=240):
     # test = 'exec ' + command
     # logger.debug(test)
     logger.warning('$ timeout={1} {0} '.format(' '.join(shlex.split(command)),

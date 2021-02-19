@@ -329,9 +329,10 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
 
         # Start comparison between files
         # TODO Replace with a signature based model
-        if '' in ref_log or '' in target_log:
+        if '' in ref_log or '' in target_log or not ref_log or not target_log:
             logger.error('Files don\'t seem to exist ; Exiting the framework')
             raise SystemExit
+        # TODO Improve error catching here
         # Check if the logs are same number
         logger.info('Starting comparison between logs')
         try:
@@ -379,30 +380,37 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
         for line in range(1, len(ref_json_list) - 1):
             ref_json_data.append(json.loads(ref_json_list[line]))
 
+        json_data = target_json_data + ref_json_data
         os.chdir(os.path.dirname(__file__))
         str_report_template = 'templates/report.html'
+        str_css_template = 'templates/style.css'
         report_file_name = 'report_{0}.html'.format(
             datetime.datetime.now().strftime("%Y%m%d-%H%M"))
 
         # TODO: WIP still finalizing the template
         # - [ ] Shutil to copy style.css
         html_objects = {}
-        html_objects['date'] = (datetime.datetime.now().strftime("%Y%m%d-%H%M"))
+        html_objects['date'] = (datetime.datetime.now().strftime("%d-%m-%Y"))
+        html_objects['time'] = (datetime.datetime.now().strftime("%H:%M"))
         html_objects['version'] = __version__
         html_objects['isa'] = config['default']['isa']
         html_objects['dut'] = config['default']['target']
         html_objects['generator'] = config['default']['generator']
         html_objects['reference'] = config['default']['reference']
-        html_objects['results'] = ref_json_data[0]
-
+        html_objects['diff_result'] = status
+        html_objects['results'] = json_data
+        # logger.debug('calue:{0}'.format(html_objects['result']['nodeid']))
+        # breakpoint()
         with open(str_report_template, "r") as report_template:
             template = Template(report_template.read())
 
         output = template.render(html_objects)
+
+        shutil.copyfile(str_css_template, output_dir + 'reports/' + 'style.css')
 
         report_file_path = output_dir + 'reports/' + report_file_name
         with open(report_file_path, "w") as report:
             report.write(output)
 
         logger.info('Final report saved at {0} with the name as {1}'.format(
-            output_dir + 'reports/', report_file_name))
+            report_file_path, report_file_name))
