@@ -3,8 +3,7 @@
 # Requirements
 Has been tested using ``python3``
 ```sh
-$ sudo apt install python3-venv
-$ sudo pip3 install sphinx --upgrade
+$ pip install -r requirements.txt
 ```
 
 ## HTML documentation
@@ -21,6 +20,9 @@ $ xdg-open build/html/index.html
 # chrome
 $ google-chrome build/html/index.html
 
+# firefox
+$ firefox build/html/index.html
+
 ```
 Documents are present in ``doc/source`` directory where you can edit
 
@@ -29,8 +31,7 @@ Documents are present in ``doc/source`` directory where you can edit
 ``Requisites:``
 ```sh
 $ sudo apt-get install  texlive
-$ sudo apt install latexmk
-$ sudo apt install texlive-formats-extra
+$ sudo apt install xelatex
 ```
 Commands to build and view
 ```sh
@@ -38,16 +39,13 @@ Commands to build and view
 $ make latexpdf
 
 # view
-$ xdg-open build/latex/river_block.pdf
+$ xdg-open build/latex/river_core.pdf
 ```
 ## Build clean
 
 ```sh
 # build clean
 $ make clean
-
-# venv clean
-$ make distclean
 ```
 
 # References
