@@ -8,7 +8,8 @@ RiVer Core's documentation!
    :caption: Contents:
 
    installation
-   usage
+   config_ini
+   code-doc
    contributing
    authors
 
