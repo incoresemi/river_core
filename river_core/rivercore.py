@@ -120,7 +120,7 @@ def rivercore_generate(config_file, output_dir, verbosity):
     # TODO Test multiple plugin cases
     # Current implementation is using for loop, which might be a bad idea for parallel processing.
 
-    suite_list = config['default']['suite'].split(',')
+    suite_list = config['river_core']['generator'].split(',')
     for suite in suite_list:
 
         # output_dir = os.environ['OUTPUT_DIR']
@@ -128,7 +128,7 @@ def rivercore_generate(config_file, output_dir, verbosity):
         generatorpm = pluggy.PluginManager("generator")
         generatorpm.add_hookspecs(RandomGeneratorSpec)
 
-        path_to_module = config['default']['path_to_suite']
+        path_to_module = config['river_core']['path_to_suite']
         plugin_suite = suite + '_plugin'
         logger.info('Now loading {0} Suite'.format(suite))
         # Using spec and exec_module as it allows usage of full path
@@ -210,8 +210,8 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
 
     # TODO Test multiple plugin cases
     # Current implementation is using for loop, which might be a bad idea for parallel processing.
-    asm_gen = config['default']['generator']
-    target_list = config['default']['target'].split(',')
+    asm_gen = config['river_core']['generator']
+    target_list = config['river_core']['target'].split(',')
     if '' in target_list:
         logger.info('No targets configured, so moving on the reference')
     else:
@@ -222,7 +222,7 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
             # compilepm.add_hookspecs(CompileSpec)
             dutpm.add_hookspecs(DuTSpec)
 
-            path_to_module = config['default']['path_to_target']
+            path_to_module = config['river_core']['path_to_target']
             plugin_target = target + '_plugin'
             logger.info('Now running on the Target Plugins')
             logger.info('Now loading {0}-target'.format(target))
@@ -261,7 +261,7 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
                                          asm_dir=asm_dir)
             target_log = dutpm.hook.post_run()
 
-    ref_list = config['default']['reference'].split(',')
+    ref_list = config['river_core']['reference'].split(',')
     if '' in ref_list:
         logger.info('No references, so exiting the framework')
         raise SystemExit
@@ -273,7 +273,7 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
             # compilepm.add_hookspecs(CompileSpec)
             dutpm.add_hookspecs(DuTSpec)
 
-            path_to_module = config['default']['path_to_ref']
+            path_to_module = config['river_core']['path_to_ref']
             plugin_ref = ref + '_plugin'
             logger.info('Now loading {0}-target'.format(ref))
 
@@ -393,10 +393,10 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
         html_objects['date'] = (datetime.datetime.now().strftime("%d-%m-%Y"))
         html_objects['time'] = (datetime.datetime.now().strftime("%H:%M"))
         html_objects['version'] = __version__
-        html_objects['isa'] = config['default']['isa']
-        html_objects['dut'] = config['default']['target']
-        html_objects['generator'] = config['default']['generator']
-        html_objects['reference'] = config['default']['reference']
+        html_objects['isa'] = config['river_core']['isa']
+        html_objects['dut'] = config['river_core']['target']
+        html_objects['generator'] = config['river_core']['generator']
+        html_objects['reference'] = config['river_core']['reference']
         html_objects['diff_result'] = status
         html_objects['results'] = json_data
         # logger.debug('calue:{0}'.format(html_objects['result']['nodeid']))
