@@ -299,9 +299,7 @@ You can pass a `-v` flag to get more verbose results, optional flag.
 
 .. code-block:: bash
 
-    river_core compile -c /path/to/river_core/examples/sample-config.ini -s /path/to/asm/dir/work/ -o /dir/above/the/work/dir
+    river_core compile -c /path/to/river_core/examples/sample-config.ini -s /path/to/asm/dir/work/
 
-
-.. IMPORTANT:: Will remove -o flag, soon update this here as well.
 
 After the tests are complete you will see that a HTML file is created in your output dir, that will contain all necessary info whether your design has matched or failed, the duration and other necessary logs generated.

@@ -167,7 +167,7 @@ def rivercore_generate(config_file, output_dir, verbosity):
             regressfile='{0}/{1}/regresslist.yaml'.format(output_dir, suite))
 
 
-def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
+def rivercore_compile(config_file, asm_dir, verbosity):
     '''
         Work in Progress
 
@@ -175,13 +175,13 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
 
         :param config_file: Config.ini file for generation
 
-        :param output_dir: Output directory for programs generated
+        :param asm_dir: Output directory for programs generated
 
         :param verbosity: Verbosity level for the framework
 
         :type config_file: click.Path
 
-        :type output_dir: click.Path
+        :type asm_dir: click.Path
 
         :type verbosity: str
     '''
@@ -247,7 +247,7 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
             dutpm.hook.init(ini_config=config[target],
                             yaml_config=path_to_module + '/' + plugin_target +
                             '/' + 'config.yaml',
-                            output_dir=output_dir)
+                            asm_dir=asm_dir)
             # NOTE (Add to documentation)
             # The config files should be saved as config.yaml in the plugin repo
             dutpm.hook.build(asm_dir=asm_dir, asm_gen=asm_gen)
@@ -297,7 +297,7 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
             dutpm.hook.init(ini_config=config[ref],
                             yaml_config=path_to_module + '/' + plugin_ref +
                             '/' + 'config.yaml',
-                            output_dir=output_dir)
+                            asm_dir=asm_dir)
             # NOTE (Add to documentation)
             # The config files should be saved as config.yaml in the plugin repo
             dutpm.hook.build(asm_dir=asm_dir, asm_gen=asm_gen)
@@ -406,9 +406,11 @@ def rivercore_compile(config_file, output_dir, asm_dir, verbosity):
 
         output = template.render(html_objects)
 
-        shutil.copyfile(str_css_template, output_dir + 'reports/' + 'style.css')
+        shutil.copyfile(str_css_template,
+                        asm_dir.replace('work/', '') + 'reports/' + 'style.css')
 
-        report_file_path = output_dir + 'reports/' + report_file_name
+        report_file_path = asm_dir.replace('work/',
+                                           '') + 'reports/' + report_file_name
         with open(report_file_path, "w") as report:
             report.write(output)
 

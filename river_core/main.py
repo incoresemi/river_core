@@ -63,18 +63,12 @@ def clean(config, output_dir, verbosity):
               required=True,
               type=click.Path(),
               help='ASM files to compile <!>')
-@click.option('--output_dir',
-              '-o',
-              default='',
-              required=True,
-              type=click.Path(),
-              help='Output Dir for the compiled binaries <!>')
 @cli.command()
-def compile(config, output_dir, asm_dir, verbosity):
+def compile(config, asm_dir, verbosity):
     '''
         subcommand to compile generated programs.
     '''
-    rivercore_compile(config, output_dir, asm_dir, verbosity)
+    rivercore_compile(config, asm_dir, verbosity)
 
 
 @click.version_option(version=__version__)
