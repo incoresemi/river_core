@@ -52,7 +52,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinxcontrib.autoyaml',
-    'sphinxcontrib.bibtex',
+    # 'sphinxcontrib.bibtex',
     'sphinx_tabs.tabs'
     ]
 

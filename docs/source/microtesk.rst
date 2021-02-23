@@ -31,6 +31,18 @@ MicroTESK generator has the RISC-V model developed in nML language and it is use
   <excludes name="MEM_SV32"/>
 
 Opensource generator
-=======================
+====================
 
 It has a configurable model, generator code, some standard example templates. 
+
+Config.yaml options
+===================
+
+**WIP**
+
+A YAML file is placed in the microtesk plugin file with the name `microtesk_gen_config.yaml`.
+
+- **global_home** -> Path to the microtesk folder
+- **global_config_path** -> Path to the template folders in the plugins
+- **global_command** -> The command to generate the required assembly files. (Usually `generate.sh riscv`)
+- **global_args** -> Args to pass to the microtesk generator (Usually `--solver z3 --generate`)

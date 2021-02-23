@@ -15,7 +15,7 @@ def cli():
         See LICENSE for details
         \b
 
-        Is your config/config.ini ready? Configure RiVer Core there!
+        Is your config.ini ready? Configure RiVer Core there!
     """
 
 

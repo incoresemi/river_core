@@ -1,4 +1,5 @@
 # See LICENSE file for details
+""" Main file containing all necessary functions of river_core """
 import sys
 import os
 import shutil
@@ -21,7 +22,6 @@ from jinja2 import Template
 
 # TODO List:
 # [ ] Improve logging errors
-# [ ] Move all config from yamls to ini
 
 
 # Misc Helper Function

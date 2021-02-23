@@ -181,7 +181,7 @@ Once you have installed RIVER_CORE you can execute ``river_core --help`` to prin
   
     See LICENSE for details 
   
-    Is your config/config.ini ready? Configure RiVer Core there!
+    Is your config.ini ready? Configure RiVer Core there!
   
   Options:
     --help  Show this message and exit.
@@ -246,25 +246,62 @@ With this you should now have all the following available as command line argume
   riscv32-unknown-elf-run            riscv32-unknown-elf-size
   riscv32-unknown-elf-strings        riscv32-unknown-elf-strip
 
+
+.. note:: Each of the generators have their own unique config.yamls to configure their plugin specific details, ensure you have changed them as required.
+
 Install Test Generators
 =======================
+Some of the existing generator plugins include:
+
+- `Microtesk <microtesk.html>`_
+
+- `AAPG <aapg.html>`_
 
 Install Plugin Models
 =====================
+Some of the existing plugin models are:
+
+- `Chromite <chromite.html>`_
+
+
+Install Reference Models
+========================
+Some of the existing reference models are:
+
+- `Spike <spike.html>`_
+
 
 Create a config.ini file
 ========================
 
-Create a config.ini file with the following contents::
+.. _config-file: https://gitlab.com/incoresemi/river-framework/core-verification/river_core/-/blob/dev/examples/sample-config.ini
+This chapter will discuss the syntax and structure of the config.ini file used by river_core.
+A sample `config-file`_ is present in the **examples** directory of the Git Repository.
 
-  blah blah
-  blah blah
-
-Explain the above the fields briefly
+More info on the `Config Spec <config_ini.html>`_
 
 Running RIVER_CORE
 ==================
 
-To run the test-generator do the following
+For taking RIVER_CORE for a test run,
 
-To compile and run the tests on the dut and reference do the following
+1. To generate tests
+
+.. code-block:: bash
+
+    river_core generate -o <output-dir> -c  /path/to/river_core/examples/sample-config.ini
+
+You can pass a `-v` flag to get more verbose results, optional flag.
+
+.. IMPORTANT:: This would only generate AAPG based tests.
+
+2. To compile and test on DuT and Reference Plugins
+
+.. code-block:: bash
+
+    river_core compile -c /path/to/river_core/examples/sample-config.ini -s /path/to/asm/dir/work/ -o /dir/above/the/work/dir
+
+
+.. IMPORTANT:: Will remove -o flag, soon update this here as well.
+
+After the tests are complete you will see that a HTML file is created in your output dir, that will contain all necessary info whether your design has matched or failed, the duration and other necessary logs generated.

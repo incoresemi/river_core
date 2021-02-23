@@ -9,8 +9,8 @@ Code Documentation
    :special-members:
    :private-members:
 
-Database Generator(dbgen)
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Top Level Commands
+^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: river_core.rivercore
    :members: 

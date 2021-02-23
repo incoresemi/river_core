@@ -1,5 +1,5 @@
 # See LICENSE for details
-"""Common Utils """
+"""Provide Utility functions for river_core"""
 import sys
 import os
 import subprocess
@@ -12,6 +12,23 @@ from threading import Timer
 
 
 def sys_command(command, timeout=240):
+    '''
+        Wrapper function to run shell commands with a timeout.
+        Uses :py:mod:`subprocess`, :py:mod:`shlex`, :py:mod:`os`
+        to ensure proper termination on timeout
+
+        :param command: The shell command to run.
+
+        :param timeout: The value after which the framework exits.
+        Default set to configured to 240 seconds
+
+        :type file1: list
+
+        :type file2: int
+
+        :return: Error Code (int) ; STDOUT ; STDERR
+
+    '''
     # test = 'exec ' + command
     # logger.debug(test)
     logger.warning('$ timeout={1} {0} '.format(' '.join(shlex.split(command)),
