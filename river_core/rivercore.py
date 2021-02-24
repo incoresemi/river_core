@@ -329,14 +329,15 @@ def rivercore_compile(config_file, asm_dir, verbosity):
 
         # Start comparison between files
         # TODO Replace with a signature based model
-        if '' in ref_log or '' in target_log or not ref_log or not target_log:
+        if '' in ref_log[0] or '' in target_log[
+                0] or not ref_log[0] or not target_log[0]:
             logger.error('Files don\'t seem to exist ; Exiting the framework')
             raise SystemExit
         # TODO Improve error catching here
         # Check if the logs are same number
         logger.info('Starting comparison between logs')
         try:
-            if len(ref_log) == len(target_log):
+            if len(ref_log[0]) == len(target_log[0]):
                 for i in range(len(ref_log)):
                     # NOTE This is absolutely strange! Why is a double list is created
                     status, result = compare_signature(ref_log[0][i],
