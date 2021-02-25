@@ -27,7 +27,7 @@ def cli():
 @click.option(
     '-c',
     '--config',
-    type=click.Path(dir_okay=False),
+    type=click.Path(dir_okay=False, exists=True),
     help='Read option defaults from the specified INI file',
     show_default=True,
 )
@@ -79,7 +79,7 @@ def compile(config, asm_dir, verbosity):
 @click.option(
     '-c',
     '--config',
-    type=click.Path(dir_okay=False),
+    type=click.Path(dir_okay=False, exists=True),
     help='Read option defaults from the specified INI file',
     show_default=True,
 )
