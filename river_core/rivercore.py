@@ -168,7 +168,7 @@ def rivercore_generate(config_file, output_dir, verbosity):
             regressfile='{0}/{1}/regresslist.yaml'.format(output_dir, suite))
 
 
-def rivercore_compile(config_file, asm_dir, verbosity):
+def rivercore_compile(config_file, asm_dir, file_type, verbosity):
     '''
         Work in Progress
 
@@ -178,11 +178,15 @@ def rivercore_compile(config_file, asm_dir, verbosity):
 
         :param asm_dir: Output directory for programs generated
 
+        :param file_type: Type of config file being passed, possibly a config.ini or a test-list
+
         :param verbosity: Verbosity level for the framework
 
         :type config_file: click.Path
 
         :type asm_dir: click.Path
+
+        :type file_type: str
 
         :type verbosity: str
     '''
@@ -211,111 +215,117 @@ def rivercore_compile(config_file, asm_dir, verbosity):
 
     # TODO Test multiple plugin cases
     # Current implementation is using for loop, which might be a bad idea for parallel processing.
-    asm_gen = config['river_core']['generator']
-    target_list = config['river_core']['target'].split(',')
-    if '' in target_list:
-        logger.info('No targets configured, so moving on the reference')
-    else:
-        for target in target_list:
+    if file_type == 'config':
+        asm_gen = config['river_core']['generator']
+        target_list = config['river_core']['target'].split(',')
+        if '' in target_list:
+            logger.info('No targets configured, so moving on the reference')
+        else:
+            for target in target_list:
 
-            # compilepm = pluggy.PluginManager('compile')
-            dutpm = pluggy.PluginManager('dut')
-            # compilepm.add_hookspecs(CompileSpec)
-            dutpm.add_hookspecs(DuTSpec)
+                # compilepm = pluggy.PluginManager('compile')
+                dutpm = pluggy.PluginManager('dut')
+                # compilepm.add_hookspecs(CompileSpec)
+                dutpm.add_hookspecs(DuTSpec)
 
-            path_to_module = config['river_core']['path_to_target']
-            plugin_target = target + '_plugin'
-            logger.info('Now running on the Target Plugins')
-            logger.info('Now loading {0}-target'.format(target))
+                path_to_module = config['river_core']['path_to_target']
+                plugin_target = target + '_plugin'
+                logger.info('Now running on the Target Plugins')
+                logger.info('Now loading {0}-target'.format(target))
 
-            abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
-            logger.debug("Loading module from {0}".format(abs_location_module))
+                abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
+                logger.debug(
+                    "Loading module from {0}".format(abs_location_module))
 
-            dutpm_spec = importlib.util.spec_from_file_location(
-                plugin_target, abs_location_module)
-            dutpm_module = importlib.util.module_from_spec(dutpm_spec)
-            dutpm_spec.loader.exec_module(dutpm_module)
+                dutpm_spec = importlib.util.spec_from_file_location(
+                    plugin_target, abs_location_module)
+                dutpm_module = importlib.util.module_from_spec(dutpm_spec)
+                dutpm_spec.loader.exec_module(dutpm_module)
 
-            # DuT Plugins
-            if target == 'chromite':
-                dutpm.register(dutpm_module.ChromitePlugin())
-                # NOTE: Add more plugins here :)
-            else:
-                logger.error(
-                    "Sorry, requested plugin is not really supported ATM")
-                raise SystemExit
+                # DuT Plugins
+                if target == 'chromite':
+                    dutpm.register(dutpm_module.ChromitePlugin())
+                    # NOTE: Add more plugins here :)
+                else:
+                    logger.error(
+                        "Sorry, requested plugin is not really supported ATM")
+                    raise SystemExit
 
-            dutpm.hook.init(ini_config=config[target],
-                            yaml_config=path_to_module + '/' + plugin_target +
-                            '/' + 'config.yaml',
-                            asm_dir=asm_dir)
-            # NOTE (Add to documentation)
-            # The config files should be saved as config.yaml in the plugin repo
-            dutpm.hook.build(asm_dir=asm_dir, asm_gen=asm_gen)
-            # regress_list='{0}/{1}/regresslist.yaml'.format(
-            # output_dir, suite),
-            # command_line_args='',
-            # jobs=jobs,
-            # norun=norun,
-            # filter=filter)
-            target_json = dutpm.hook.run(module_dir=path_to_module,
-                                         asm_dir=asm_dir)
-            target_log = dutpm.hook.post_run()
+                dutpm.hook.init(ini_config=config[target],
+                                yaml_config=path_to_module + '/' +
+                                plugin_target + '/' + 'config.yaml',
+                                asm_dir=asm_dir)
+                # NOTE (Add to documentation)
+                # The config files should be saved as config.yaml in the plugin repo
+                dutpm.hook.build(asm_dir=asm_dir, asm_gen=asm_gen)
+                # regress_list='{0}/{1}/regresslist.yaml'.format(
+                # output_dir, suite),
+                # command_line_args='',
+                # jobs=jobs,
+                # norun=norun,
+                # filter=filter)
+                target_json = dutpm.hook.run(module_dir=path_to_module,
+                                             asm_dir=asm_dir)
+                target_log = dutpm.hook.post_run()
 
-    ref_list = config['river_core']['reference'].split(',')
-    if '' in ref_list:
-        logger.info('No references, so exiting the framework')
+        ref_list = config['river_core']['reference'].split(',')
+        if '' in ref_list:
+            logger.info('No references, so exiting the framework')
+            raise SystemExit
+        else:
+            for ref in ref_list:
+
+                # compilepm = pluggy.PluginManager('compile')
+                dutpm = pluggy.PluginManager('dut')
+                # compilepm.add_hookspecs(CompileSpec)
+                dutpm.add_hookspecs(DuTSpec)
+
+                path_to_module = config['river_core']['path_to_ref']
+                plugin_ref = ref + '_plugin'
+                logger.info('Now loading {0}-target'.format(ref))
+
+                abs_location_module = path_to_module + '/' + plugin_ref + '/' + plugin_ref + '.py'
+                logger.debug(
+                    "Loading module from {0}".format(abs_location_module))
+
+                dutpm_spec = importlib.util.spec_from_file_location(
+                    plugin_ref, abs_location_module)
+                dutpm_module = importlib.util.module_from_spec(dutpm_spec)
+                dutpm_spec.loader.exec_module(dutpm_module)
+
+                # DuT Plugins
+                if ref == 'spike':
+                    dutpm.register(dutpm_module.SpikePlugin())
+                    # NOTE: Add more plugins here :)
+                else:
+                    logger.error(
+                        "Sorry, requested plugin is not really supported ATM")
+                    raise SystemExit
+
+                dutpm.hook.init(ini_config=config[ref],
+                                yaml_config=path_to_module + '/' + plugin_ref +
+                                '/' + 'config.yaml',
+                                asm_dir=asm_dir)
+                # NOTE (Add to documentation)
+                # The config files should be saved as config.yaml in the plugin repo
+                dutpm.hook.build(asm_dir=asm_dir, asm_gen=asm_gen)
+                # regress_list='{0}/{1}/regresslist.yaml'.format(
+                # output_dir, suite),
+                # command_line_args='',
+                # jobs=jobs,
+                # norun=norun,
+                # filter=filter)
+                ref_json = dutpm.hook.run(module_dir=path_to_module,
+                                          asm_dir=asm_dir)
+                ref_log = dutpm.hook.post_run()
+                # except FileNotFoundError as txt:
+                #     logger.error(target + " not found at : " + path_to_module + ".\n" +
+                #                  str(txt))
+                #     raise SystemExit
+
+    if file_type == 'test-list':
+        logger.info('Scaffold detected ; Bye Bye :|')
         raise SystemExit
-    else:
-        for ref in ref_list:
-
-            # compilepm = pluggy.PluginManager('compile')
-            dutpm = pluggy.PluginManager('dut')
-            # compilepm.add_hookspecs(CompileSpec)
-            dutpm.add_hookspecs(DuTSpec)
-
-            path_to_module = config['river_core']['path_to_ref']
-            plugin_ref = ref + '_plugin'
-            logger.info('Now loading {0}-target'.format(ref))
-
-            abs_location_module = path_to_module + '/' + plugin_ref + '/' + plugin_ref + '.py'
-            logger.debug("Loading module from {0}".format(abs_location_module))
-
-            dutpm_spec = importlib.util.spec_from_file_location(
-                plugin_ref, abs_location_module)
-            dutpm_module = importlib.util.module_from_spec(dutpm_spec)
-            dutpm_spec.loader.exec_module(dutpm_module)
-
-            # DuT Plugins
-            if ref == 'spike':
-                dutpm.register(dutpm_module.SpikePlugin())
-                # NOTE: Add more plugins here :)
-            else:
-                logger.error(
-                    "Sorry, requested plugin is not really supported ATM")
-                raise SystemExit
-
-            dutpm.hook.init(ini_config=config[ref],
-                            yaml_config=path_to_module + '/' + plugin_ref +
-                            '/' + 'config.yaml',
-                            asm_dir=asm_dir)
-            # NOTE (Add to documentation)
-            # The config files should be saved as config.yaml in the plugin repo
-            dutpm.hook.build(asm_dir=asm_dir, asm_gen=asm_gen)
-            # regress_list='{0}/{1}/regresslist.yaml'.format(
-            # output_dir, suite),
-            # command_line_args='',
-            # jobs=jobs,
-            # norun=norun,
-            # filter=filter)
-            ref_json = dutpm.hook.run(module_dir=path_to_module,
-                                      asm_dir=asm_dir)
-            ref_log = dutpm.hook.post_run()
-            # except FileNotFoundError as txt:
-            #     logger.error(target + " not found at : " + path_to_module + ".\n" +
-            #                  str(txt))
-            #     raise SystemExit
-
         ## Chromite Compile plugin manager
         #compilepm = pluggy.PluginManager('compile')
         #compilepm.add_hookspecs(CompileSpec)
@@ -330,91 +340,90 @@ def rivercore_compile(config_file, asm_dir, verbosity):
 
         # Start comparison between files
         # TODO Replace with a signature based model
-        if '' in ref_log[0] or '' in target_log[
-                0] or not ref_log[0] or not target_log[0]:
-            logger.error('Files don\'t seem to exist ; Exiting the framework')
+    if '' in ref_log[0] or '' in target_log[
+            0] or not ref_log[0] or not target_log[0]:
+        logger.error('Files don\'t seem to exist ; Exiting the framework')
+    # TODO Improve error catching here
+    # Check if the logs are same number
+    logger.info('Starting comparison between logs')
+    try:
+        if len(ref_log[0]) == len(target_log[0]):
+            for i in range(len(ref_log)):
+                # NOTE This is absolutely strange! Why is a double list is created
+                status, result = compare_signature(ref_log[0][i],
+                                                   target_log[0][i])
+                logger.info("Matching {0} and {1} \n Result : {2}".format(
+                    ref_log[i], target_log[i], status))
+        else:
+            logger.info(
+                'Something is not right with the logs, manual inspection is now reccomended.'
+            )
             raise SystemExit
-        # TODO Improve error catching here
-        # Check if the logs are same number
-        logger.info('Starting comparison between logs')
-        try:
-            if len(ref_log[0]) == len(target_log[0]):
-                for i in range(len(ref_log)):
-                    # NOTE This is absolutely strange! Why is a double list is created
-                    status, result = compare_signature(ref_log[0][i],
-                                                       target_log[0][i])
-                    logger.info("Matching {0} and {1} \n Result : {2}".format(
-                        ref_log[i], target_log[i], status))
-            else:
-                logger.info(
-                    'Something is not right with the logs, manual inspection is now reccomended.'
-                )
-                raise SystemExit
-        except SystemExit as err:
-            print("Some thing went wrong with looking at logs :|")
-            raise
+    except SystemExit as err:
+        print("Some thing went wrong with looking at logs :|")
+        raise
 
-        # Start checking things after running the commands
-        # Report generation starts here
-        # report_dir = output_dir + 'reports/'
-        # Target
-        if not target_json[0] or not ref_json[0]:
-            logger.error('JSON files not available exiting')
-            raise SystemExit
+    # Start checking things after running the commands
+    # Report generation starts here
+    # report_dir = output_dir + 'reports/'
+    # Target
+    if not target_json[0] or not ref_json[0]:
+        logger.error('JSON files not available exiting')
+        raise SystemExit
 
-        json_file = open(target_json[0] + '.json', 'r')
-        # NOTE Ignore first and last lines cause; Fails to load the JSON
-        # target_json_list = json_file.readlines()[1:-1]
-        # json_file.close()
-        target_json_list = json_file.readlines()
-        json_file.close()
-        target_json_data = []
-        for line in range(1, len(target_json_list) - 1):
-            target_json_data.append(json.loads(target_json_list[line]))
+    json_file = open(target_json[0] + '.json', 'r')
+    # NOTE Ignore first and last lines cause; Fails to load the JSON
+    # target_json_list = json_file.readlines()[1:-1]
+    # json_file.close()
+    target_json_list = json_file.readlines()
+    json_file.close()
+    target_json_data = []
+    for line in range(1, len(target_json_list) - 1):
+        target_json_data.append(json.loads(target_json_list[line]))
 
-        json_file = open(ref_json[0] + '.json', 'r')
-        # NOTE Ignore first and last lines cause; Fails to load the JSON
-        # ref_json_list = json_file.readlines()[1:-1]
-        # json_file.close()
-        ref_json_list = json_file.readlines()
-        json_file.close()
-        ref_json_data = []
-        for line in range(1, len(ref_json_list) - 1):
-            ref_json_data.append(json.loads(ref_json_list[line]))
+    json_file = open(ref_json[0] + '.json', 'r')
+    # NOTE Ignore first and last lines cause; Fails to load the JSON
+    # ref_json_list = json_file.readlines()[1:-1]
+    # json_file.close()
+    ref_json_list = json_file.readlines()
+    json_file.close()
+    ref_json_data = []
+    for line in range(1, len(ref_json_list) - 1):
+        ref_json_data.append(json.loads(ref_json_list[line]))
 
-        json_data = target_json_data + ref_json_data
-        os.chdir(os.path.dirname(__file__))
-        str_report_template = 'templates/report.html'
-        str_css_template = 'templates/style.css'
-        report_file_name = 'report_{0}.html'.format(
-            datetime.datetime.now().strftime("%Y%m%d-%H%M"))
+    json_data = target_json_data + ref_json_data
+    os.chdir(os.path.dirname(__file__))
+    str_report_template = 'templates/report.html'
+    str_css_template = 'templates/style.css'
+    report_file_name = 'report_{0}.html'.format(
+        datetime.datetime.now().strftime("%Y%m%d-%H%M"))
 
-        # TODO: WIP still finalizing the template
-        # - [ ] Shutil to copy style.css
-        html_objects = {}
-        html_objects['date'] = (datetime.datetime.now().strftime("%d-%m-%Y"))
-        html_objects['time'] = (datetime.datetime.now().strftime("%H:%M"))
-        html_objects['version'] = __version__
-        html_objects['isa'] = config['river_core']['isa']
-        html_objects['dut'] = config['river_core']['target']
-        html_objects['generator'] = config['river_core']['generator']
-        html_objects['reference'] = config['river_core']['reference']
-        html_objects['diff_result'] = status
-        html_objects['results'] = json_data
-        # logger.debug('calue:{0}'.format(html_objects['result']['nodeid']))
-        # breakpoint()
-        with open(str_report_template, "r") as report_template:
-            template = Template(report_template.read())
+    # TODO: WIP still finalizing the template
+    # - [ ] Shutil to copy style.css
+    html_objects = {}
+    html_objects['date'] = (datetime.datetime.now().strftime("%d-%m-%Y"))
+    html_objects['time'] = (datetime.datetime.now().strftime("%H:%M"))
+    html_objects['version'] = __version__
+    html_objects['isa'] = config['river_core']['isa']
+    html_objects['dut'] = config['river_core']['target']
+    html_objects['generator'] = config['river_core']['generator']
+    html_objects['reference'] = config['river_core']['reference']
+    html_objects['diff_result'] = status
+    html_objects['results'] = json_data
+    # logger.debug('calue:{0}'.format(html_objects['result']['nodeid']))
+    # breakpoint()
+    with open(str_report_template, "r") as report_template:
+        template = Template(report_template.read())
 
-        output = template.render(html_objects)
+    output = template.render(html_objects)
 
-        shutil.copyfile(str_css_template,
-                        asm_dir.replace('work/', '') + 'reports/' + 'style.css')
+    shutil.copyfile(str_css_template,
+                    asm_dir.replace('work/', '') + 'reports/' + 'style.css')
 
-        report_file_path = asm_dir.replace('work/',
-                                           '') + 'reports/' + report_file_name
-        with open(report_file_path, "w") as report:
-            report.write(output)
+    report_file_path = asm_dir.replace('work/',
+                                       '') + 'reports/' + report_file_name
+    with open(report_file_path, "w") as report:
+        report.write(output)
 
-        logger.info('Final report saved at {0} with the name as {1}'.format(
-            report_file_path, report_file_name))
+    logger.info('Final report saved at {0} with the name as {1}'.format(
+        report_file_path, report_file_name))
