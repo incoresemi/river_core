@@ -157,11 +157,12 @@ def rivercore_generate(config_file, output_dir, verbosity):
 
         generatorpm.hook.pre_gen(spec_config=config[suite],
                                  output_dir='{0}/{1}'.format(output_dir, suite))
-        generatorpm.hook.gen(
+        test_list = generatorpm.hook.gen(
             gen_config='{0}/{1}_plugin/{1}_gen_config.yaml'.format(
                 path_to_module, suite),
             module_dir=path_to_module,
             output_dir=output_dir)
+        logger.debug(test_list)
         generatorpm.hook.post_gen(
             output_dir='{0}/{1}'.format(output_dir, suite),
             regressfile='{0}/{1}/regresslist.yaml'.format(output_dir, suite))
