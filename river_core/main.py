@@ -63,16 +63,16 @@ def clean(config, output_dir, verbosity):
               type=click.Path(dir_okay=False, exists=True),
               help='Read option defaults from the specified INI file',
               required=True)
-@click.option('--asm_dir',
-              '-s',
+@click.option('--output_dir',
+              '-o',
               type=click.Path(exists=True),
               help='ASM files to compile')
 @cli.command()
-def compile(config, asm_dir, test_list, verbosity):
+def compile(config, output_dir, test_list, verbosity):
     '''
         subcommand to compile generated programs.
     '''
-    rivercore_compile(config, asm_dir, test_list, verbosity)
+    rivercore_compile(config, output_dir, test_list, verbosity)
 
 
 @click.version_option(version=__version__)

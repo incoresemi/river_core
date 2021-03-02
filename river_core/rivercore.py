@@ -183,7 +183,7 @@ def rivercore_generate(config_file, output_dir, verbosity):
             test_list_file))
 
 
-def rivercore_compile(config_file, asm_dir, test_list, verbosity):
+def rivercore_compile(config_file, output_dir, test_list, verbosity):
     '''
         Work in Progress
 
@@ -191,7 +191,7 @@ def rivercore_compile(config_file, asm_dir, test_list, verbosity):
 
         :param config_file: Config.ini file for generation
 
-        :param asm_dir: Output directory for programs generated
+        :param output_dir: Output directory for programs generated
 
         :param test_list: Test List exported from generate sub-command ; (Optional)
 
@@ -199,7 +199,7 @@ def rivercore_compile(config_file, asm_dir, test_list, verbosity):
 
         :type config_file: click.Path
 
-        :type asm_dir: click.Path
+        :type output_dir: click.Path
 
         :type test_list: click.Path
 
@@ -266,12 +266,12 @@ def rivercore_compile(config_file, asm_dir, test_list, verbosity):
 
             dutpm.hook.init(ini_config=config[target],
                             test_list=test_list,
-                            asm_dir=asm_dir,
+                            asm_dir=output_dir,
                             config_yaml=path_to_module + '/' + plugin_target +
                             '/' + 'config.yaml')
             # NOTE (Add to documentation)
             # The config files should be saved as config.yaml in the plugin repo
-            dutpm.hook.build(asm_dir=asm_dir, asm_gen=asm_gen)
+            dutpm.hook.build(asm_dir=output_dir, asm_gen=asm_gen)
             # regress_list='{0}/{1}/regresslist.yaml'.format(
             # output_dir, suite),
             # command_line_args='',
@@ -279,7 +279,7 @@ def rivercore_compile(config_file, asm_dir, test_list, verbosity):
             # norun=norun,
             # filter=filter)
             target_json = dutpm.hook.run(module_dir=path_to_module,
-                                         asm_dir=asm_dir)
+                                         asm_dir=output_dir)
             target_log = dutpm.hook.post_run()
 
     ref_list = config['river_core']['reference'].split(',')
@@ -317,12 +317,12 @@ def rivercore_compile(config_file, asm_dir, test_list, verbosity):
 
             dutpm.hook.init(ini_config=config[ref],
                             test_list=test_list,
-                            asm_dir=asm_dir,
-                            config_yaml=path_to_module + '/' + plugin_target +
+                            asm_dir=output_dir,
+                            config_yaml=path_to_module + '/' + plugin_ref +
                             '/' + 'config.yaml')
             # NOTE (Add to documentation)
             # The config files should be saved as config.yaml in the plugin repo
-            dutpm.hook.build(asm_dir=asm_dir, asm_gen=asm_gen)
+            dutpm.hook.build(asm_dir=output_dir, asm_gen=asm_gen)
             # regress_list='{0}/{1}/regresslist.yaml'.format(
             # output_dir, suite),
             # command_line_args='',
@@ -330,7 +330,7 @@ def rivercore_compile(config_file, asm_dir, test_list, verbosity):
             # norun=norun,
             # filter=filter)
             ref_json = dutpm.hook.run(module_dir=path_to_module,
-                                      asm_dir=asm_dir)
+                                      asm_dir=output_dir)
             ref_log = dutpm.hook.post_run()
             # except FileNotFoundError as txt:
             #     logger.error(target + " not found at : " + path_to_module + ".\n" +
