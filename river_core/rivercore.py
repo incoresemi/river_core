@@ -162,19 +162,25 @@ def rivercore_generate(config_file, output_dir, verbosity):
                 path_to_module, suite),
             module_dir=path_to_module,
             output_dir=output_dir)
-        logger.debug(test_list)
         generatorpm.hook.post_gen(
             output_dir='{0}/{1}'.format(output_dir, suite),
             regressfile='{0}/{1}/regresslist.yaml'.format(output_dir, suite))
 
-        testfile = open(
-            output_dir + '/' + suite + '/' + suite + '_test_list.yaml', 'w')
+        test_list_file = output_dir + suite + '/' + suite + '_test_list.yaml'
+        testfile = open(test_list_file, 'w')
+        logger.debug('Test-List Dump:{0} \n {1}'.format(test_list,
+                                                        test_list[0]))
         # Sort keys allows to maintain the above order
-        yaml.safe_dump(test_list,
+        # Weird Python thingy, converting dicts into lists
+        # Code will have these X[0], find a better solution some day, maybe a future TODO
+        yaml.safe_dump(test_list[0],
                        testfile,
                        default_flow_style=False,
                        sort_keys=False)
         testfile.close()
+
+        logger.info('Test list is generated and available at {0}'.format(
+            test_list_file))
 
 
 def rivercore_compile(config_file, asm_dir, test_list, verbosity):
@@ -259,9 +265,10 @@ def rivercore_compile(config_file, asm_dir, test_list, verbosity):
                 raise SystemExit
 
             dutpm.hook.init(ini_config=config[target],
-                            yaml_config=path_to_module + '/' + plugin_target +
-                            '/' + 'config.yaml',
-                            asm_dir=asm_dir)
+                            test_list=test_list,
+                            asm_dir=asm_dir,
+                            config_yaml=path_to_module + '/' + plugin_target +
+                            '/' + 'config.yaml')
             # NOTE (Add to documentation)
             # The config files should be saved as config.yaml in the plugin repo
             dutpm.hook.build(asm_dir=asm_dir, asm_gen=asm_gen)
@@ -309,9 +316,10 @@ def rivercore_compile(config_file, asm_dir, test_list, verbosity):
                 raise SystemExit
 
             dutpm.hook.init(ini_config=config[ref],
-                            yaml_config=path_to_module + '/' + plugin_ref +
-                            '/' + 'config.yaml',
-                            asm_dir=asm_dir)
+                            test_list=test_list,
+                            asm_dir=asm_dir,
+                            config_yaml=path_to_module + '/' + plugin_target +
+                            '/' + 'config.yaml')
             # NOTE (Add to documentation)
             # The config files should be saved as config.yaml in the plugin repo
             dutpm.hook.build(asm_dir=asm_dir, asm_gen=asm_gen)
