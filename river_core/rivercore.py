@@ -142,8 +142,8 @@ def rivercore_clean(config_file, output_dir, verbosity):
     logger.info('{0}/{1}/Makefile.{2}'.format(output_dir, suite, target))
     logger.info('{0}/{1}/{2}'.format(output_dir, suite, ref))
     logger.info('{0}/{1}/Makefile.{2}'.format(output_dir, suite, ref))
-    res=confirm()
-    if res == 'y':
+    res = confirm()
+    if res:
         sys_command('rm -rf {0}/{1}/{2}'.format(output_dir, suite, target))
         sys_command('rm -rf {0}/{1}/Makefile.{2}'.format(output_dir, suite, target))
         sys_command('rm -rf {0}/{1}/{2}'.format(output_dir, suite, ref))
@@ -258,7 +258,7 @@ def rivercore_compile(config_file, output_dir, test_list, verbosity):
 
         :param output_dir: Output directory for programs generated
 
-        :param test_list: Test List exported from generate sub-command ; (Optional)
+        :param test_list: Test List exported from generate sub-command 
 
         :param verbosity: Verbosity level for the framework
 
