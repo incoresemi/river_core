@@ -104,6 +104,16 @@ def generate_report(output_dir, json_data, config, log_cmp_status):
         'Final report saved at {0}\nMay the debugging force be with you!'.
         format(report_file_path))
 
+def confirm():
+    """
+    Ask user to enter Y or N (case-insensitive).
+    :return: True if the answer is Y.
+    :rtype: bool
+    """
+    answer = ""
+    while answer not in ["y", "n"]:
+        answer = input("Type [Y/N] to continue execution ? ").lower()
+    return answer == "y"
 
 def rivercore_clean(config_file, output_dir, verbosity):
     '''
@@ -112,6 +122,7 @@ def rivercore_clean(config_file, output_dir, verbosity):
 
     '''
 
+    config = configparser.ConfigParser()
     config.read(config_file)
     logger.level(verbosity)
     logger.info('****** RiVer Core {0} *******'.format(__version__))
@@ -119,8 +130,27 @@ def rivercore_clean(config_file, output_dir, verbosity):
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
 
-    # sys_command('rm -rf {0}/{1}/*'.format(output_dir, suite))
+    suite = config['river_core']['generator']
+    target = config['river_core']['target']
+    ref = config['river_core']['reference']
 
+    logger.info("It only removes the files generated during tests, so ASM/Reports are safe")
+    logger.info("Now removing files from {0} Suite for the {1} Target with {2} Ref".format(suite, target,ref))
+    logger.info("Follwoing files will be removed")
+    logger.info('{0}/{1}/{2}'.format(output_dir, suite, target))
+    logger.info('{0}/{1}/Makefile.{2}'.format(output_dir, suite, target))
+    logger.info('{0}/{1}/{2}'.format(output_dir, suite, ref))
+    logger.info('{0}/{1}/Makefile.{2}'.format(output_dir, suite, ref))
+    res=confirm()
+    if res == 'y':
+        sys_command('rm -rf {0}/{1}/{2}'.format(output_dir, suite, target))
+        sys_command('rm -rf {0}/{1}/Makefile.{2}'.format(output_dir, suite, target))
+        sys_command('rm -rf {0}/{1}/{2}'.format(output_dir, suite, ref))
+        sys_command('rm -rf {0}/{1}/Makefile.{2}'.format(output_dir, suite, ref))
+
+        logger.info("All clean now")
+    else:
+        logger.info("No so, nothing is modified")
 
 def rivercore_generate(config_file, output_dir, verbosity):
     '''

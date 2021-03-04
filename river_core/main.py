@@ -51,12 +51,11 @@ def clean(config, output_dir, verbosity):
               '--verbosity',
               default='info',
               help='Set the verbosity level for the framework')
-@click.option(
-    '-t',
-    '--test_list',
-    type=click.Path(dir_okay=False, exists=True),
-    help='Test List file to pass',
-)
+@click.option('-t',
+              '--test_list',
+              type=click.Path(dir_okay=False, exists=True),
+              help='Test List file to pass',
+              required=True)
 # required=True)
 @click.option('-c',
               '--config',
@@ -66,7 +65,8 @@ def clean(config, output_dir, verbosity):
 @click.option('--output_dir',
               '-o',
               type=click.Path(exists=True),
-              help='ASM files to compile')
+              help='ASM files to compile',
+              required=True)
 @cli.command()
 def compile(config, output_dir, test_list, verbosity):
     '''
