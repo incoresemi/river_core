@@ -121,7 +121,8 @@ def rivercore_clean(config_file, output_dir, verbosity):
         Work in Progress
 
     '''
-
+    
+    output_dir = output_dir + '/'
     config = configparser.ConfigParser()
     config.read(config_file)
     logger.level(verbosity)
@@ -169,6 +170,7 @@ def rivercore_generate(config_file, output_dir, verbosity):
         :type verbosity: str
     '''
 
+    output_dir = output_dir + '/'
     logger.level(verbosity)
     config = configparser.ConfigParser()
     config.read(config_file)
@@ -269,6 +271,7 @@ def rivercore_compile(config_file, output_dir, test_list, verbosity):
         :type verbosity: str
     '''
 
+    output_dir = output_dir + '/'
     logger.level(verbosity)
     config = configparser.ConfigParser()
     config.read(config_file)
