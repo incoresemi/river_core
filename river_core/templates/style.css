@@ -226,3 +226,12 @@ div.image img {
   position: relative;
   overflow: hidden;
 }
+
+.red {
+        color: red;
+    }
+
+.green {
+        color: green;
+    }
+

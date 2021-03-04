@@ -209,7 +209,7 @@ function key_num(col_index) {
 
 function key_result(col_index) {
     return function(elem) {
-        var strings = ['Passed','Failed'];
+        var strings = ['passed','failed'];
         return strings.indexOf(elem.childNodes[1].childNodes[col_index].firstChild.data);
     };
 }
@@ -265,23 +265,19 @@ function filter_table(elem) {
 
 </script>
     <h1>{{ name }}</h1>
-    <p>Report generated on {{ date }} at {{ time }} by <a href="https://gitlab.com/incoresemi/river-framework">river_core</a> v{{ version }}</p>
+    <h2>Report generated on {{ date }} at {{ time }} by <a href="https://gitlab.com/incoresemi/river-framework">river_core</a> v{{ version }}</h2>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
-        <td>river_core Version</td>
-        <td>{{ version }}</td></tr>
-      <tr>
-        <td>DUT</td>
-        <td>{{ dut }}</td></tr>
-      <tr>
-        <td>Reference</td>
-        <td>{{ reference }}</td></tr>
-      <tr>
-        <td>ISA</td>
-        <td>{{ isa }}</td></tr>
-      <tr>
-        <td>Generator</td>
+        <th>River_Core Version</th>
+        <td>{{ version }}</td>
+        <th>DuT Model</th>
+        <td>{{ dut }}</td>
+        <th>Reference Model</th>
+        <td>{{ reference }}</td>
+        <th>ISA</th>
+        <td>{{ isa }}</td>
+        <th>Program Generator</th>
         <td>{{ generator }}</td></tr>
       <!-- <tr> -->
       <!--   <td>User Spec Version</td> -->
@@ -316,15 +312,17 @@ function filter_table(elem) {
     <!-- <p>Please visit <a href="https://riscv-config.readthedocs.io/en/latest/yaml-specs.html">YAML specifications</a> for more information. </p> -->
 
     <h2>Summary</h2>
-    <h3>Simple Diff comparison</h3>
-    <p>Diff test: {{ diff_result }}</p>
-    <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="passed">{{ num_passed }}Passed</span>, <input checked="true" class="filter" data-test-result="failed" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="failed">{{ num_failed }}Failed</span>
+    <h3>Log comparison result:</h3>
+    <h4 class="{{'red' if diff_result == False else 'green'}}">{{'Failed'  if diff_result == False and 'Unavailable' else 'Matched'}}</h4>
+     <!-- TODO Fix checkbox toggle --> 
+    <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="passed">{{ num_passed }} Passed</span>, <input checked="true" class="filter" data-test-result="failed" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="failed">{{ num_failed }} Failed</span>
     <h2>Results</h2>
     <table id="results-table">
       <thead id="results-table-head">
         <tr>
           <th class="sortable" col="name">Test</th>
           <th class="sortable result initial-sort" col="result">Result</th>
+          <th col="stage">Stage</th>
           <th col="path">Path</th>
           <th col="duration">Duration</th>
           </tr>
@@ -335,6 +333,7 @@ function filter_table(elem) {
         <tr>
           <td class="col-name">{{ result.nodeid }}</td>
           <td class="col-result">{{ result.outcome }}</td>
+          <td class="col-stage">{{ result.ticket }}</td>
           <td class="col-path">{{ result.location}}</td>
           <td class="col-duration">{{ result.duration}}</td></tr>
         <tr>
