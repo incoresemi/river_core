@@ -1,7 +1,0 @@
-gcc:
-  command: riscv64-unknown-elf-gcc
-  args: -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -DENTROPY=0x9629af2 -std=gnu99 -O2 
-elf2hex:
-  command: elf2hex
-  args: [8, 4194304, 2147483648]
-  out_file: code.mem

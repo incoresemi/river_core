@@ -26,6 +26,12 @@ To generate test programs use::
   // Sample config is provided in the config/config.ini
   river_core --help // For more info
 
+To compile and compare programs use::
+
+  river_core compile -c < <path to river_core config>/config-compile.ini -s <AAPG Gen ASM dir>/work/ -v debug -o <Dir above ASM>/
+  // Please ensure that the paths end with a slash.
+  // Will remove -o/-s to avoid redundancy while running command
+
 Config
 ------
 *In the process of being determined*

@@ -8,6 +8,7 @@ from river_core.__init__ import __version__
 
 
 @click.group()
+@click.version_option(version=__version__)
 def cli():
     """ RiVer Core verification framework
         \b
@@ -15,7 +16,7 @@ def cli():
         See LICENSE for details
         \b
 
-        Is your config/config.ini ready? Configure RiVer Core there!
+        Is your config.ini ready? Configure RiVer Core there!
     """
 
 
@@ -27,7 +28,7 @@ def cli():
 @click.option(
     '-c',
     '--config',
-    type=click.Path(dir_okay=False),
+    type=click.Path(dir_okay=False, exists=True),
     help='Read option defaults from the specified INI file',
     show_default=True,
 )
@@ -50,25 +51,28 @@ def clean(config, output_dir, verbosity):
               '--verbosity',
               default='info',
               help='Set the verbosity level for the framework')
-@click.option(
-    '-c',
-    '--config',
-    type=click.Path(dir_okay=False),
-    help='Read option defaults from the specified INI file',
-    show_default=True,
-)
+@click.option('-t',
+              '--test_list',
+              type=click.Path(dir_okay=False, exists=True),
+              help='Test List file to pass',
+              required=True)
+# required=True)
+@click.option('-c',
+              '--config',
+              type=click.Path(dir_okay=False, exists=True),
+              help='Read option defaults from the specified INI file',
+              required=True)
 @click.option('--output_dir',
               '-o',
-              default='',
-              required=True,
-              type=click.Path(),
-              help='Output Dir <!>')
+              type=click.Path(exists=True),
+              help='ASM files to compile',
+              required=True)
 @cli.command()
-def compile(config, output_dir, verbosity):
+def compile(config, output_dir, test_list, verbosity):
     '''
         subcommand to compile generated programs.
     '''
-    rivercore_compile(config, output_dir, verbosity)
+    rivercore_compile(config, output_dir, test_list, verbosity)
 
 
 @click.version_option(version=__version__)
@@ -79,7 +83,7 @@ def compile(config, output_dir, verbosity):
 @click.option(
     '-c',
     '--config',
-    type=click.Path(dir_okay=False),
+    type=click.Path(dir_okay=False, exists=True),
     help='Read option defaults from the specified INI file',
     show_default=True,
 )
