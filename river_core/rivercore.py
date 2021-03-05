@@ -104,6 +104,7 @@ def generate_report(output_dir, json_data, config, log_cmp_status):
         'Final report saved at {0}\nMay the debugging force be with you!'.
         format(report_file_path))
 
+
 def confirm():
     """
     Ask user to enter Y or N (case-insensitive).
@@ -115,13 +116,14 @@ def confirm():
         answer = input("Type [Y/N] to continue execution ? ").lower()
     return answer == "y"
 
+
 def rivercore_clean(config_file, output_dir, verbosity):
     '''
         Alpha
         Work in Progress
 
     '''
-    
+
     output_dir = output_dir + '/'
     config = configparser.ConfigParser()
     config.read(config_file)
@@ -135,9 +137,13 @@ def rivercore_clean(config_file, output_dir, verbosity):
     target = config['river_core']['target']
     ref = config['river_core']['reference']
 
-    logger.info("It only removes the files generated during tests, so ASM/Reports are safe")
-    logger.info("Now removing files from {0} Suite for the {1} Target with {2} Ref".format(suite, target,ref))
-    logger.info("Follwoing files will be removed")
+    logger.info(
+        "It only removes the files generated during tests, so ASM/Reports are safe"
+    )
+    logger.info(
+        "Now removing files from {0} Suite for the {1} Target with {2} Ref".
+        format(suite, target, ref))
+    logger.info("Following files will be removed")
     logger.info('{0}/{1}/{2}'.format(output_dir, suite, target))
     logger.info('{0}/{1}/Makefile.{2}'.format(output_dir, suite, target))
     logger.info('{0}/{1}/{2}'.format(output_dir, suite, ref))
@@ -145,13 +151,16 @@ def rivercore_clean(config_file, output_dir, verbosity):
     res = confirm()
     if res:
         sys_command('rm -rf {0}/{1}/{2}'.format(output_dir, suite, target))
-        sys_command('rm -rf {0}/{1}/Makefile.{2}'.format(output_dir, suite, target))
+        sys_command('rm -rf {0}/{1}/Makefile.{2}'.format(
+            output_dir, suite, target))
         sys_command('rm -rf {0}/{1}/{2}'.format(output_dir, suite, ref))
-        sys_command('rm -rf {0}/{1}/Makefile.{2}'.format(output_dir, suite, ref))
+        sys_command('rm -rf {0}/{1}/Makefile.{2}'.format(
+            output_dir, suite, ref))
 
         logger.info("All clean now")
     else:
         logger.info("No so, nothing is modified")
+
 
 def rivercore_generate(config_file, output_dir, verbosity):
     '''
@@ -220,8 +229,7 @@ def rivercore_generate(config_file, output_dir, verbosity):
             generatorpm.register(generatorpm_module.RiscvDvPlugin())
 
         generatorpm.hook.pre_gen(spec_config=config[suite],
-                                 output_dir='{0}/{1}'.format(
-                                     output_dir, suite))
+                                 output_dir='{0}/{1}'.format(output_dir, suite))
         test_list = generatorpm.hook.gen(
             gen_config='{0}/{1}_plugin/{1}_gen_config.yaml'.format(
                 path_to_module, suite),
@@ -233,8 +241,8 @@ def rivercore_generate(config_file, output_dir, verbosity):
 
         test_list_file = output_dir + suite + '/' + suite + '_test_list.yaml'
         testfile = open(test_list_file, 'w')
-        logger.debug('Test-List Dump:{0} \n {1}'.format(
-            test_list, test_list[0]))
+        logger.debug('Test-List Dump:{0} \n {1}'.format(test_list,
+                                                        test_list[0]))
         # Sort keys allows to maintain the above order
         # Weird Python thingy, converting dicts into lists
         # Code will have these X[0], find a better solution some day, maybe a future TODO
@@ -322,7 +330,7 @@ def rivercore_compile(config_file, output_dir, test_list, verbosity):
             dutpm_spec.loader.exec_module(dutpm_module)
 
             # DuT Plugins
-            if target == 'chromite':
+            if target == 'chromite_verilator':
                 dutpm.register(dutpm_module.ChromitePlugin())
                 # NOTE: Add more plugins here :)
             else:
@@ -419,8 +427,8 @@ def rivercore_compile(config_file, output_dir, test_list, verbosity):
         # TODO Replace with a signature based model
         if '' in ref_log[0] or '' in target_log[
                 0] or not ref_log[0] or not target_log[0]:
-            logger.error('Files don\'t seem to exist ; Exiting the framework')
-            raise SystemExit
+            logger.error(
+                'Files don\'t seem to exist ; Expect more errors on the way')
         # TODO Improve error catching here
         # Check if the logs are same number
         logger.info('Starting comparison between logs')
