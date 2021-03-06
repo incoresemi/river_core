@@ -49,7 +49,8 @@ def generate_report(output_dir, json_data, config, log_cmp_status):
     final_data = []
     ## Remove the initial info
     for json_row in json_data:
-        if json_row.get('nodeid', None):
+        # NOTE: Playing with fire here, pytest developers could (potentially) change this
+        if json_row.get('$report_type', None) == 'TestReport':
             final_data.append(json_row)
     json_data = final_data
     ## Get the proper stats about passed and failed test
@@ -85,7 +86,6 @@ def generate_report(output_dir, json_data, config, log_cmp_status):
     html_objects['results'] = json_data
     html_objects['num_passed'] = num_passed
     html_objects['num_failed'] = num_failed
-    # logger.debug('calue:{0}'.format(html_objects['result']['nodeid']))
     if not os.path.exists(report_dir):
         os.makedirs(report_dir)
 
@@ -305,6 +305,7 @@ def rivercore_compile(config_file, output_dir, test_list, verbosity):
     # TODO Test multiple plugin cases
     # Current implementation is using for loop, which might be a bad idea for parallel processing.
     asm_gen = config['river_core']['generator']
+    output_dir = output_dir + asm_gen + '/'
     target_list = config['river_core']['target'].split(',')
     if '' in target_list:
         logger.info('No targets configured, so moving on the reference')
