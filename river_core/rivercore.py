@@ -256,7 +256,7 @@ def rivercore_generate(config_file, output_dir, verbosity):
             test_list_file))
 
 
-def rivercore_compile(config_file, output_dir, test_list, verbosity):
+def rivercore_compile(config_file, output_dir, test_list, coverage, verbosity):
     '''
         Work in Progress
 
@@ -267,6 +267,8 @@ def rivercore_compile(config_file, output_dir, test_list, verbosity):
         :param output_dir: Output directory for programs generated
 
         :param test_list: Test List exported from generate sub-command 
+
+        :param coverage: Enable coverage merge and stats from the reports 
 
         :param verbosity: Verbosity level for the framework
 
@@ -288,8 +290,9 @@ def rivercore_compile(config_file, output_dir, test_list, verbosity):
     logger.info('****** RiVer Core {0} *******'.format(__version__))
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
-
-    logger.info('****** Compilation Mode ****** ')
+    logger.info('****** Compilation Mode ******')
+    if coverage:
+        logger.info("Coverage mode is enabled")
 
     # Compile plugin manager
     #compilepm = pluggy.PluginManager('compile')
@@ -307,6 +310,14 @@ def rivercore_compile(config_file, output_dir, test_list, verbosity):
     asm_gen = config['river_core']['generator']
     output_dir = output_dir + asm_gen + '/'
     target_list = config['river_core']['target'].split(',')
+    # Load coverage stats
+    if coverage:
+        code_coverage = config['coverage']['code']
+        functional_coverage = config['coverage']['functional']
+        if code_coverage:
+            logger.info("Code Coverage is enabled")
+        if functional_coverage:
+            logger.info("Functional Coverage is enabled")
     if '' in target_list:
         logger.info('No targets configured, so moving on the reference')
     else:

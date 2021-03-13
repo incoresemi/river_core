@@ -67,12 +67,13 @@ def clean(config, output_dir, verbosity):
               type=click.Path(exists=True),
               help='ASM files to compile',
               required=True)
+@click.option('--coverage', is_flag=True)
 @cli.command()
-def compile(config, output_dir, test_list, verbosity):
+def compile(config, output_dir, test_list, coverage, verbosity):
     '''
         subcommand to compile generated programs.
     '''
-    rivercore_compile(config, output_dir, test_list, verbosity)
+    rivercore_compile(config, output_dir, test_list, coverage, verbosity)
 
 
 @click.version_option(version=__version__)
