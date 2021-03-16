@@ -293,6 +293,7 @@ def rivercore_compile(config_file, output_dir, test_list, coverage, verbosity):
     logger.info('****** Compilation Mode ******')
     if coverage:
         logger.info("Coverage mode is enabled")
+        logger.info("Just a reminder to ensrue that you have installed things with coverage enabled")
 
     # Compile plugin manager
     #compilepm = pluggy.PluginManager('compile')
@@ -312,12 +313,9 @@ def rivercore_compile(config_file, output_dir, test_list, coverage, verbosity):
     target_list = config['river_core']['target'].split(',')
     # Load coverage stats
     if coverage:
-        code_coverage = config['coverage']['code']
-        functional_coverage = config['coverage']['functional']
-        if code_coverage:
-            logger.info("Code Coverage is enabled")
-        if functional_coverage:
-            logger.info("Functional Coverage is enabled")
+        coverage_config = config['coverage']
+    else:
+        coverage_config = ''
     if '' in target_list:
         logger.info('No targets configured, so moving on the reference')
     else:
@@ -342,7 +340,7 @@ def rivercore_compile(config_file, output_dir, test_list, coverage, verbosity):
             dutpm_spec.loader.exec_module(dutpm_module)
 
             # DuT Plugins
-            if target == 'chromite_verilator':
+            if target == 'chromite_verilator' or 'chromite_cadence' or 'chromite_questa' :
                 dutpm.register(dutpm_module.ChromitePlugin())
                 # NOTE: Add more plugins here :)
             else:
@@ -354,7 +352,8 @@ def rivercore_compile(config_file, output_dir, test_list, coverage, verbosity):
                             test_list=test_list,
                             asm_dir=output_dir,
                             config_yaml=path_to_module + '/' + plugin_target +
-                            '/' + 'config.yaml')
+                            '/' + 'config.yaml',
+                            coverage_config=coverage_config)
             # NOTE (Add to documentation)
             # The config files should be saved as config.yaml in the plugin repo
             dutpm.hook.build(asm_dir=output_dir, asm_gen=asm_gen)
@@ -405,7 +404,8 @@ def rivercore_compile(config_file, output_dir, test_list, coverage, verbosity):
                             test_list=test_list,
                             asm_dir=output_dir,
                             config_yaml=path_to_module + '/' + plugin_ref +
-                            '/' + 'config.yaml')
+                            '/' + 'config.yaml',
+                            coverage_config=coverage_config)  
             # NOTE (Add to documentation)
             # The config files should be saved as config.yaml in the plugin repo
             dutpm.hook.build(asm_dir=output_dir, asm_gen=asm_gen)
