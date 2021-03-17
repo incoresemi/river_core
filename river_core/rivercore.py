@@ -214,10 +214,10 @@ def rivercore_generate(config_file, verbosity):
                          str(txt))
             raise SystemExit
 
-        # TODO:NEEL: I don't like this hard-coding below. Everything should come
+        # DONE:NEEL: I don't like this hard-coding below. Everything should come
         # from config.ini or the names should be consistant for autodetection.
 
-        #TODO:NEEL isa fields should not be local to plugins. They have to be
+        #DONE:NEEL isa fields should not be local to plugins. They have to be
         #common for all plugins
 
         if suite == 'microtesk':
@@ -318,20 +318,22 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
             logger.debug("Loading module from {0}".format(abs_location_module))
 
-            dutpm_spec = importlib.util.spec_from_file_location(
-                plugin_target, abs_location_module)
-            dutpm_module = importlib.util.module_from_spec(dutpm_spec)
-            dutpm_spec.loader.exec_module(dutpm_module)
+            try:
+                dutpm_spec = importlib.util.spec_from_file_location(
+                    plugin_target, abs_location_module)
+                dutpm_module = importlib.util.module_from_spec(dutpm_spec)
+                dutpm_spec.loader.exec_module(dutpm_module)
 
-            # DuT Plugins
-            # TODO:NEEL: I don't like this hard-coding below. Everything should come
-            # from config.ini or the names should be consistant for autodetection.
-            if target == 'chromite_verilator' or 'chromite_cadence' or 'chromite_questa' :
-                dutpm.register(dutpm_module.ChromitePlugin())
-                # NOTE: Add more plugins here :)
-            else:
+                # DuT Plugins
+                # DONE:NEEL: I don't like this hard-coding below. Everything should come
+                # from config.ini or the names should be consistant for autodetection.
+                # TODO:DOC: Naming for class in plugin
+                plugin_class = "{0}_plugin".format(target)
+                class_to_call = getattr(dutpm_module,plugin_class)
+                dutpm.register(class_to_call())
+            except:
                 logger.error(
-                    "Sorry, requested plugin is not really supported ATM")
+                    "Sorry, loading the requested plugin is not failed, please check the confiuration")
                 raise SystemExit
 
             dutpm.hook.init(ini_config=config[target],
@@ -364,20 +366,22 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             abs_location_module = path_to_module + '/' + plugin_ref + '/' + plugin_ref + '.py'
             logger.debug("Loading module from {0}".format(abs_location_module))
 
-            dutpm_spec = importlib.util.spec_from_file_location(
-                plugin_ref, abs_location_module)
-            dutpm_module = importlib.util.module_from_spec(dutpm_spec)
-            dutpm_spec.loader.exec_module(dutpm_module)
+            try:
+                dutpm_spec = importlib.util.spec_from_file_location(
+                    plugin_ref, abs_location_module)
+                dutpm_module = importlib.util.module_from_spec(dutpm_spec)
+                dutpm_spec.loader.exec_module(dutpm_module)
 
-            # DuT Plugins
-            # TODO:NEEL: I don't like this hard-coding below. Everything should come
-            # from config.ini or the names should be consistant for autodetection.
-            if ref == 'spike':
-                dutpm.register(dutpm_module.SpikePlugin())
-                # NOTE: Add more plugins here :)
-            else:
+                # DuT Plugins
+                # DONE:NEEL: I don't like this hard-coding below. Everything should come
+                # from config.ini or the names should be consistant for autodetection.
+                # TODO:DOC: Naming for class in plugin
+                plugin_class = "{0}_plugin".format(ref)
+                class_to_call = getattr(dutpm_module,plugin_class)
+                dutpm.register(class_to_call())
+            except:
                 logger.error(
-                    "Sorry, requested plugin is not really supported ATM")
+                    "Sorry, requested plugin is not really was not found at location, please check config.ini")
                 raise SystemExit
 
             dutpm.hook.init(ini_config=config[ref],
