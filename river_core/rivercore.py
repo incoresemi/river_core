@@ -205,9 +205,9 @@ def rivercore_generate(config_file, verbosity):
     output_dir = config['river_core']['work_dir']
 
     logger.info('****** RiVer Core {0} *******'.format(__version__))
-    logger.info('****** Generation Mode ****** ')
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
+    logger.info('****** Generation Mode ****** ')
 
     # TODO Test multiple plugin cases
     # Current implementation is using for loop, which might be a bad idea for parallel processing.
@@ -239,6 +239,9 @@ def rivercore_generate(config_file, verbosity):
         # TODO:NEEL: I don't like this hard-coding below. Everything should come
         # from config.ini or the names should be consistant for autodetection.
 
+        #TODO:NEEL isa fields should not be local to plugins. They have to be
+        #common for all plugins
+
         if suite == 'microtesk':
             generatorpm.register(generatorpm_module.MicroTESKPlugin())
         if suite == 'aapg':
@@ -259,10 +262,6 @@ def rivercore_generate(config_file, verbosity):
 
         test_list_file = output_dir + '/test_list.yaml'
         testfile = open(test_list_file, 'w')
-#        logger.debug('Test-List Dump:{0} \n {1}'.format(test_list, test_list[0]))
-        # Sort keys allows to maintain the above order
-        # Weird Python thingy, converting dicts into lists
-        # Code will have these X[0], find a better solution some day, maybe a future TODO
         utils.yaml.dump(test_list[0],
                        testfile)
         testfile.close()
@@ -407,6 +406,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             ref_json = dutpm.hook.run(module_dir=path_to_module,
                                       work_dir=output_dir)
             ref_log = dutpm.hook.post_run()
+
+        ## Comparing Dumps
 
         result = 'Unavailable'
         test_dict = utils.load_yaml(test_list) 
