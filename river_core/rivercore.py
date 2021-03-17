@@ -67,11 +67,11 @@ def generate_report(output_dir, json_data, config, log_cmp_status):
 
     num_failed = num_total - num_passed
 
-    # TODO:NEEL The below should be constants in constants.py with automatic
+    # DONE:NEEL The below should be constants in constants.py with automatic
     # absolute path detection. Please check riscof for this.
-
-    str_report_template = 'river_core/templates/report.html'
-    str_css_template = 'river_core/templates/style.css'
+    root = os.path.abspath(os.path.dirname(__file__))
+    str_report_template = root + '/templates/report.html'
+    str_css_template = root + '/templates/style.css'
     report_file_name = 'report_{0}.html'.format(
         datetime.datetime.now().strftime("%Y%m%d-%H%M"))
     report_dir = output_dir + '/reports/'
