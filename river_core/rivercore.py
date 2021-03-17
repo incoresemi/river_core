@@ -146,38 +146,12 @@ def rivercore_clean(config_file, verbosity):
         return
     else:
         logger.info('The following directory will be removed : ' +str(output_dir))
+        logger.info('Hope you took a backup of the reports')
         res = confirm()
         if res:
             shutil.rmtree(output_dir)
             logger.info(output_dir + ' directory deleted')
 
-    #TODO:NEEL: I simlpy delete the workdir. Clean means clean.. there is no
-    # half-clean or some-clean. If you agree remoev the below stuff.
-
-#    logger.info(
-#        "It only removes the files generated during tests, so ASM/Reports are safe"
-#    )
-#    logger.info(
-#        "Now removing files from {0} Suite for the {1} Target with {2} Ref".
-#        format(suite, target, ref))
-#    logger.info("Following files will be removed")
-#   
-#    logger.info('{0}/{1}/'.format(output_dir, suite))
-#    logger.info('{0}/{1}/Makefile.{2}'.format(output_dir, suite, target))
-#    logger.info('{0}/{1}/{2}'.format(output_dir, suite, ref))
-#    logger.info('{0}/{1}/Makefile.{2}'.format(output_dir, suite, ref))
-#    res = confirm()
-#    if res:
-#        utils.sys_command('rm -rf {0}/{1}/{2}'.format(output_dir, suite, target))
-#        utils.sys_command('rm -rf {0}/{1}/Makefile.{2}'.format(
-#            output_dir, suite, target))
-#        utils.sys_command('rm -rf {0}/{1}/{2}'.format(output_dir, suite, ref))
-#        utils.sys_command('rm -rf {0}/{1}/Makefile.{2}'.format(
-#            output_dir, suite, ref))
-#
-#        logger.info("All clean now")
-#    else:
-#        logger.info("No so, nothing is modified")
 
 
 def rivercore_generate(config_file, verbosity):
@@ -220,6 +194,10 @@ def rivercore_generate(config_file, verbosity):
 
         path_to_module = config['river_core']['path_to_suite']
         plugin_suite = suite + '_plugin'
+
+        # Get ISA and pass to plugin
+        isa = config['river_core']['isa']
+        config[suite]['isa'] = isa
         logger.info('Now loading {0} Suite'.format(suite))
         abs_location_module = path_to_module + '/' + plugin_suite + '/' + plugin_suite + '.py'
         logger.debug("Loading module from {0}".format(abs_location_module))
@@ -330,6 +308,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             # compilepm.add_hookspecs(CompileSpec)
             dutpm.add_hookspecs(DuTSpec)
 
+            isa = config['river_core']['isa']
+            config[target]['isa'] = isa
             path_to_module = config['river_core']['path_to_target']
             plugin_target = target + '_plugin'
             logger.info('Now running on the Target Plugins')
@@ -377,6 +357,9 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             path_to_module = config['river_core']['path_to_ref']
             plugin_ref = ref + '_plugin'
             logger.info('Now loading {0}-target'.format(ref))
+            # Get ISA from river
+            isa = config['river_core']['isa']
+            config[ref]['isa'] = isa
 
             abs_location_module = path_to_module + '/' + plugin_ref + '/' + plugin_ref + '.py'
             logger.debug("Loading module from {0}".format(abs_location_module))
