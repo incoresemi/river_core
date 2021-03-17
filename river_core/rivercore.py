@@ -319,7 +319,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
     if coverage:
         coverage_config = config['coverage']
     else:
-        coverage_config = ''
+        coverage_config = None
     if '' in target_list:
         logger.info('No targets configured, so moving on the reference')
     else:
@@ -359,8 +359,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                             work_dir=output_dir,
                             coverage_config=coverage_config)
             dutpm.hook.build()
-            target_json = dutpm.hook.run(module_dir=path_to_module,
-                                         asm_dir=output_dir)
+            target_json = dutpm.hook.run(module_dir=path_to_module)
             target_log = dutpm.hook.post_run()
 
     ref_list = config['river_core']['reference'].split(',')
@@ -403,8 +402,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                             work_dir=output_dir,
                             coverage_config=coverage_config)  
             dutpm.hook.build()
-            ref_json = dutpm.hook.run(module_dir=path_to_module,
-                                      work_dir=output_dir)
+            ref_json = dutpm.hook.run(module_dir=path_to_module)
             ref_log = dutpm.hook.post_run()
 
         ## Comparing Dumps
