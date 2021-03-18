@@ -25,13 +25,12 @@ def cli():
               '--verbosity',
               default='info',
               help='Set the verbosity level for the framework')
-@click.option(
-    '-c',
-    '--config',
-    type=click.Path(dir_okay=False, exists=True),
-    help='Read option defaults from the specified INI file',
-    show_default=True,
-)
+@click.option('-c',
+              '--config',
+              type=click.Path(dir_okay=False, exists=True),
+              help='Read option defaults from the specified INI file',
+              show_default=True,
+              required=True)
 @cli.command()
 def clean(config, verbosity):
     '''

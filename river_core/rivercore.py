@@ -2,6 +2,7 @@
 """ Main file containing all necessary functions of river_core """
 import sys
 import os
+import glob
 import shutil
 import datetime
 import importlib
@@ -24,7 +25,26 @@ from jinja2 import Template
 
 
 # Misc Helper Functions
-def generate_report(output_dir, json_data, config, log_cmp_status):
+def sanitise_pytest_json(json):
+    '''
+        Function to sanitise pytest JSONs 
+
+        :param json: JSON to sanitise 
+
+        :type json: list  
+
+        :return return_data: list  
+    '''
+    return_data = []
+    for json_row in json:
+        # NOTE: Playing with fire here, pytest developers could (potentially) change this
+        if json_row.get('$report_type', None) == 'TestReport':
+            return_data.append(json_row)
+
+    return return_data
+
+def generate_report(output_dir,gen_json_data, target_json_data, ref_json_data, config,
+                    test_dict):
     '''
         Work in Progress
 
@@ -32,37 +52,34 @@ def generate_report(output_dir, json_data, config, log_cmp_status):
 
         :param output_dir: Output directory for programs generated
 
-        :param json_list: JSON List exported from the plugins ; (Optional)
+        :param json_data: JSON data combined from Plugins 
 
         :param config: Config ini with the loaded by the configparser module
 
+        :param test_list: Test List loaded as a dict 
+
         :type output_dir: str
 
-        :type json_data: st
+        :type json_data: str
 
         :type config: list
 
+        :type test_list: dict 
     '''
 
     #TODO:NEEL: This report is currently useless. Need pass fail results per
     #test. Why not send the test_list here and print the info
 
     # Filter JSON files
-    final_data = []
-    ## Remove the initial info
-    for json_row in json_data:
-        # NOTE: Playing with fire here, pytest developers could (potentially) change this
-        if json_row.get('$report_type', None) == 'TestReport':
-            final_data.append(json_row)
-    json_data = final_data
+    gen_json_data = sanitise_pytest_json(gen_json_data)
+    target_json_data = sanitise_pytest_json(target_json_data)  
+    ref_json_data = sanitise_pytest_json(ref_json_data)
     ## Get the proper stats about passed and failed test
     # NOTE: This is the place where you determine when your test passed fail, just add extra things to compare in the if condition if the results become to high
     num_passed = num_total = 0
-    for json_row in json_data:
-        if json_row.get('when', None) == 'call':
-            num_total = num_total + 1
-        if json_row.get('outcome', None) == 'passed' and json_row.get(
-                'when', None) == 'call':
+    for test in test_dict:
+        num_total = num_total + 1
+        if test_dict[test]['result']:
             num_passed = num_passed + 1
 
     num_failed = num_total - num_passed
@@ -75,8 +92,6 @@ def generate_report(output_dir, json_data, config, log_cmp_status):
     report_file_name = 'report_{0}.html'.format(
         datetime.datetime.now().strftime("%Y%m%d-%H%M"))
     report_dir = output_dir + '/reports/'
-    # TODO: WIP still finalizing the template
-    # - [X] Shutil to copy style.css
     html_objects = {}
     html_objects['name'] = "RiVer Core Verification Report"
     html_objects['date'] = (datetime.datetime.now().strftime("%d-%m-%Y"))
@@ -86,10 +101,13 @@ def generate_report(output_dir, json_data, config, log_cmp_status):
     html_objects['dut'] = config['river_core']['target']
     html_objects['generator'] = config['river_core']['generator']
     html_objects['reference'] = config['river_core']['reference']
-    html_objects['diff_result'] = log_cmp_status
-    html_objects['results'] = json_data
+    html_objects['test_dict'] = test_dict
+    html_objects['target_data'] = target_json_data
+    html_objects['ref_data'] = ref_json_data
+    html_objects['gen_data'] = gen_json_data
     html_objects['num_passed'] = num_passed
     html_objects['num_failed'] = num_failed
+
     if not os.path.exists(report_dir):
         os.makedirs(report_dir)
 
@@ -100,7 +118,7 @@ def generate_report(output_dir, json_data, config, log_cmp_status):
 
     shutil.copyfile(str_css_template, report_dir + 'style.css')
 
-    report_file_path = report_dir +'/' + report_file_name
+    report_file_path = report_dir + '/' + report_file_name
     with open(report_file_path, "w") as report:
         report.write(output)
 
@@ -142,16 +160,17 @@ def rivercore_clean(config_file, verbosity):
     ref = config['river_core']['reference']
 
     if not os.path.exists(output_dir):
-        logger.info(output_dir + ' directory does not exist. Nothing to delete')
+        logger.info(output_dir +
+                    ' directory does not exist. Nothing to delete')
         return
     else:
-        logger.info('The following directory will be removed : ' +str(output_dir))
+        logger.info('The following directory will be removed : ' +
+                    str(output_dir))
         logger.info('Hope you took a backup of the reports')
         res = confirm()
         if res:
             shutil.rmtree(output_dir)
             logger.info(output_dir + ' directory deleted')
-
 
 
 def rivercore_generate(config_file, verbosity):
@@ -208,6 +227,10 @@ def rivercore_generate(config_file, verbosity):
             generatorpm_module = importlib.util.module_from_spec(
                 generatorpm_spec)
             generatorpm_spec.loader.exec_module(generatorpm_module)
+            plugin_class = "{0}_plugin".format(suite)
+            class_to_call = getattr(generatorpm_module, plugin_class)
+            # TODO:DOC: Naming for class in plugin
+            generatorpm.register(class_to_call())
 
         except FileNotFoundError as txt:
             logger.error(suite + " not found at : " + path_to_module + ".\n" +
@@ -219,16 +242,9 @@ def rivercore_generate(config_file, verbosity):
 
         #DONE:NEEL isa fields should not be local to plugins. They have to be
         #common for all plugins
-
-        if suite == 'microtesk':
-            generatorpm.register(generatorpm_module.MicroTESKPlugin())
-        if suite == 'aapg':
-            generatorpm.register(generatorpm_module.AapgPlugin())
-        if suite == 'dv':
-            generatorpm.register(generatorpm_module.RiscvDvPlugin())
-
         generatorpm.hook.pre_gen(spec_config=config[suite],
-                                 output_dir='{0}/{1}'.format(output_dir, suite))
+                                 output_dir='{0}/{1}'.format(
+                                     output_dir, suite))
         test_list = generatorpm.hook.gen(
             gen_config='{0}/{1}_plugin/{1}_gen_config.yaml'.format(
                 path_to_module, suite),
@@ -240,8 +256,7 @@ def rivercore_generate(config_file, verbosity):
 
         test_list_file = output_dir + '/test_list.yaml'
         testfile = open(test_list_file, 'w')
-        utils.yaml.dump(test_list[0],
-                       testfile)
+        utils.yaml.dump(test_list[0], testfile)
         testfile.close()
 
         logger.info('Test list is generated and available at {0}'.format(
@@ -288,7 +303,9 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
 
     if coverage:
         logger.info("Coverage mode is enabled")
-        logger.info("Just a reminder to ensrue that you have installed things with coverage enabled")
+        logger.info(
+            "Just a reminder to ensrue that you have installed things with coverage enabled"
+        )
 
     output_dir = config['river_core']['work_dir']
     asm_gen = config['river_core']['generator']
@@ -329,11 +346,12 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                 # from config.ini or the names should be consistant for autodetection.
                 # TODO:DOC: Naming for class in plugin
                 plugin_class = "{0}_plugin".format(target)
-                class_to_call = getattr(dutpm_module,plugin_class)
+                class_to_call = getattr(dutpm_module, plugin_class)
                 dutpm.register(class_to_call())
             except:
                 logger.error(
-                    "Sorry, loading the requested plugin is not failed, please check the confiuration")
+                    "Sorry, loading the requested plugin is not failed, please check the confiuration"
+                )
                 raise SystemExit
 
             dutpm.hook.init(ini_config=config[target],
@@ -377,17 +395,18 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                 # from config.ini or the names should be consistant for autodetection.
                 # TODO:DOC: Naming for class in plugin
                 plugin_class = "{0}_plugin".format(ref)
-                class_to_call = getattr(dutpm_module,plugin_class)
+                class_to_call = getattr(dutpm_module, plugin_class)
                 dutpm.register(class_to_call())
             except:
                 logger.error(
-                    "Sorry, requested plugin is not really was not found at location, please check config.ini")
+                    "Sorry, requested plugin is not really was not found at location, please check config.ini"
+                )
                 raise SystemExit
 
             dutpm.hook.init(ini_config=config[ref],
                             test_list=test_list,
                             work_dir=output_dir,
-                            coverage_config=coverage_config)  
+                            coverage_config=coverage_config)
             dutpm.hook.build()
             ref_json = dutpm.hook.run(module_dir=path_to_module)
             ref_log = dutpm.hook.post_run()
@@ -395,19 +414,22 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
         ## Comparing Dumps
 
         result = 'Unavailable'
-        test_dict = utils.load_yaml(test_list) 
+        test_dict = utils.load_yaml(test_list)
         for test, attr in test_dict.items():
             test_wd = attr['work_dir']
-            if not os.path.isfile(test_wd+'/dut.dump'):
+            if not os.path.isfile(test_wd + '/dut.dump'):
                 logger.error('Dut dump for Test: {0} is missing'.format(test))
                 continue
-            if not os.path.isfile(test_wd+'/ref.dump'):
+            if not os.path.isfile(test_wd + '/ref.dump'):
                 logger.error('Ref dump for Test: {0} is missing'.format(test))
                 continue
-            result = filecmp.cmp(test_wd+'/dut.dump', test_wd+'/ref.dump')
+            result = filecmp.cmp(test_wd + '/dut.dump', test_wd + '/ref.dump')
+            # ASK: If we need this in the test-list as well?
+            test_dict[test]['result'] = result
             if not result:
                 logger.error(
-                    "Dumps for test {0}. Do not match. TEST FAILED".format(test))
+                    "Dumps for test {0}. Do not match. TEST FAILED".format(
+                        test))
             else:
                 logger.info(
                     "Dumps for test {0} Match. TEST PASSED".format(test))
@@ -415,28 +437,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
         # TODO:NEEL: I have replaced the below with the above. The dumps shuold
         # always be dut.dump and ref.dump. Will come back to this when multiple
         # dumps need to be checked. If you agree delete the below code.
-
-        # Start comparison between files
-        # TODO Replace with a signature based model
-#        if '' in ref_log[0] or '' in target_log[
-#                0] or not ref_log[0] or not target_log[0]:
-#            logger.error(
-#                'Files don\'t seem to exist ; Expect more errors on the way')
-#        # TODO Improve error catching here
-#        # Check if the logs are same number
-#        logger.info('Starting comparison between logs')
-#        result = 'Unavailable'
-#        if len(ref_log[0]) == len(target_log[0]):
-#            for i in range(len(ref_log)):
-#                # NOTE This is absolutely strange! Why is a double list is created
-#                result = filecmp.cmp(ref_log[0][i], target_log[0][i])
-#                logger.info(
-#                    "Matching {0} and {1} \n Result : Are files same?: {2}".
-#                    format(ref_log[i], target_log[i], result))
-#        else:
-#            logger.info(
-#                'Something is not right with the logs, manual inspection is reccomended, after program termination'
-#            )
 
         # Start checking things after running the commands
         # Report generation starts here
@@ -468,6 +468,27 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
         for line in ref_json_list:
             ref_json_data.append(json.loads(line))
 
-        json_data = target_json_data + ref_json_data
+        # Need to an Gen json file for final report
+        # TODO:CHECK: Only issue is that this can ideally be a wrong approach
+
+        try:
+            logging.info("Checking for a generator json to create final report")
+            json_files = glob.glob(output_dir + '/.json/{0}*.json'.format(config['river_core']['generator']))
+            logger.debug("Detected generated JSON Files: {0}".format(json_files))
+
+            # Can only get one file back
+            gen_json_file = max(json_files, key=os.path.getctime)
+            json_file = open(gen_json_file,'r')
+            target_json_list = json_file.readlines()
+            json_file.close()
+            gen_json_data = []
+            for line in target_json_list:
+                gen_json_data.append(json.loads(line))
+
+        except:
+            logger.warning("Couldn't find a generator JSON file")
+            gen_json_data = [] 
+
         logger.info("Now generating some good HTML reports for you")
-        generate_report(output_dir, json_data, config, result)
+        generate_report(output_dir, gen_json_data, target_json_data, ref_json_data, config,
+                        test_dict)
