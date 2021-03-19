@@ -80,11 +80,14 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
     num_passed = num_total = num_unav = 0
     for test in test_dict:
         num_total = num_total + 1
-        if test_dict[test]['result'] == 'Unavailable':
-            num_unav = num_unav + 1
-            continue
-        if test_dict[test]['result']:
-            num_passed = num_passed + 1
+        try:
+            if test_dict[test]['result'] == 'Unavailable':
+                num_unav = num_unav + 1
+                continue
+            if test_dict[test]['result']:
+                num_passed = num_passed + 1
+        except:
+            logger.warning("Couldn't get a result from the Test List Dict")
 
     num_failed = num_total - num_passed
 
@@ -131,6 +134,7 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
         'Final report saved at {0}\nMay the debugging force be with you!'.
         format(report_file_path))
 
+    return report_file_path
 
 def confirm():
     """
@@ -523,5 +527,15 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             gen_json_data = []
 
         logger.info("Now generating some good HTML reports for you")
-        generate_report(output_dir, gen_json_data, target_json_data,
+        report_html = generate_report(output_dir, gen_json_data, target_json_data,
                         ref_json_data, config, test_dict)
+        
+        # Check if web browser
+        if utils.str_2_bool(config['river_core']['open_browser']):
+           try:
+                import webbrowser
+                logger.info("Openning test report in web-browser")
+                webbrowser.open(report_html)
+           except:
+                return 1
+

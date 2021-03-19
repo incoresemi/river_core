@@ -5,6 +5,7 @@ import os
 import subprocess
 import shlex
 from river_core.log import logger
+import distutils.util
 import ruamel
 import signal
 from ruamel.yaml import YAML
@@ -15,12 +16,33 @@ yaml.default_flow_style = False
 yaml.allow_unicode = True
 
 
+def str_2_bool(string):
+    """
+        Simple String to Bool conversion
+    """
+    return bool(distutils.util.strtobool(string))
+
+
+def save_yaml(data, out_file):
+    """
+        Save a dict to a file
+    """
+    try:
+        with open(out_file, 'w') as outfile:
+            ruamel.yaml.dump(data, outfile)
+    except FileNotFoundError:
+        logger.error("File doesn't exist")
+    else:
+        logger.error("Failed to dump data to YAML")
+
+
 def load_yaml(foo):
     try:
         with open(foo, "r") as file:
             return dict(yaml.load(file))
     except ruamel.yaml.constructor.DuplicateKeyError as msg:
         raise SystemExit
+
 
 def sys_command(command, timeout=240):
     '''
@@ -105,13 +127,14 @@ def sys_command_file(command, filename, timeout=500):
 
     return (x.returncode, None, None)
 
+
 class makeUtil():
     """
     Utility for ease of use of make commands like `make` and `pmake`.
     Supports automatic addition and execution of targets. Uses the class
     :py:class:`shellCommand` to execute commands.
     """
-    def __init__(self,makeCommand='make',makefilePath="./Makefile"):
+    def __init__(self, makeCommand='make', makefilePath="./Makefile"):
         """ Constructor.
 
         :param makeCommand: The variant of make to be used with optional arguments.
@@ -124,12 +147,13 @@ class makeUtil():
         :type makefilePath: str
 
         """
-        self.makeCommand=makeCommand
+        self.makeCommand = makeCommand
         self.makefilePath = makefilePath
-        makefile = open(makefilePath,'w')
+        makefile = open(makefilePath, 'w')
         makefile.close()
         self.targets = []
-    def add_target(self,command,tname=""):
+
+    def add_target(self, command, tname=""):
         """
         Function to add a target to the makefile.
 
@@ -142,11 +166,13 @@ class makeUtil():
         :type tname: str
         """
         if tname == "":
-            tname = "TARGET"+str(len(self.targets))
-        with open(self.makefilePath,"a") as makefile:
-            makefile.write("\n\n.PHONY : " + tname + "\n" + tname + " :\n\t"+command.replace("\n","\n\t"))
+            tname = "TARGET" + str(len(self.targets))
+        with open(self.makefilePath, "a") as makefile:
+            makefile.write("\n\n.PHONY : " + tname + "\n" + tname + " :\n\t" +
+                           command.replace("\n", "\n\t"))
             self.targets.append(tname)
-    def execute_target(self,tname,cwd="./"):
+
+    def execute_target(self, tname, cwd="./"):
         """
         Function to execute a particular target only.
 
@@ -162,8 +188,10 @@ class makeUtil():
 
         """
         assert tname in self.targets, "Target does not exist."
-        return shellCommand(self.makeCommand+" -f "+self.makefilePath+" "+tname).run(cwd=cwd)
-    def execute_all(self,cwd):
+        return shellCommand(self.makeCommand + " -f " + self.makefilePath +
+                            " " + tname).run(cwd=cwd)
+
+    def execute_all(self, cwd):
         """
         Function to execute all the defined targets.
 
@@ -172,7 +200,9 @@ class makeUtil():
         :type cwd: str
 
         """
-        return shellCommand(self.makeCommand+" -f "+self.makefilePath+" "+" ".join(self.targets)).run(cwd=cwd)
+        return shellCommand(self.makeCommand + " -f " + self.makefilePath +
+                            " " + " ".join(self.targets)).run(cwd=cwd)
+
 
 class Command():
     """
@@ -181,7 +211,6 @@ class Command():
     conversion of :py:class:`pathlib.Path` instances to
     valid format for :py:mod:`subprocess` functions.
     """
-
     def __init__(self, *args, pathstyle='auto', ensure_absolute_paths=False):
         """Constructor.
 
@@ -336,7 +365,6 @@ class shellCommand(Command):
     """
         Sub Class of the command class which always executes commands as shell commands.
     """
-
     def __init__(self, *args, pathstyle='auto', ensure_absolute_paths=False):
         """
         :param pathstyle: Determine the path style when adding instance of
@@ -362,5 +390,3 @@ class shellCommand(Command):
 
     def _is_shell_command(self):
         return True
-
-
