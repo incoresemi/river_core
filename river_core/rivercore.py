@@ -43,8 +43,9 @@ def sanitise_pytest_json(json):
 
     return return_data
 
-def generate_report(output_dir,gen_json_data, target_json_data, ref_json_data, config,
-                    test_dict):
+
+def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
+                    config, test_dict):
     '''
         Work in Progress
 
@@ -67,18 +68,21 @@ def generate_report(output_dir,gen_json_data, target_json_data, ref_json_data, c
         :type test_list: dict 
     '''
 
-    #TODO:NEEL: This report is currently useless. Need pass fail results per
+    #DONE:NEEL: This report is currently useless. Need pass fail results per
     #test. Why not send the test_list here and print the info
 
     # Filter JSON files
     gen_json_data = sanitise_pytest_json(gen_json_data)
-    target_json_data = sanitise_pytest_json(target_json_data)  
+    target_json_data = sanitise_pytest_json(target_json_data)
     ref_json_data = sanitise_pytest_json(ref_json_data)
     ## Get the proper stats about passed and failed test
     # NOTE: This is the place where you determine when your test passed fail, just add extra things to compare in the if condition if the results become to high
-    num_passed = num_total = 0
+    num_passed = num_total = num_unav = 0
     for test in test_dict:
         num_total = num_total + 1
+        if test_dict[test]['result'] == 'Unavailable':
+            num_unav = num_unav + 1
+            continue
         if test_dict[test]['result']:
             num_passed = num_passed + 1
 
@@ -107,6 +111,7 @@ def generate_report(output_dir,gen_json_data, target_json_data, ref_json_data, c
     html_objects['gen_data'] = gen_json_data
     html_objects['num_passed'] = num_passed
     html_objects['num_failed'] = num_failed
+    html_objects['num_unav'] = num_unav
 
     if not os.path.exists(report_dir):
         os.makedirs(report_dir)
@@ -160,8 +165,7 @@ def rivercore_clean(config_file, verbosity):
     ref = config['river_core']['reference']
 
     if not os.path.exists(output_dir):
-        logger.info(output_dir +
-                    ' directory does not exist. Nothing to delete')
+        logger.info(output_dir + ' directory does not exist. Nothing to delete')
         return
     else:
         logger.info('The following directory will be removed : ' +
@@ -206,8 +210,20 @@ def rivercore_generate(config_file, verbosity):
     # Current implementation is using for loop, which might be a bad idea for parallel processing.
 
     suite_list = config['river_core']['generator'].split(',')
+
+    logger.info(
+        "The river_core is currently configured to run with following parameters"
+    )
+    logger.info("The Output Directory (work_dir) : {0}".format(output_dir))
+    logger.info("ISA : {0}".format(config['river_core']['isa']))
+
     for suite in suite_list:
 
+        # Give Plugin Info
+        logger.info("Plugin Jobs : {0}".format(config[suite]['jobs']))
+        logger.info("Plugin Seed : {0}".format(config[suite]['seed']))
+        logger.info("Plugin Count (Times to run the test) : {0}".format(
+            config[suite]['count']))
         generatorpm = pluggy.PluginManager("generator")
         generatorpm.add_hookspecs(RandomGeneratorSpec)
 
@@ -243,8 +259,7 @@ def rivercore_generate(config_file, verbosity):
         #DONE:NEEL isa fields should not be local to plugins. They have to be
         #common for all plugins
         generatorpm.hook.pre_gen(spec_config=config[suite],
-                                 output_dir='{0}/{1}'.format(
-                                     output_dir, suite))
+                                 output_dir='{0}/{1}'.format(output_dir, suite))
         test_list = generatorpm.hook.gen(
             gen_config='{0}/{1}_plugin/{1}_gen_config.yaml'.format(
                 path_to_module, suite),
@@ -298,8 +313,23 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
     logger.info('All Rights Reserved.')
     logger.info('****** Compilation Mode ******')
 
-    #TODO:NEEL: Worthwhile to print some useful config values like work_dir,
+    output_dir = config['river_core']['work_dir']
+    asm_gen = config['river_core']['generator']
+    target_list = config['river_core']['target'].split(',')
+    ref_list = config['river_core']['reference'].split(',')
+
+    #DONE:NEEL: REPLACE ; with && to ensure failure handling
+    #DONE:NEEL: Worthwhile to print some useful config values like work_dir,
     # isa, etc here as logger.info output
+
+    logger.info(
+        "The river_core is currently configured to run with following parameters"
+    )
+    logger.info("The Output Directory (work_dir) : {0}".format(output_dir))
+    logger.info("ISA : {0}".format(config['river_core']['isa']))
+    logger.info("Generator Plugin : {0}".format(asm_gen))
+    logger.info("Target Plugin : {0}".format(target_list))
+    logger.info("Reference Plugin : {0}".format(ref_list))
 
     if coverage:
         logger.info("Coverage mode is enabled")
@@ -307,9 +337,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             "Just a reminder to ensrue that you have installed things with coverage enabled"
         )
 
-    output_dir = config['river_core']['work_dir']
-    asm_gen = config['river_core']['generator']
-    target_list = config['river_core']['target'].split(',')
     # Load coverage stats
     if coverage:
         coverage_config = config['coverage']
@@ -319,10 +346,12 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
         logger.info('No targets configured, so moving on the reference')
     else:
         for target in target_list:
+            logger.info("DuT Info")
+            logger.info("DuT Jobs : {0}".format(config[target]['jobs']))
+            logger.info("DuT Count (Times to run) : {0}".format(
+                config[target]['count']))
 
-            # compilepm = pluggy.PluginManager('compile')
             dutpm = pluggy.PluginManager('dut')
-            # compilepm.add_hookspecs(CompileSpec)
             dutpm.add_hookspecs(DuTSpec)
 
             isa = config['river_core']['isa']
@@ -360,18 +389,19 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                             coverage_config=coverage_config)
             dutpm.hook.build()
             target_json = dutpm.hook.run(module_dir=path_to_module)
-            target_log = dutpm.hook.post_run()
+            dutpm.hook.post_run()
 
-    ref_list = config['river_core']['reference'].split(',')
     if '' in ref_list:
         logger.info('No references, so exiting the framework')
         raise SystemExit
     else:
         for ref in ref_list:
 
-            # compilepm = pluggy.PluginManager('compile')
+            logger.info("Reference Info")
+            logger.info("Reference Jobs : {0}".format(config[ref]['jobs']))
+            logger.info("Reference Count (Times to run the test) : {0}".format(
+                config[ref]['count']))
             dutpm = pluggy.PluginManager('dut')
-            # compilepm.add_hookspecs(CompileSpec)
             dutpm.add_hookspecs(DuTSpec)
 
             path_to_module = config['river_core']['path_to_ref']
@@ -409,7 +439,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                             coverage_config=coverage_config)
             dutpm.hook.build()
             ref_json = dutpm.hook.run(module_dir=path_to_module)
-            ref_log = dutpm.hook.post_run()
+            dutpm.hook.post_run()
 
         ## Comparing Dumps
 
@@ -434,7 +464,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                 logger.info(
                     "Dumps for test {0} Match. TEST PASSED".format(test))
 
-        # TODO:NEEL: I have replaced the below with the above. The dumps shuold
+        # DONE:NEEL: I have replaced the below with the above. The dumps shuold
         # always be dut.dump and ref.dump. Will come back to this when multiple
         # dumps need to be checked. If you agree delete the below code.
 
@@ -472,13 +502,16 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
         # TODO:CHECK: Only issue is that this can ideally be a wrong approach
 
         try:
-            logging.info("Checking for a generator json to create final report")
-            json_files = glob.glob(output_dir + '/.json/{0}*.json'.format(config['river_core']['generator']))
-            logger.debug("Detected generated JSON Files: {0}".format(json_files))
+            logger.info("Checking for a generator json to create final report")
+            json_files = glob.glob(
+                output_dir +
+                '/.json/{0}*.json'.format(config['river_core']['generator']))
+            logger.debug(
+                "Detected generated JSON Files: {0}".format(json_files))
 
             # Can only get one file back
             gen_json_file = max(json_files, key=os.path.getctime)
-            json_file = open(gen_json_file,'r')
+            json_file = open(gen_json_file, 'r')
             target_json_list = json_file.readlines()
             json_file.close()
             gen_json_data = []
@@ -487,8 +520,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
 
         except:
             logger.warning("Couldn't find a generator JSON file")
-            gen_json_data = [] 
+            gen_json_data = []
 
         logger.info("Now generating some good HTML reports for you")
-        generate_report(output_dir, gen_json_data, target_json_data, ref_json_data, config,
-                        test_dict)
+        generate_report(output_dir, gen_json_data, target_json_data,
+                        ref_json_data, config, test_dict)

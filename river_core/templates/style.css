@@ -57,6 +57,9 @@ span.failed, .failed .col-sort-result {
 	color: red;
 }
 
+span.unavailable, .unavailable .col-sort-result {
+	color: orange;
+}
 /******************************
  * RESULTS TABLE
  *
