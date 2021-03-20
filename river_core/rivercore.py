@@ -136,6 +136,7 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
 
     return report_file_path
 
+
 def confirm():
     """
     Ask user to enter Y or N (case-insensitive).
@@ -393,7 +394,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                             coverage_config=coverage_config)
             dutpm.hook.build()
             target_json = dutpm.hook.run(module_dir=path_to_module)
-            dutpm.hook.post_run()
 
     if '' in ref_list:
         logger.info('No references, so exiting the framework')
@@ -405,8 +405,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             logger.info("Reference Jobs : {0}".format(config[ref]['jobs']))
             logger.info("Reference Count (Times to run the test) : {0}".format(
                 config[ref]['count']))
-            dutpm = pluggy.PluginManager('dut')
-            dutpm.add_hookspecs(DuTSpec)
+            refpm = pluggy.PluginManager('dut')
+            refpm.add_hookspecs(DuTSpec)
 
             path_to_module = config['river_core']['path_to_ref']
             plugin_ref = ref + '_plugin'
@@ -419,31 +419,30 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             logger.debug("Loading module from {0}".format(abs_location_module))
 
             try:
-                dutpm_spec = importlib.util.spec_from_file_location(
+                refpm_spec = importlib.util.spec_from_file_location(
                     plugin_ref, abs_location_module)
-                dutpm_module = importlib.util.module_from_spec(dutpm_spec)
-                dutpm_spec.loader.exec_module(dutpm_module)
+                refpm_module = importlib.util.module_from_spec(refpm_spec)
+                refpm_spec.loader.exec_module(refpm_module)
 
                 # DuT Plugins
                 # DONE:NEEL: I don't like this hard-coding below. Everything should come
                 # from config.ini or the names should be consistant for autodetection.
                 # TODO:DOC: Naming for class in plugin
                 plugin_class = "{0}_plugin".format(ref)
-                class_to_call = getattr(dutpm_module, plugin_class)
-                dutpm.register(class_to_call())
+                class_to_call = getattr(refpm_module, plugin_class)
+                refpm.register(class_to_call())
             except:
                 logger.error(
                     "Sorry, requested plugin is not really was not found at location, please check config.ini"
                 )
                 raise SystemExit
 
-            dutpm.hook.init(ini_config=config[ref],
+            refpm.hook.init(ini_config=config[ref],
                             test_list=test_list,
                             work_dir=output_dir,
                             coverage_config=coverage_config)
-            dutpm.hook.build()
-            ref_json = dutpm.hook.run(module_dir=path_to_module)
-            dutpm.hook.post_run()
+            refpm.hook.build()
+            ref_json = refpm.hook.run(module_dir=path_to_module)
 
         ## Comparing Dumps
 
@@ -460,6 +459,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             result = filecmp.cmp(test_wd + '/dut.dump', test_wd + '/ref.dump')
             # ASK: If we need this in the test-list as well?
             test_dict[test]['result'] = result
+            utils.save_yaml(test_dict, test_list)
             if not result:
                 logger.error(
                     "Dumps for test {0}. Do not match. TEST FAILED".format(
@@ -526,16 +526,21 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             logger.warning("Couldn't find a generator JSON file")
             gen_json_data = []
 
+        # See if space saver is enabled
+        if utils.str_2_bool(config['river_core']['space_saver']):
+            dutpm.hook.post_run(test_dict=test_dict)
+            refpm.hook.post_run(test_dict=test_dict)
+
         logger.info("Now generating some good HTML reports for you")
-        report_html = generate_report(output_dir, gen_json_data, target_json_data,
-                        ref_json_data, config, test_dict)
-        
+        report_html = generate_report(output_dir, gen_json_data,
+                                      target_json_data, ref_json_data, config,
+                                      test_dict)
+
         # Check if web browser
         if utils.str_2_bool(config['river_core']['open_browser']):
-           try:
+            try:
                 import webbrowser
                 logger.info("Openning test report in web-browser")
                 webbrowser.open(report_html)
-           except:
+            except:
                 return 1
-

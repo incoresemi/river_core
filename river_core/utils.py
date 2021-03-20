@@ -32,8 +32,6 @@ def save_yaml(data, out_file):
             ruamel.yaml.dump(data, outfile)
     except FileNotFoundError:
         logger.error("File doesn't exist")
-    else:
-        logger.error("Failed to dump data to YAML")
 
 
 def load_yaml(foo):
@@ -134,6 +132,7 @@ class makeUtil():
     Supports automatic addition and execution of targets. Uses the class
     :py:class:`shellCommand` to execute commands.
     """
+
     def __init__(self, makeCommand='make', makefilePath="./Makefile"):
         """ Constructor.
 
@@ -211,6 +210,7 @@ class Command():
     conversion of :py:class:`pathlib.Path` instances to
     valid format for :py:mod:`subprocess` functions.
     """
+
     def __init__(self, *args, pathstyle='auto', ensure_absolute_paths=False):
         """Constructor.
 
@@ -365,6 +365,7 @@ class shellCommand(Command):
     """
         Sub Class of the command class which always executes commands as shell commands.
     """
+
     def __init__(self, *args, pathstyle='auto', ensure_absolute_paths=False):
         """
         :param pathstyle: Determine the path style when adding instance of

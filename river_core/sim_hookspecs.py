@@ -106,5 +106,5 @@ class DuTSpec(object):
         """ The moment of truth, getting things tested on the core """
 
     @dut_hookspec
-    def post_run(self):
+    def post_run(self, test_dict):
         """ Just to check something if required """
