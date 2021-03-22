@@ -77,7 +77,7 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
     ref_json_data = sanitise_pytest_json(ref_json_data)
     ## Get the proper stats about passed and failed test
     # NOTE: This is the place where you determine when your test passed fail, just add extra things to compare in the if condition if the results become to high
-    num_passed = num_total = num_unav = 0
+    num_passed = num_total = num_unav = num_failed = 0
     for test in test_dict:
         num_total = num_total + 1
         try:
@@ -86,10 +86,10 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
                 continue
             if test_dict[test]['result']:
                 num_passed = num_passed + 1
+            if not test_dict[test]['result']:
+                num_failed = num_failed + 1
         except:
             logger.warning("Couldn't get a result from the Test List Dict")
-
-    num_failed = num_total - num_passed
 
     # DONE:NEEL The below should be constants in constants.py with automatic
     # absolute path detection. Please check riscof for this.
@@ -384,7 +384,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                 dutpm.register(class_to_call())
             except:
                 logger.error(
-                    "Sorry, loading the requested plugin is not failed, please check the confiuration"
+                    "Sorry, loading the requested plugin has failed, please check the configuration"
                 )
                 raise SystemExit
 
@@ -527,9 +527,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             gen_json_data = []
 
         # See if space saver is enabled
-        if utils.str_2_bool(config['river_core']['space_saver']):
-            dutpm.hook.post_run(test_dict=test_dict)
-            refpm.hook.post_run(test_dict=test_dict)
+        dutpm.hook.post_run(test_dict=test_dict, config=config)
+        refpm.hook.post_run(test_dict=test_dict, config=config)
 
         logger.info("Now generating some good HTML reports for you")
         report_html = generate_report(output_dir, gen_json_data,
