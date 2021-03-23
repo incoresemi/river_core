@@ -391,7 +391,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             dutpm.hook.init(ini_config=config[target],
                             test_list=test_list,
                             work_dir=output_dir,
-                            coverage_config=coverage_config)
+                            coverage_config=coverage_config,
+                            plugin_path=path_to_module)
             dutpm.hook.build()
             target_json = dutpm.hook.run(module_dir=path_to_module)
 
@@ -440,7 +441,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             refpm.hook.init(ini_config=config[ref],
                             test_list=test_list,
                             work_dir=output_dir,
-                            coverage_config=coverage_config)
+                            coverage_config=coverage_config,
+                            plugin_path=path_to_module)
             refpm.hook.build()
             ref_json = refpm.hook.run(module_dir=path_to_module)
 

@@ -94,7 +94,7 @@ class DuTSpec(object):
     """ DuT plugin specification"""
 
     @dut_hookspec
-    def init(self, ini_config, test_list, work_dir, coverage_config):
+    def init(self, ini_config, test_list, work_dir, coverage_config, plugin_path):
         """ Gets everything up and ready """
 
     @dut_hookspec
