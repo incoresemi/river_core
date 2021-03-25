@@ -1,3 +1,5 @@
+.. _microtesk:
+
 MicroTESK Random Generator
 ===========================
 
@@ -31,12 +33,12 @@ MicroTESK generator has the RISC-V model developed in nML language and it is use
   <excludes name="MEM_SV32"/>
 
 Opensource generator
-====================
+--------------------
 
 It has a configurable model, generator code, some standard example templates. 
 
 Config.yaml options
-===================
+-------------------
 
 **WIP**
 
