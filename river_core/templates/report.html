@@ -296,7 +296,7 @@ function filter_table(elem) {
           <th col="result">Result</th>
           </tr>
         {% for test in test_dict %}
-            {% if test_dict[test]['result'] == 'True' %}
+            {% if test_dict[test]['result'] == true %}
             <tbody class= "passed simple-table-row" >
             {% elif test_dict[test]['result'] == 'Unavailable' %}
             <tbody class= "unavailable simple-table-row" >
@@ -306,7 +306,7 @@ function filter_table(elem) {
                 <tr>
                 <td class="col-name">{{ test }}</td>
                 <td class="col-path">{{ test_dict[test].work_dir }}</td>
-            {% if test_dict[test]['result'] == 'True' %}
+            {% if test_dict[test]['result'] == true %}
                 <td class="col-sort-result">Passed</td></tr>
             {%- elif test_dict[test]['result'] == 'Unavailable' -%}
             <td class="col-sort-result">Unavailable</td></tr>
