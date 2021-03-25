@@ -84,9 +84,9 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
             if test_dict[test]['result'] == 'Unavailable':
                 num_unav = num_unav + 1
                 continue
-            if test_dict[test]['result']:
+            elif test_dict[test]['result'] == 'Passed':
                 num_passed = num_passed + 1
-            if not test_dict[test]['result']:
+            else:
                 num_failed = num_failed + 1
         except:
             logger.warning("Couldn't get a result from the Test List Dict")
@@ -458,9 +458,10 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             if not os.path.isfile(test_wd + '/ref.dump'):
                 logger.error('Ref dump for Test: {0} is missing'.format(test))
                 continue
+            filecmp.clear_cache()
             result = filecmp.cmp(test_wd + '/dut.dump', test_wd + '/ref.dump')
             # ASK: If we need this in the test-list as well?
-            test_dict[test]['result'] = result
+            test_dict[test]['result'] = 'Passed' if result else 'Failed'
             utils.save_yaml(test_dict, test_list)
             if not result:
                 logger.error(
