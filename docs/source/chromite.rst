@@ -22,8 +22,8 @@ Chromite [Verilator]
 ====================
 This section will help you setup the `chromite_verilator` plugin.
 
-Installation steps
-------------------
+Installation
+------------
 1. Install chromite core
 2. Configure chromite_verilator.py
 
@@ -255,6 +255,21 @@ This will generate a ``bin`` folder containing the verilated ``chromite_core`` e
 
 .. note:: The user can also refer to the most up-to-date setup instructions at https://chromite.readthedocs.io/en/latest/getting_started.html.
 
+
+BootRom Content
+^^^^^^^^^^^^^^^
+
+By default, on system-reset the core will always jump to ``0x1000`` which is mapped to the bootrom. 
+The bootrom is initialized using the file ``boot.mem``. The bootrom after a few instructions
+causes a re-direction jump to address ``0x80000000`` where the application program is expected to be. 
+It is thus required that all programs are linked with text-section begining at ``0x80000000``. 
+The rest of the boot-rom holds a dummy device-tree-string information.
+
+To ``boot.mem`` file is generated in the ``bin`` folder using the following command:
+
+.. code-block:: shell-session
+
+   $ make generate_boot_files
 
 
 Configuring plugin.py

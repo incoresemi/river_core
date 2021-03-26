@@ -304,8 +304,18 @@ For taking RIVER_CORE for a test run,
 
     .. code-block:: bash
 
-        river_core compile -c <path to config> -t <path to test_list> -v <level> // Please ensure that the paths end with a slash.
+        river_core compile -c <path to config> -t <path to test_list> -v <level> 
 
     You can pass a `-v` flag to get more verbose results, optional flag.
 
     This step will generate an HTML report showing the status and linking other reports, and short summary of the log comparison 
+
+3. To clean your existing directory:
+
+    .. code-block:: bash
+
+        river_core clean -c <path to config>
+
+    This step will remove everything inside your `work_dir`. 
+
+    Will ask for confirmation once before removing anything.

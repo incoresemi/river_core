@@ -48,3 +48,10 @@ A YAML file is placed in the microtesk plugin file with the name `microtesk_gen_
 - **global_config_path** -> Path to the template folders in the plugins
 - **global_command** -> The command to generate the required assembly files. (Usually `generate.sh riscv`)
 - **global_args** -> Args to pass to the microtesk generator (Usually `--solver z3 --generate`)
+
+Output
+------
+
+This plugin will generate a `test-list` containing all necessary information for the framework to compile and test code. 
+
+This can be useful to share test cases across machines. In order to share the tests, one only needs to share the original finals and test-list which contains all necessary infomation about the tests run.
