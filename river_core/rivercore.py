@@ -2,16 +2,16 @@
 """ Main file containing all necessary functions of river_core """
 import sys
 import os
+import glob
 import shutil
 import datetime
 import importlib
 import configparser
 import filecmp
 import json
-import yaml
 
 from river_core.log import *
-from river_core.utils import *
+import river_core.utils as utils
 from river_core.constants import *
 from river_core.__init__ import __version__
 from river_core.sim_hookspecs import *
@@ -25,7 +25,27 @@ from jinja2 import Template
 
 
 # Misc Helper Functions
-def generate_report(output_dir, json_data, config, log_cmp_status):
+def sanitise_pytest_json(json):
+    '''
+        Function to sanitise pytest JSONs 
+
+        :param json: JSON to sanitise 
+
+        :type json: list  
+
+        :return return_data: list  
+    '''
+    return_data = []
+    for json_row in json:
+        # NOTE: Playing with fire here, pytest developers could (potentially) change this
+        if json_row.get('$report_type', None) == 'TestReport':
+            return_data.append(json_row)
+
+    return return_data
+
+
+def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
+                    config, test_dict):
     '''
         Work in Progress
 
@@ -33,46 +53,52 @@ def generate_report(output_dir, json_data, config, log_cmp_status):
 
         :param output_dir: Output directory for programs generated
 
-        :param json_list: JSON List exported from the plugins ; (Optional)
+        :param json_data: JSON data combined from Plugins 
 
         :param config: Config ini with the loaded by the configparser module
 
+        :param test_list: Test List loaded as a dict 
+
         :type output_dir: str
 
-        :type json_data: st
+        :type json_data: str
 
         :type config: list
 
+        :type test_list: dict 
     '''
 
+    #DONE:NEEL: This report is currently useless. Need pass fail results per
+    #test. Why not send the test_list here and print the info
+
     # Filter JSON files
-    final_data = []
-    ## Remove the initial info
-    for json_row in json_data:
-        # NOTE: Playing with fire here, pytest developers could (potentially) change this
-        if json_row.get('$report_type', None) == 'TestReport':
-            final_data.append(json_row)
-    json_data = final_data
+    gen_json_data = sanitise_pytest_json(gen_json_data)
+    target_json_data = sanitise_pytest_json(target_json_data)
+    ref_json_data = sanitise_pytest_json(ref_json_data)
     ## Get the proper stats about passed and failed test
     # NOTE: This is the place where you determine when your test passed fail, just add extra things to compare in the if condition if the results become to high
-    num_passed = num_total = 0
-    for json_row in json_data:
-        if json_row.get('when', None) == 'call':
-            num_total = num_total + 1
-        if json_row.get('outcome', None) == 'passed' and json_row.get(
-                'when', None) == 'call':
-            num_passed = num_passed + 1
+    num_passed = num_total = num_unav = num_failed = 0
+    for test in test_dict:
+        num_total = num_total + 1
+        try:
+            if test_dict[test]['result'] == 'Unavailable':
+                num_unav = num_unav + 1
+                continue
+            elif test_dict[test]['result'] == 'Passed':
+                num_passed = num_passed + 1
+            else:
+                num_failed = num_failed + 1
+        except:
+            logger.warning("Couldn't get a result from the Test List Dict")
 
-    num_failed = num_total - num_passed
-
-    os.chdir(os.path.dirname(__file__))
-    str_report_template = 'templates/report.html'
-    str_css_template = 'templates/style.css'
+    # DONE:NEEL The below should be constants in constants.py with automatic
+    # absolute path detection. Please check riscof for this.
+    root = os.path.abspath(os.path.dirname(__file__))
+    str_report_template = root + '/templates/report.html'
+    str_css_template = root + '/templates/style.css'
     report_file_name = 'report_{0}.html'.format(
         datetime.datetime.now().strftime("%Y%m%d-%H%M"))
-    report_dir = output_dir + 'reports/'
-    # TODO: WIP still finalizing the template
-    # - [X] Shutil to copy style.css
+    report_dir = output_dir + '/reports/'
     html_objects = {}
     html_objects['name'] = "RiVer Core Verification Report"
     html_objects['date'] = (datetime.datetime.now().strftime("%d-%m-%Y"))
@@ -82,10 +108,14 @@ def generate_report(output_dir, json_data, config, log_cmp_status):
     html_objects['dut'] = config['river_core']['target']
     html_objects['generator'] = config['river_core']['generator']
     html_objects['reference'] = config['river_core']['reference']
-    html_objects['diff_result'] = log_cmp_status
-    html_objects['results'] = json_data
+    html_objects['test_dict'] = test_dict
+    html_objects['target_data'] = target_json_data
+    html_objects['ref_data'] = ref_json_data
+    html_objects['gen_data'] = gen_json_data
     html_objects['num_passed'] = num_passed
     html_objects['num_failed'] = num_failed
+    html_objects['num_unav'] = num_unav
+
     if not os.path.exists(report_dir):
         os.makedirs(report_dir)
 
@@ -96,13 +126,15 @@ def generate_report(output_dir, json_data, config, log_cmp_status):
 
     shutil.copyfile(str_css_template, report_dir + 'style.css')
 
-    report_file_path = report_dir + report_file_name
+    report_file_path = report_dir + '/' + report_file_name
     with open(report_file_path, "w") as report:
         report.write(output)
 
     logger.info(
         'Final report saved at {0}\nMay the debugging force be with you!'.
         format(report_file_path))
+
+    return report_file_path
 
 
 def confirm():
@@ -117,16 +149,16 @@ def confirm():
     return answer == "y"
 
 
-def rivercore_clean(config_file, output_dir, verbosity):
+def rivercore_clean(config_file, verbosity):
     '''
         Alpha
         Work in Progress
 
     '''
 
-    output_dir = output_dir + '/'
     config = configparser.ConfigParser()
     config.read(config_file)
+    output_dir = config['river_core']['work_dir']
     logger.level(verbosity)
     logger.info('****** RiVer Core {0} *******'.format(__version__))
     logger.info('****** Cleaning Mode ****** ')
@@ -137,32 +169,20 @@ def rivercore_clean(config_file, output_dir, verbosity):
     target = config['river_core']['target']
     ref = config['river_core']['reference']
 
-    logger.info(
-        "It only removes the files generated during tests, so ASM/Reports are safe"
-    )
-    logger.info(
-        "Now removing files from {0} Suite for the {1} Target with {2} Ref".
-        format(suite, target, ref))
-    logger.info("Following files will be removed")
-    logger.info('{0}/{1}/{2}'.format(output_dir, suite, target))
-    logger.info('{0}/{1}/Makefile.{2}'.format(output_dir, suite, target))
-    logger.info('{0}/{1}/{2}'.format(output_dir, suite, ref))
-    logger.info('{0}/{1}/Makefile.{2}'.format(output_dir, suite, ref))
-    res = confirm()
-    if res:
-        sys_command('rm -rf {0}/{1}/{2}'.format(output_dir, suite, target))
-        sys_command('rm -rf {0}/{1}/Makefile.{2}'.format(
-            output_dir, suite, target))
-        sys_command('rm -rf {0}/{1}/{2}'.format(output_dir, suite, ref))
-        sys_command('rm -rf {0}/{1}/Makefile.{2}'.format(
-            output_dir, suite, ref))
-
-        logger.info("All clean now")
+    if not os.path.exists(output_dir):
+        logger.info(output_dir + ' directory does not exist. Nothing to delete')
+        return
     else:
-        logger.info("No so, nothing is modified")
+        logger.info('The following directory will be removed : ' +
+                    str(output_dir))
+        logger.info('Hope you took a backup of the reports')
+        res = confirm()
+        if res:
+            shutil.rmtree(output_dir)
+            logger.info(output_dir + ' directory deleted')
 
 
-def rivercore_generate(config_file, output_dir, verbosity):
+def rivercore_generate(config_file, verbosity):
     '''
         Function to generate the assembly programs using the plugin as configured in the config.ini.
 
@@ -179,33 +199,46 @@ def rivercore_generate(config_file, output_dir, verbosity):
         :type verbosity: str
     '''
 
-    output_dir = output_dir + '/'
     logger.level(verbosity)
     config = configparser.ConfigParser()
     config.read(config_file)
     logger.debug('Read file from {0}'.format(config_file))
 
+    output_dir = config['river_core']['work_dir']
+
     logger.info('****** RiVer Core {0} *******'.format(__version__))
-    logger.info('****** Generation Mode ****** ')
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
+    logger.info('****** Generation Mode ****** ')
 
     # TODO Test multiple plugin cases
     # Current implementation is using for loop, which might be a bad idea for parallel processing.
 
     suite_list = config['river_core']['generator'].split(',')
+
+    logger.info(
+        "The river_core is currently configured to run with following parameters"
+    )
+    logger.info("The Output Directory (work_dir) : {0}".format(output_dir))
+    logger.info("ISA : {0}".format(config['river_core']['isa']))
+
     for suite in suite_list:
 
-        # output_dir = os.environ['OUTPUT_DIR']
-
+        # Give Plugin Info
+        logger.info("Plugin Jobs : {0}".format(config[suite]['jobs']))
+        logger.info("Plugin Seed : {0}".format(config[suite]['seed']))
+        logger.info("Plugin Count (Times to run the test) : {0}".format(
+            config[suite]['count']))
         generatorpm = pluggy.PluginManager("generator")
         generatorpm.add_hookspecs(RandomGeneratorSpec)
 
         path_to_module = config['river_core']['path_to_suite']
         plugin_suite = suite + '_plugin'
+
+        # Get ISA and pass to plugin
+        isa = config['river_core']['isa']
+        config[suite]['isa'] = isa
         logger.info('Now loading {0} Suite'.format(suite))
-        # Using spec and exec_module as it allows usage of full path
-        # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
         abs_location_module = path_to_module + '/' + plugin_suite + '/' + plugin_suite + '.py'
         logger.debug("Loading module from {0}".format(abs_location_module))
         # generatorpm_name = 'river_core.{0}_plugin.{0}_plugin'.format(suite)
@@ -215,19 +248,21 @@ def rivercore_generate(config_file, output_dir, verbosity):
             generatorpm_module = importlib.util.module_from_spec(
                 generatorpm_spec)
             generatorpm_spec.loader.exec_module(generatorpm_module)
+            plugin_class = "{0}_plugin".format(suite)
+            class_to_call = getattr(generatorpm_module, plugin_class)
+            # TODO:DOC: Naming for class in plugin
+            generatorpm.register(class_to_call())
 
         except FileNotFoundError as txt:
             logger.error(suite + " not found at : " + path_to_module + ".\n" +
                          str(txt))
             raise SystemExit
 
-        if suite == 'microtesk':
-            generatorpm.register(generatorpm_module.MicroTESKPlugin())
-        if suite == 'aapg':
-            generatorpm.register(generatorpm_module.AapgPlugin())
-        if suite == 'dv':
-            generatorpm.register(generatorpm_module.RiscvDvPlugin())
+        # DONE:NEEL: I don't like this hard-coding below. Everything should come
+        # from config.ini or the names should be consistant for autodetection.
 
+        #DONE:NEEL isa fields should not be local to plugins. They have to be
+        #common for all plugins
         generatorpm.hook.pre_gen(spec_config=config[suite],
                                  output_dir='{0}/{1}'.format(output_dir, suite))
         test_list = generatorpm.hook.gen(
@@ -239,24 +274,16 @@ def rivercore_generate(config_file, output_dir, verbosity):
             output_dir='{0}/{1}'.format(output_dir, suite),
             regressfile='{0}/{1}/regresslist.yaml'.format(output_dir, suite))
 
-        test_list_file = output_dir + suite + '/' + suite + '_test_list.yaml'
+        test_list_file = output_dir + '/test_list.yaml'
         testfile = open(test_list_file, 'w')
-        logger.debug('Test-List Dump:{0} \n {1}'.format(test_list,
-                                                        test_list[0]))
-        # Sort keys allows to maintain the above order
-        # Weird Python thingy, converting dicts into lists
-        # Code will have these X[0], find a better solution some day, maybe a future TODO
-        yaml.safe_dump(test_list[0],
-                       testfile,
-                       default_flow_style=False,
-                       sort_keys=False)
+        utils.yaml.dump(test_list[0], testfile)
         testfile.close()
 
         logger.info('Test list is generated and available at {0}'.format(
             test_list_file))
 
 
-def rivercore_compile(config_file, output_dir, test_list, verbosity):
+def rivercore_compile(config_file, test_list, coverage, verbosity):
     '''
         Work in Progress
 
@@ -267,6 +294,8 @@ def rivercore_compile(config_file, output_dir, test_list, verbosity):
         :param output_dir: Output directory for programs generated
 
         :param test_list: Test List exported from generate sub-command 
+
+        :param coverage: Enable coverage merge and stats from the reports 
 
         :param verbosity: Verbosity level for the framework
 
@@ -279,7 +308,6 @@ def rivercore_compile(config_file, output_dir, test_list, verbosity):
         :type verbosity: str
     '''
 
-    output_dir = output_dir + '/'
     logger.level(verbosity)
     config = configparser.ConfigParser()
     config.read(config_file)
@@ -288,35 +316,51 @@ def rivercore_compile(config_file, output_dir, test_list, verbosity):
     logger.info('****** RiVer Core {0} *******'.format(__version__))
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
+    logger.info('****** Compilation Mode ******')
 
-    logger.info('****** Compilation Mode ****** ')
-
-    # Compile plugin manager
-    #compilepm = pluggy.PluginManager('compile')
-    #compilepm.add_hookspecs(CompileSpec)
-
-    #compilepm_name = 'river_core.cclass_plugin.compile_plugin'
-    #compilepm_module = importlib.import_module(compilepm_name, '.')
-    #compilepm.register(compilepm_module.CompilePlugin())
-    #compilepm.hook.pre_compile(compile_config='{0}/river_core/cclass_plugin/compile_config.yaml'.format(cwd))
-    #compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), command_line_args='', jobs=jobs, filter=filter)
-    #compilepm.hook.post_compile()
-
-    # TODO Test multiple plugin cases
-    # Current implementation is using for loop, which might be a bad idea for parallel processing.
+    output_dir = config['river_core']['work_dir']
     asm_gen = config['river_core']['generator']
-    output_dir = output_dir + asm_gen + '/'
     target_list = config['river_core']['target'].split(',')
+    ref_list = config['river_core']['reference'].split(',')
+
+    #DONE:NEEL: REPLACE ; with && to ensure failure handling
+    #DONE:NEEL: Worthwhile to print some useful config values like work_dir,
+    # isa, etc here as logger.info output
+
+    logger.info(
+        "The river_core is currently configured to run with following parameters"
+    )
+    logger.info("The Output Directory (work_dir) : {0}".format(output_dir))
+    logger.info("ISA : {0}".format(config['river_core']['isa']))
+    logger.info("Generator Plugin : {0}".format(asm_gen))
+    logger.info("Target Plugin : {0}".format(target_list))
+    logger.info("Reference Plugin : {0}".format(ref_list))
+
+    if coverage:
+        logger.info("Coverage mode is enabled")
+        logger.info(
+            "Just a reminder to ensrue that you have installed things with coverage enabled"
+        )
+
+    # Load coverage stats
+    if coverage:
+        coverage_config = config['coverage']
+    else:
+        coverage_config = None
     if '' in target_list:
         logger.info('No targets configured, so moving on the reference')
     else:
         for target in target_list:
+            logger.info("DuT Info")
+            logger.info("DuT Jobs : {0}".format(config[target]['jobs']))
+            logger.info("DuT Count (Times to run) : {0}".format(
+                config[target]['count']))
 
-            # compilepm = pluggy.PluginManager('compile')
             dutpm = pluggy.PluginManager('dut')
-            # compilepm.add_hookspecs(CompileSpec)
             dutpm.add_hookspecs(DuTSpec)
 
+            isa = config['river_core']['isa']
+            config[target]['isa'] = isa
             path_to_module = config['river_core']['path_to_target']
             plugin_target = target + '_plugin'
             logger.info('Now running on the Target Plugins')
@@ -325,126 +369,111 @@ def rivercore_compile(config_file, output_dir, test_list, verbosity):
             abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
             logger.debug("Loading module from {0}".format(abs_location_module))
 
-            dutpm_spec = importlib.util.spec_from_file_location(
-                plugin_target, abs_location_module)
-            dutpm_module = importlib.util.module_from_spec(dutpm_spec)
-            dutpm_spec.loader.exec_module(dutpm_module)
+            try:
+                dutpm_spec = importlib.util.spec_from_file_location(
+                    plugin_target, abs_location_module)
+                dutpm_module = importlib.util.module_from_spec(dutpm_spec)
+                dutpm_spec.loader.exec_module(dutpm_module)
 
-            # DuT Plugins
-            if target == 'chromite_verilator':
-                dutpm.register(dutpm_module.ChromitePlugin())
-                # NOTE: Add more plugins here :)
-            else:
+                # DuT Plugins
+                # DONE:NEEL: I don't like this hard-coding below. Everything should come
+                # from config.ini or the names should be consistant for autodetection.
+                # TODO:DOC: Naming for class in plugin
+                plugin_class = "{0}_plugin".format(target)
+                class_to_call = getattr(dutpm_module, plugin_class)
+                dutpm.register(class_to_call())
+            except:
                 logger.error(
-                    "Sorry, requested plugin is not really supported ATM")
+                    "Sorry, loading the requested plugin has failed, please check the configuration"
+                )
                 raise SystemExit
 
             dutpm.hook.init(ini_config=config[target],
                             test_list=test_list,
-                            asm_dir=output_dir,
-                            config_yaml=path_to_module + '/' + plugin_target +
-                            '/' + 'config.yaml')
-            # NOTE (Add to documentation)
-            # The config files should be saved as config.yaml in the plugin repo
-            dutpm.hook.build(asm_dir=output_dir, asm_gen=asm_gen)
-            # regress_list='{0}/{1}/regresslist.yaml'.format(
-            # output_dir, suite),
-            # command_line_args='',
-            # jobs=jobs,
-            # norun=norun,
-            # filter=filter)
-            target_json = dutpm.hook.run(module_dir=path_to_module,
-                                         asm_dir=output_dir)
-            target_log = dutpm.hook.post_run()
+                            work_dir=output_dir,
+                            coverage_config=coverage_config,
+                            plugin_path=path_to_module)
+            dutpm.hook.build()
+            target_json = dutpm.hook.run(module_dir=path_to_module)
 
-    ref_list = config['river_core']['reference'].split(',')
     if '' in ref_list:
         logger.info('No references, so exiting the framework')
         raise SystemExit
     else:
         for ref in ref_list:
 
-            # compilepm = pluggy.PluginManager('compile')
-            dutpm = pluggy.PluginManager('dut')
-            # compilepm.add_hookspecs(CompileSpec)
-            dutpm.add_hookspecs(DuTSpec)
+            logger.info("Reference Info")
+            logger.info("Reference Jobs : {0}".format(config[ref]['jobs']))
+            logger.info("Reference Count (Times to run the test) : {0}".format(
+                config[ref]['count']))
+            refpm = pluggy.PluginManager('dut')
+            refpm.add_hookspecs(DuTSpec)
 
             path_to_module = config['river_core']['path_to_ref']
             plugin_ref = ref + '_plugin'
             logger.info('Now loading {0}-target'.format(ref))
+            # Get ISA from river
+            isa = config['river_core']['isa']
+            config[ref]['isa'] = isa
 
             abs_location_module = path_to_module + '/' + plugin_ref + '/' + plugin_ref + '.py'
             logger.debug("Loading module from {0}".format(abs_location_module))
 
-            dutpm_spec = importlib.util.spec_from_file_location(
-                plugin_ref, abs_location_module)
-            dutpm_module = importlib.util.module_from_spec(dutpm_spec)
-            dutpm_spec.loader.exec_module(dutpm_module)
+            try:
+                refpm_spec = importlib.util.spec_from_file_location(
+                    plugin_ref, abs_location_module)
+                refpm_module = importlib.util.module_from_spec(refpm_spec)
+                refpm_spec.loader.exec_module(refpm_module)
 
-            # DuT Plugins
-            if ref == 'spike':
-                dutpm.register(dutpm_module.SpikePlugin())
-                # NOTE: Add more plugins here :)
-            else:
+                # DuT Plugins
+                # DONE:NEEL: I don't like this hard-coding below. Everything should come
+                # from config.ini or the names should be consistant for autodetection.
+                # TODO:DOC: Naming for class in plugin
+                plugin_class = "{0}_plugin".format(ref)
+                class_to_call = getattr(refpm_module, plugin_class)
+                refpm.register(class_to_call())
+            except:
                 logger.error(
-                    "Sorry, requested plugin is not really supported ATM")
+                    "Sorry, requested plugin is not really was not found at location, please check config.ini"
+                )
                 raise SystemExit
 
-            dutpm.hook.init(ini_config=config[ref],
+            refpm.hook.init(ini_config=config[ref],
                             test_list=test_list,
-                            asm_dir=output_dir,
-                            config_yaml=path_to_module + '/' + plugin_ref +
-                            '/' + 'config.yaml')
-            # NOTE (Add to documentation)
-            # The config files should be saved as config.yaml in the plugin repo
-            dutpm.hook.build(asm_dir=output_dir, asm_gen=asm_gen)
-            # regress_list='{0}/{1}/regresslist.yaml'.format(
-            # output_dir, suite),
-            # command_line_args='',
-            # jobs=jobs,
-            # norun=norun,
-            # filter=filter)
-            ref_json = dutpm.hook.run(module_dir=path_to_module,
-                                      asm_dir=output_dir)
-            ref_log = dutpm.hook.post_run()
-            # except FileNotFoundError as txt:
-            #     logger.error(target + " not found at : " + path_to_module + ".\n" +
-            #                  str(txt))
-            #     raise SystemExit
+                            work_dir=output_dir,
+                            coverage_config=coverage_config,
+                            plugin_path=path_to_module)
+            refpm.hook.build()
+            ref_json = refpm.hook.run(module_dir=path_to_module)
 
-        ## Chromite Compile plugin manager
-        #compilepm = pluggy.PluginManager('compile')
-        #compilepm.add_hookspecs(CompileSpec)
+        ## Comparing Dumps
 
-        ##compilepm_name = 'river_core.compile_plugin.compile_plugin'
-        #compilepm_name = 'river_core.chromite_simlog_plugin.chromite_simlog_plugin'
-        #compilepm_module = importlib.import_module(compilepm_name, '.')
-        #compilepm.register(compilepm_module.ChromiteSimLogPlugin())
-        #compilepm.hook.pre_compile(compile_config='{0}/river_core/chromite_simlog_plugin/chromite_config.yaml'.format(cwd))
-        #compilepm.hook.compile(regress_list='{0}/workdir/regresslist.yaml'.format(cwd), command_line_args='', jobs=jobs, filter=filter)
-        #compilepm.hook.post_compile()
-
-        # Start comparison between files
-        # TODO Replace with a signature based model
-        if '' in ref_log[0] or '' in target_log[
-                0] or not ref_log[0] or not target_log[0]:
-            logger.error(
-                'Files don\'t seem to exist ; Expect more errors on the way')
-        # TODO Improve error catching here
-        # Check if the logs are same number
-        logger.info('Starting comparison between logs')
         result = 'Unavailable'
-        if len(ref_log[0]) == len(target_log[0]):
-            for i in range(len(ref_log)):
-                # NOTE This is absolutely strange! Why is a double list is created
-                result = filecmp.cmp(ref_log[0][i], target_log[0][i])
+        test_dict = utils.load_yaml(test_list)
+        for test, attr in test_dict.items():
+            test_wd = attr['work_dir']
+            if not os.path.isfile(test_wd + '/dut.dump'):
+                logger.error('Dut dump for Test: {0} is missing'.format(test))
+                continue
+            if not os.path.isfile(test_wd + '/ref.dump'):
+                logger.error('Ref dump for Test: {0} is missing'.format(test))
+                continue
+            filecmp.clear_cache()
+            result = filecmp.cmp(test_wd + '/dut.dump', test_wd + '/ref.dump')
+            # ASK: If we need this in the test-list as well?
+            test_dict[test]['result'] = 'Passed' if result else 'Failed'
+            utils.save_yaml(test_dict, test_list)
+            if not result:
+                logger.error(
+                    "Dumps for test {0}. Do not match. TEST FAILED".format(
+                        test))
+            else:
                 logger.info(
-                    "Matching {0} and {1} \n Result : Are files same?: {2}".
-                    format(ref_log[i], target_log[i], result))
-        else:
-            logger.info(
-                'Something is not right with the logs, manual inspection is reccomended, after program termination'
-            )
+                    "Dumps for test {0} Match. TEST PASSED".format(test))
+
+        # DONE:NEEL: I have replaced the below with the above. The dumps shuold
+        # always be dut.dump and ref.dump. Will come back to this when multiple
+        # dumps need to be checked. If you agree delete the below code.
 
         # Start checking things after running the commands
         # Report generation starts here
@@ -476,6 +505,44 @@ def rivercore_compile(config_file, output_dir, test_list, verbosity):
         for line in ref_json_list:
             ref_json_data.append(json.loads(line))
 
-        json_data = target_json_data + ref_json_data
+        # Need to an Gen json file for final report
+        # TODO:CHECK: Only issue is that this can ideally be a wrong approach
+
+        try:
+            logger.info("Checking for a generator json to create final report")
+            json_files = glob.glob(
+                output_dir +
+                '/.json/{0}*.json'.format(config['river_core']['generator']))
+            logger.debug(
+                "Detected generated JSON Files: {0}".format(json_files))
+
+            # Can only get one file back
+            gen_json_file = max(json_files, key=os.path.getctime)
+            json_file = open(gen_json_file, 'r')
+            target_json_list = json_file.readlines()
+            json_file.close()
+            gen_json_data = []
+            for line in target_json_list:
+                gen_json_data.append(json.loads(line))
+
+        except:
+            logger.warning("Couldn't find a generator JSON file")
+            gen_json_data = []
+
+        # See if space saver is enabled
+        dutpm.hook.post_run(test_dict=test_dict, config=config)
+        refpm.hook.post_run(test_dict=test_dict, config=config)
+
         logger.info("Now generating some good HTML reports for you")
-        generate_report(output_dir, json_data, config, result)
+        report_html = generate_report(output_dir, gen_json_data,
+                                      target_json_data, ref_json_data, config,
+                                      test_dict)
+
+        # Check if web browser
+        if utils.str_2_bool(config['river_core']['open_browser']):
+            try:
+                import webbrowser
+                logger.info("Openning test report in web-browser")
+                webbrowser.open(report_html)
+            except:
+                return 1

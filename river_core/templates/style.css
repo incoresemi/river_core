@@ -50,7 +50,16 @@ span.failed, .failed .col-result {
 	color: red;
 }
 
+span.passed, .passed .col-sort-result {
+	color: green;
+}
+span.failed, .failed .col-sort-result {
+	color: red;
+}
 
+span.unavailable, .unavailable .col-sort-result {
+	color: orange;
+}
 /******************************
  * RESULTS TABLE
  *
@@ -114,6 +123,22 @@ span.failed, .failed .col-result {
 	text-align: left
 }
 #yaml-table th {
+	font-weight: bold
+}
+
+#simple-table {
+	border: 1px solid #cccccc;
+	color: #313131;
+	font-size: 12px;
+	width: 100%
+}
+
+#simple-table th, #simple-table td {
+	padding: 5px;
+	border: 1px solid #E6E6E6;
+	text-align: left
+}
+#simple-table th {
 	font-weight: bold
 }
 
@@ -226,12 +251,4 @@ div.image img {
   position: relative;
   overflow: hidden;
 }
-
-.red {
-        color: red;
-    }
-
-.green {
-        color: green;
-    }
 

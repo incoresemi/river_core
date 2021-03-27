@@ -249,57 +249,73 @@ With this you should now have all the following available as command line argume
 
 .. note:: Each of the generators have their own unique config.yamls to configure their plugin specific details, ensure you have changed them as required.
 
-Install Test Generators
+
+Test Generators
 =======================
 Some of the existing generator plugins include:
 
-- `Microtesk <microtesk.html>`_
+- :ref:`Microtesk Plugin <microtesk>`
 
-- `AAPG <aapg.html>`_
+- :ref:`AAPG Plugin <aapg>`
 
-Install Plugin Models
+Plugin Models
 =====================
 Some of the existing plugin models are:
 
-- `Chromite <chromite.html>`_
+- :ref:`Chromite Plugin <chromite>`
 
-
-Install Reference Models
+Reference Models
 ========================
 Some of the existing reference models are:
 
-- `Spike <spike.html>`_
+- :ref:`Spike Plugin <spike>`
 
 
 Create a config.ini file
 ========================
 
 .. _config-file: https://gitlab.com/incoresemi/river-framework/core-verification/river_core/-/blob/dev/examples/sample-config.ini
+
 This chapter will discuss the syntax and structure of the config.ini file used by river_core.
 A sample `config-file`_ is present in the **examples** directory of the Git Repository.
 
-More info on the `Config Spec <config_ini.html>`_
+More info on the :ref:`Config Spec<config_ini>`.
 
 Running RIVER_CORE
 ==================
 
 For taking RIVER_CORE for a test run,
 
-1. To generate tests
 
-.. code-block:: bash
+1. To generate test programs use:
 
-    river_core generate -o <output-dir> -c  /path/to/river_core/examples/sample-config.ini
+    .. code-block:: bash
 
-You can pass a `-v` flag to get more verbose results, optional flag.
+        river_core generate -c <path to config> -v <level>
+        river_core --help // For more info
 
-.. IMPORTANT:: This would only generate AAPG based tests.
+    The only parameter required for this step is a valid `config.ini`, for more info check :ref:`Config Spec <config_ini>`
 
-2. To compile and test on DuT and Reference Plugins
+    You can pass a `-v` flag to get more verbose results, optional flag.
 
-.. code-block:: bash
+    .. Note:: This generates a test list which can then be used for compliations
 
-    river_core compile -c /path/to/river_core/examples/sample-config.ini -s /path/to/asm/dir/work/
+2. To compile and compare programs use:
 
+    .. code-block:: bash
 
-After the tests are complete you will see that a HTML file is created in your output dir, that will contain all necessary info whether your design has matched or failed, the duration and other necessary logs generated.
+        river_core compile -c <path to config> -t <path to test_list> -v <level> 
+
+    You can pass a `-v` flag to get more verbose results, optional flag.
+
+    This step will generate an HTML report showing the status and linking other reports, and short summary of the log comparison 
+
+3. To clean your existing directory:
+
+    .. code-block:: bash
+
+        river_core clean -c <path to config>
+
+    This step will remove everything inside your `work_dir`. 
+
+    Will ask for confirmation once before removing anything.

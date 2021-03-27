@@ -25,25 +25,18 @@ def cli():
               '--verbosity',
               default='info',
               help='Set the verbosity level for the framework')
-@click.option(
-    '-c',
-    '--config',
-    type=click.Path(dir_okay=False, exists=True),
-    help='Read option defaults from the specified INI file',
-    show_default=True,
-)
-@click.option('--output_dir',
-              '-o',
-              default='',
-              required=True,
-              type=click.Path(),
-              help='Output Dir <!>')
+@click.option('-c',
+              '--config',
+              type=click.Path(dir_okay=False, exists=True),
+              help='Read option defaults from the specified INI file',
+              show_default=True,
+              required=True)
 @cli.command()
-def clean(config, output_dir, verbosity):
+def clean(config, verbosity):
     '''
         subcommand to clean generated programs.
     '''
-    rivercore_clean(config, output_dir, verbosity)
+    rivercore_clean(config, verbosity)
 
 
 @click.version_option(version=__version__)
@@ -62,17 +55,13 @@ def clean(config, output_dir, verbosity):
               type=click.Path(dir_okay=False, exists=True),
               help='Read option defaults from the specified INI file',
               required=True)
-@click.option('--output_dir',
-              '-o',
-              type=click.Path(exists=True),
-              help='ASM files to compile',
-              required=True)
+@click.option('--coverage', is_flag=True)
 @cli.command()
-def compile(config, output_dir, test_list, verbosity):
+def compile(config, test_list, coverage, verbosity):
     '''
         subcommand to compile generated programs.
     '''
-    rivercore_compile(config, output_dir, test_list, verbosity)
+    rivercore_compile(config, test_list, coverage, verbosity)
 
 
 @click.version_option(version=__version__)
@@ -87,18 +76,12 @@ def compile(config, output_dir, test_list, verbosity):
     help='Read option defaults from the specified INI file',
     show_default=True,
 )
-@click.option('--output_dir',
-              '-o',
-              default='',
-              required=True,
-              type=click.Path(),
-              help='Output Dir <!>')
 @cli.command()
-def generate(config, output_dir, verbosity):
+def generate(config, verbosity):
     """
     subcommand to generate programs.
     """
-    rivercore_generate(config, output_dir, verbosity)
+    rivercore_generate(config, verbosity)
 
 
 if __name__ == '__main__':

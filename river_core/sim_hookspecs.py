@@ -94,17 +94,17 @@ class DuTSpec(object):
     """ DuT plugin specification"""
 
     @dut_hookspec
-    def init(self, ini_config, test_list, asm_dir, config_yaml):
+    def init(self, ini_config, test_list, work_dir, coverage_config, plugin_path):
         """ Gets everything up and ready """
 
     @dut_hookspec
-    def build(self, asm_dir, asm_gen):
+    def build(self):
         """ Alright, let's get this running; Basically get things compiled and ready to be loaded onto the core """
 
     @dut_hookspec
-    def run(self, module_dir, asm_dir):
+    def run(self, module_dir):
         """ The moment of truth, getting things tested on the core """
 
     @dut_hookspec
-    def post_run(self):
+    def post_run(self, test_dict, config):
         """ Just to check something if required """

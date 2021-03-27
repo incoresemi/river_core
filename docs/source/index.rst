@@ -9,7 +9,14 @@ RiVer Core's documentation!
 
    installation
    config_ini
+   coverage
+   test_list
+   aapg
+   microtesk
+   chromite
+   spike
    code-doc
+   plugin_developer
    contributing
    authors
 

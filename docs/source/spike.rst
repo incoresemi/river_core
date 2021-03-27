@@ -1,66 +1,65 @@
+.. _spike:
+
 Spike
 =====
 
-.. _Spike: https://gitlab.com/shaktiproject/tools/mod-spike
-
-`Spike`_ plugin is based on the mod-spike developed by Team Shakti.
+`Spike [Mod] <https://gitlab.com/shaktiproject/tools/mod-spike>`_ plugin is based on the mod-spike developed by Team Shakti.
 
 `mod-spike` is a modified version of the RISC-V ISA Simulator written by Andrew Waterman and Yunsup Lee.
 `mod-spike` has different custom extensions to spike, which is helpful for getting better insight into the RISC-V simulation at the ISA level.
 
-Ensure you have `mod-spike` installed in your path.
+Installation
+------------
+1. Clone the `modified` spike directory
+
+      .. code-block:: shell-session
+
+        $ git clone https://gitlab.com/shaktiproject/tools/mod-spike.git  
+
+2. Checkout to the `bump-to-latest` branch
+
+      .. code-block:: shell-session
+
+        $ cd mod-spike                                                                                    
+        $ git checkout bump-to-latest
+
+3. Now clone the latest spike repo from Github.
+
+      .. code-block:: shell-session
+
+        $ git clone https://github.com/riscv/riscv-isa-sim.git
+
+4. Apply the `shakti.patch` to the original repo.
+
+      .. code-block:: shell-session
+
+        $ cd riscv-isa-sim
+        $ git checkout 6d15c93fd75db322981fe58ea1db13035e0f7add
+        $ git apply ../shakti.patch
+
+5. Now export `RISCV` path and create a `build` to store the new compiled executable.
+
+      .. code-block:: shell-session
+      
+        $ export RISCV=<path you to install spike>
+        $ mkdir build
+        $ cd build
+
+6. Configure and build the new spike with the modifications. Optionally you can install with `sudo` permissions.
+
+      .. code-block:: shell-session
+      
+         $ ../configure --prefix=$RISCV
+         $ make
+         $ [sudo] make install 
+
+
+
 
 Design
-=======
+------
 
-The plugin creates a Makefile in your `workdir` based on the parameters set in `config.yaml`, this is then called by the pytest framework which creates a JSON file containing the file report and runs the makefile in the order.
+The plugin creates a Makefile in your `workdir` based on the parameters set in `config.ini`, this is then called by the pytest framework which creates a JSON file containing the file report and runs the makefile in the order.
 The framework returns a JSON which is then parsed to create a final HTML report.
-Currently it also returns a `spike.dump` which is used to compare the working of the design.
+Currently it also returns a `dut.dump` which is used to compare the working of the design.
 
-Config.yaml options
-===================
-A YAML file is placed in the Spike plugin folder with the name `config.yaml`.
-
-- **abi** -> The ABI (This goes in as an option for the compiler)
-
-- **arch** -> The Arch for tests
-
-- **gcc** -> The main option to configure parameters for GCC
-
-   - **command** -> The main command for the calling the RISC-V GCC
-    Usually `riscv64-unknown-elf-gcc`
-   - **args** -> The set of arguments to pass for GCC
-    Usually  `-static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -std=gnu99 -O2 -DPREALLOCATE=1`
-   - **include** -> Directory to include common linker scripts etc.
-   - **asm_dir** -> Directory where the ASM is stored in the work directory.
-
-- **linker** -> The option to configure parameters for Linker
-
-   -  **ld** -> The main command for Linker
-      Usually `ld`
-   -  **args** -> The set of arguments for Linker
-      Usually `-static -nostdlib -nostartfiles -lm -lgcc -T`
-   - **crt** -> Path to CRT assmebly file
-
-- **objdump** -> The option to configure parameters for objdump
-
-   -  **command** -> The place to configure the command for objdump
-      Usually `riscv64-unknown-elf-objdump`
-   - **args** -> Args to pass to the command
-
-- **elf2hex** -> The option to configure parameters for elf2hex
-
-   - **command** -> The command to run elf2hex
-   Usually `elf2hex` (if installed on Path)
-
-   - **args** -> Args to pass <width> <depth> <base>
-   For a standard simple file of 64-bit `[8, 4194304, 2147483648]`
-
-   - **out_file** -> Output file Fixed as  `code.mem`
-
-- **sim** -> Options to configure simulator being used in the plugin
-
-   -  **command** -> The command to run
-      Usually `spike`
-   -  **args** -> Parameters to pass the simulation binary.
-      Usually `-c -l`
