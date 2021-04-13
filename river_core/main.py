@@ -95,7 +95,7 @@ def generate(config, verbosity):
               help='Read option defaults from the specified INI file',
               show_default=True,
               required=True)
-@click.argument('db_files', nargs=-1, type=click.Path())
+@click.argument('db_files', nargs=-1, type=click.Path(exists=True))
 @cli.command()
 def merge(config, verbosity, db_files):
     """
