@@ -94,7 +94,8 @@ class DuTSpec(object):
     """ DuT plugin specification"""
 
     @dut_hookspec
-    def init(self, ini_config, test_list, work_dir, coverage_config, plugin_path):
+    def init(self, ini_config, test_list, work_dir, coverage_config,
+             plugin_path):
         """ Gets everything up and ready """
 
     @dut_hookspec
@@ -107,4 +108,8 @@ class DuTSpec(object):
 
     @dut_hookspec
     def post_run(self, test_dict, config):
+        """ Just to check something if required """
+
+    @dut_hookspec
+    def merge_db(self, db_files, config):
         """ Just to check something if required """

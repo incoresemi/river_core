@@ -3,7 +3,7 @@
 
 import click
 
-from river_core.rivercore import rivercore_clean, rivercore_compile, rivercore_generate
+from river_core.rivercore import rivercore_clean, rivercore_compile, rivercore_generate, rivercore_merge
 from river_core.__init__ import __version__
 
 
@@ -82,6 +82,26 @@ def generate(config, verbosity):
     subcommand to generate programs.
     """
     rivercore_generate(config, verbosity)
+
+
+@click.version_option(version=__version__)
+@click.option('-v',
+              '--verbosity',
+              default='info',
+              help='Set the verbosity level for the framework')
+@click.option('-c',
+              '--config',
+              type=click.Path(dir_okay=False, exists=True),
+              help='Read option defaults from the specified INI file',
+              show_default=True,
+              required=True)
+@click.argument('db_files', nargs=-1, type=click.Path())
+@cli.command()
+def merge(config, verbosity, db_files):
+    """
+    subcommand to merge coverage databases.
+    """
+    rivercore_merge(config, verbosity, db_files)
 
 
 if __name__ == '__main__':

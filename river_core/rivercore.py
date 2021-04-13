@@ -546,3 +546,81 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                 webbrowser.open(report_html)
             except:
                 return 1
+
+
+def rivercore_merge(config_file, verbosity, db_files):
+    '''
+        Work in Progress
+
+        Function to merge coverage databases
+
+        :param config_file: Config.ini file for generation
+
+        :param verbosity: Verbosity level for the framework
+
+        :param db_files: Tuple containing list of database files to merge
+
+        :type config_file: click.Path
+
+        :type verbosity: str
+    '''
+
+    logger.level(verbosity)
+    config = configparser.ConfigParser()
+    config.read(config_file)
+    logger.debug('Read file from {0}'.format(config_file))
+
+    logger.info('****** RiVer Core {0} *******'.format(__version__))
+    logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
+    logger.info('All Rights Reserved.')
+    logger.info('****** Merge Mode ******')
+
+    output_dir = config['river_core']['work_dir']
+    merge_options = config['coverage']
+    target_list = config['river_core']['target'].split(',')
+
+    logger.info(
+        "The river_core is currently configured to run with following parameters"
+    )
+    logger.info("The Output Directory (work_dir) : {0}".format(output_dir))
+    logger.info("ISA : {0}".format(config['river_core']['isa']))
+    logger.info("Target Plugin : {0}".format(target_list))
+    logger.info("The files it's about to merge: {0}".format(db_files))
+
+    for target in target_list:
+        dutpm = pluggy.PluginManager('dut')
+        dutpm.add_hookspecs(DuTSpec)
+
+        isa = config['river_core']['isa']
+        config[target]['isa'] = isa
+        path_to_module = config['river_core']['path_to_target']
+        plugin_target = target + '_plugin'
+        logger.info('Now loading {0}-target'.format(target))
+        abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
+        logger.debug("Loading module from {0}".format(abs_location_module))
+
+        try:
+            dutpm_spec = importlib.util.spec_from_file_location(
+                plugin_target, abs_location_module)
+            dutpm_module = importlib.util.module_from_spec(dutpm_spec)
+            dutpm_spec.loader.exec_module(dutpm_module)
+
+            plugin_class = "{0}_plugin".format(target)
+            class_to_call = getattr(dutpm_module, plugin_class)
+            dutpm.register(class_to_call())
+        except:
+            logger.error(
+                "Sorry, loading the requested plugin has failed, please check the configuration"
+            )
+            raise SystemExit
+
+        dutpm.hook.merge_db(db_files=db_files, config=merge_options)
+
+    # Sample code for DuT Plugins
+    # Just add it below the post_run function
+    # @dut_hookimpl
+    # def merge_db(self, db_files, config):
+
+    # # Add commands to run here :)
+    # logger.info('Just a test here')
+    # logger.info('Printing other info :{0}'.format(db_files))
