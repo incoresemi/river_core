@@ -96,12 +96,13 @@ def generate(config, verbosity):
               show_default=True,
               required=True)
 @click.argument('db_files', nargs=-1, type=click.Path(exists=True))
+@click.argument('output', nargs=1, type=click.Path())
 @cli.command()
-def merge(config, verbosity, db_files):
+def merge(config, verbosity, db_files, output):
     """
     subcommand to merge coverage databases.
     """
-    rivercore_merge(config, verbosity, db_files)
+    rivercore_merge(config, verbosity, db_files, output)
 
 
 if __name__ == '__main__':

@@ -111,5 +111,5 @@ class DuTSpec(object):
         """ Just to check something if required """
 
     @dut_hookspec
-    def merge_db(self, db_files, config):
+    def merge_db(self, db_files, output_db, config):
         """ Just to check something if required """
