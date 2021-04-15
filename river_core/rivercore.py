@@ -626,11 +626,11 @@ def rivercore_merge(config_file, verbosity, db_files, output_db):
         # Add link to main report file
 
         try:
-
             report_file = glob.glob(output_dir + '/reports/report_*.html')
             # TODO Check naming
+            
             report_str = '<h3><a href={0}.html>Coverage Merge Report on {1}</h3></a>\n'.format(
-                output_db, merge_time)
+                './'+output_db+ '_html/index', merge_time)
             html_file = open(report_file[0], 'r+')
             data = html_file.readlines()
             data.insert(-1, report_str)
