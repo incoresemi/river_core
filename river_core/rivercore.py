@@ -642,20 +642,20 @@ def rivercore_merge(config_file, verbosity, db_files, output_db):
         abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
         logger.debug("Loading module from {0}".format(abs_location_module))
 
-        try:
-            dutpm_spec = importlib.util.spec_from_file_location(
-                plugin_target, abs_location_module)
-            dutpm_module = importlib.util.module_from_spec(dutpm_spec)
-            dutpm_spec.loader.exec_module(dutpm_module)
+        #try:
+        dutpm_spec = importlib.util.spec_from_file_location(
+        plugin_target, abs_location_module)
+        dutpm_module = importlib.util.module_from_spec(dutpm_spec)
+        dutpm_spec.loader.exec_module(dutpm_module)
 
-            plugin_class = "{0}_plugin".format(target)
-            class_to_call = getattr(dutpm_module, plugin_class)
-            dutpm.register(class_to_call())
-        except:
-            logger.error(
-                "Sorry, loading the requested plugin has failed, please check the configuration"
-            )
-            raise SystemExit
+        plugin_class = "{0}_plugin".format(target)
+        class_to_call = getattr(dutpm_module, plugin_class)
+        dutpm.register(class_to_call())
+        #except:
+         #   logger.error(
+          #      "Sorry, loading the requested plugin has failed, please check the configuration"
+           # )
+            #raise SystemExit
 
         dutpm.hook.merge_db(db_files=db_files,
                             config=config,
@@ -663,10 +663,19 @@ def rivercore_merge(config_file, verbosity, db_files, output_db):
 
         # Add link to main report file
         try:
-            report_str = './' + output_db + '_html/index.html'
-            # TODO Vinay check naming
-            ranked_report_str = './' + output_db + '_html/rank.html'
-            report_html = generate_coverage_report(output_dir, config,
+            
+            # TODO Vinay check naming: DONE
+            report_target=config['river_core']['target']
+            if report_target == 'chromite_cadence':
+                report_str = './' + output_db + '_html/index.html'
+                ranked_report_str = './' + output_db +  '_rank/rank_sub_dir/rank.html'
+                report_html = generate_coverage_report(output_dir, config,
+                                                   report_str,
+                                                   ranked_report_str, db_files)
+            if report_target == 'chromite_questa':
+                report_str = './' + output_db + '/'+ output_db + '_html/index.html'
+                ranked_report_str = './' + output_db +  '/rank_html/rank.html'
+                report_html = generate_coverage_report(output_dir, config,
                                                    report_str,
                                                    ranked_report_str, db_files)
             # Check if web browser
