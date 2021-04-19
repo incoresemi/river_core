@@ -49,8 +49,7 @@ def generate_coverage_report(output_dir, config, coverage_report,
     root = os.path.abspath(os.path.dirname(__file__))
     str_report_template = root + '/templates/coverage_report.html'
     str_css_template = root + '/templates/style.css'
-    report_file_name = 'coverage_report_{0}.html'.format(
-        datetime.datetime.now().strftime("%Y%m%d-%H%M"))
+    report_file_name = 'coverage_report.html'
     report_dir = output_dir + '/reports/'
     html_objects = {}
     html_objects['name'] = "RiVer Core Coverage Report"
@@ -313,7 +312,15 @@ def rivercore_generate(config_file, verbosity):
             output_dir='{0}/{1}'.format(output_dir, suite),
             regressfile='{0}/{1}/regresslist.yaml'.format(output_dir, suite))
 
-        test_list_file = output_dir + '/test_list.yaml'
+        # Get name if exists
+        name = config['river_core'].get('test_list_name')
+        if not name:
+            logger.info('No name configured\nCreating file with test_list.yaml')
+            test_list_file = output_dir + '/test_list.yaml'
+        else:
+            test_list_file = output_dir + '/{0}.yaml'.format(name)
+
+        # Write to file
         testfile = open(test_list_file, 'w')
         utils.yaml.dump(test_list[0], testfile)
         testfile.close()
