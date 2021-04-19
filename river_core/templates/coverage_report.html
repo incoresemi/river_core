@@ -39,7 +39,7 @@
             <td>List of merged files
                 <ul>
         {% for test in db_files %}
-                    <li>{{ test }}</li>
+        <li><a href={{ test }}>{{ test }}</a></li>
         {% endfor %}
                 </ul>
             </tr>

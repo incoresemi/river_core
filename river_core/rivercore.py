@@ -635,9 +635,42 @@ def rivercore_merge(config_file, verbosity, db_files, output_db):
     logger.info("ISA : {0}".format(config['river_core']['isa']))
     logger.info("Target Plugin : {0}".format(target_list))
     logger.info("The files it's about to merge: {0}".format(db_files))
-    logger.info
+
+    # Design DOC:
+    # 1. Copy HTML and Coverage DB files into reports folder with filename of all inputs
+    # 2. Perform merge and store the data into reports/output
+    # The mywork/reports/test_list_hazard  will have individual HTML files and DB
+    # The mywork/reports/test_list_recursion will have individual HTML files and DB
+    # And finally
+    # mywork/reports/<merged or output name> would have the merged reports and DB
 
     for target in target_list:
+
+        # Copy the files
+        # Search for html and db files
+        # TODO: Check this
+        for db_file in db_files:
+            file_path = os.path.abspath(db_file)
+            database = ''
+            # Database
+            if 'cadence' in config['river_core']['target']:
+                database = glob.glob(file_path + '*.udb')
+            elif 'questa' in config['river_core']['target']:
+                database = glob.glob(file_path + '*.ucm')
+            elif 'verilator' in config['river_core']['target']:
+                database = glob.glob(file_path + '*.dat')
+                logger.debug('Verilator')
+            if not database:
+                logger.info('No DB files found\nExiting framework')
+                raise SystemExit
+            # HTML files
+            html_files = glob.glob(output_dir + '*.html')
+            dest_dir = os.path.abspath(output_dir + '/reports/' + db_file + '/')
+            for files in database:
+                shutil.copy(files, dest_dir)
+            for files in html_files:
+                shutil.copy(files, dest_dir)
+
         dutpm = pluggy.PluginManager('dut')
         dutpm.add_hookspecs(DuTSpec)
 
@@ -649,47 +682,54 @@ def rivercore_merge(config_file, verbosity, db_files, output_db):
         abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
         logger.debug("Loading module from {0}".format(abs_location_module))
 
-        #try:
-        dutpm_spec = importlib.util.spec_from_file_location(
-        plugin_target, abs_location_module)
-        dutpm_module = importlib.util.module_from_spec(dutpm_spec)
-        dutpm_spec.loader.exec_module(dutpm_module)
+        try:
+            dutpm_spec = importlib.util.spec_from_file_location(
+                plugin_target, abs_location_module)
+            dutpm_module = importlib.util.module_from_spec(dutpm_spec)
+            dutpm_spec.loader.exec_module(dutpm_module)
 
-        plugin_class = "{0}_plugin".format(target)
-        class_to_call = getattr(dutpm_module, plugin_class)
-        dutpm.register(class_to_call())
-        #except:
-         #   logger.error(
-          #      "Sorry, loading the requested plugin has failed, please check the configuration"
-           # )
-            #raise SystemExit
+            plugin_class = "{0}_plugin".format(target)
+            class_to_call = getattr(dutpm_module, plugin_class)
+            dutpm.register(class_to_call())
+        except:
+            logger.error(
+                "Sorry, loading the requested plugin has failed, please check the configuration"
+            )
+            raise SystemExit
 
+        # Perform Merge
         dutpm.hook.merge_db(db_files=db_files,
                             config=config,
                             output_db=output_db)
 
-        # Add link to main report file
         try:
-            
-            # TODO Vinay check naming: DONE
-            report_target=config['river_core']['target']
-            if report_target == 'chromite_cadence':
+
+            if 'cadence' in config['river_core']['target']:
                 report_str = './' + output_db + '_html/index.html'
-                ranked_report_str = './' + output_db +  '_rank/rank_sub_dir/rank.html'
+                ranked_report_str = './' + output_db + '_rank/rank_sub_dir/rank.html'
                 report_html = generate_coverage_report(output_dir, config,
-                                                   report_str,
-                                                   ranked_report_str, db_files)
-            if report_target == 'chromite_questa':
-                report_str = './' + output_db + '/'+ output_db + '_html/index.html'
-                ranked_report_str = './' + output_db +  '/rank_html/rank.html'
+                                                       report_str,
+                                                       ranked_report_str,
+                                                       html_files)
+            elif 'questa' in config['river_core']['target']:
+                report_str = './' + output_db + '/' + output_db + '_html/index.html'
+                ranked_report_str = './' + output_db + '/rank_html/rank.html'
                 report_html = generate_coverage_report(output_dir, config,
-                                                   report_str,
-                                                   ranked_report_str, db_files)
+                                                       report_str,
+                                                       ranked_report_str,
+                                                       html_files)
+            elif 'verilator' in config['river_core']['target']:
+                report_str = './' + output_db + '/' + output_db + '_html/index.html'
+                ranked_report_str = './' + output_db + '/rank_html/rank.html'
+                report_html = generate_coverage_report(output_dir, config,
+                                                       report_str,
+                                                       ranked_report_str,
+                                                       html_files)
             # Check if web browser
             if utils.str_2_bool(config['river_core']['open_browser']):
                 try:
                     import webbrowser
-                    logger.info("Openning test report in web-browser")
+                    logger.info("Opening test report in web-browser")
                     webbrowser.open(report_html)
                 except:
                     return 1
