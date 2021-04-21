@@ -89,20 +89,14 @@ def generate(config, verbosity):
               '--verbosity',
               default='info',
               help='Set the verbosity level for the framework')
-@click.option('-c',
-              '--config',
-              type=click.Path(dir_okay=False, exists=True),
-              help='Read option defaults from the specified INI file',
-              show_default=True,
-              required=True)
 @click.argument('db_files', nargs=-1, type=click.Path(exists=True))
 @click.argument('output', nargs=1, type=click.Path())
 @cli.command()
-def merge(config, verbosity, db_files, output):
+def merge(verbosity, db_files, output):
     """
     subcommand to merge coverage databases.
     """
-    rivercore_merge(config, verbosity, db_files, output)
+    rivercore_merge(verbosity, db_files, output)
 
 
 if __name__ == '__main__':

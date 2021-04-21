@@ -353,7 +353,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
 
         :type verbosity: str
     '''
-
     logger.level(verbosity)
     config = configparser.ConfigParser()
     config.read(config_file)
@@ -594,7 +593,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                 return 1
 
 
-def rivercore_merge(config_file, verbosity, db_files, output_db):
+def rivercore_merge(verbosity, db_folders, output):
     '''
         Work in Progress
 
@@ -604,7 +603,7 @@ def rivercore_merge(config_file, verbosity, db_files, output_db):
 
         :param verbosity: Verbosity level for the framework
 
-        :param db_files: Tuple containing list of database files to merge
+        :param db_files: Tuple containing list of testlists to merge 
         
         :param output_db: Final output database name 
 
@@ -614,125 +613,134 @@ def rivercore_merge(config_file, verbosity, db_files, output_db):
     '''
 
     logger.level(verbosity)
-    config = configparser.ConfigParser()
-    config.read(config_file)
-    logger.debug('Read file from {0}'.format(config_file))
 
     logger.info('****** RiVer Core {0} *******'.format(__version__))
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
     logger.info('****** Merge Mode ******')
 
-    output_dir = config['river_core']['work_dir']
-    target_list = config['river_core']['target'].split(',')
-
-    # Time for reports
-    # TODO Check this
-    logger.info(
-        "The river_core is currently configured to run with following parameters"
-    )
-    logger.info("The Output Directory (work_dir) : {0}".format(output_dir))
-    logger.info("ISA : {0}".format(config['river_core']['isa']))
-    logger.info("Target Plugin : {0}".format(target_list))
-    logger.info("The files it's about to merge: {0}".format(db_files))
-
     # Design DOC:
-    # 1. Copy HTML and Coverage DB files into reports folder with filename of all inputs
-    # 2. Perform merge and store the data into reports/output
-    # The mywork/reports/test_list_hazard  will have individual HTML files and DB
-    # The mywork/reports/test_list_recursion will have individual HTML files and DB
-    # And finally
-    # mywork/reports/<merged or output name> would have the merged reports and DB
+    # 1. Create dir / and asm in it
+    # 2. Get contents
+    # 2a. First YAML load
+    # 2b. Then get ASM files
+    # 2c. DuT Files
+    # 2d. Something wy
+    # 3. Create new file
+    output = os.path.abspath(output)
+    if os.path.exists(output):
+        logger.info('Previous directory with same name detected\nOverwrite?')
+        res = confirm()
+        if res:
+            shutil.rmtree(output)
+            logger.info(output + ' directory deleted')
+        else:
+            logger.info('Alright\nBailing out.')
+            raise SystemExit
+    os.makedirs(output)
+    asm_dir = output + '/asm'
+    common_dir = output + '/common'
+    # Create the ASM dir
+    os.makedirs(asm_dir)
+    # Create the Common dir
+    os.makedirs(common_dir)
+    # Create the final test_list dict
+    test_list = {}
+    # Coverage DB list
+    coverage_db = ''
+    # Copy the files
+    # TODO: Check this
+    for db_folder in db_folders:
+        file_path = os.path.abspath(db_folder)
+        # Would return all values, need to ensure nothing else exists
+        # FIX Maybe an extra feature to load all yamls
+        # folder_yaml = glob.glob(file_path + '/*.yaml')
+        folder_yaml = utils.load_yaml(file_path + '/test_list.yaml')
+        for test in folder_yaml.keys():
+            test_list[test] = {}
+            test_asm = asm_dir + '/' + test
+            test_common = common_dir + '/' + test
+            # Copy the ASM folder
+            os.system('cp -r -f {0} {1}'.format(folder_yaml[test]['work_dir'],
+                                                test_asm))
+            # Check if something common is there
+            if folder_yaml[test].get('extra_compile'):
+                for extra in range(0, len(folder_yaml[test]['extra_compile'])):
+                    # Keep this seperate right now
+                    shutil.copy(folder_yaml[test]['extra_compile'][extra],
+                                common_dir)
+                test_list[test]['extra_compile'] = glob.glob(common_dir + '/*')
+            # Check if we need to copy stuff like aapg.ini and all
+            # Copying things from test_list
+            test_list[test]['cc'] = folder_yaml[test]['cc']
+            test_list[test]['cc_args'] = folder_yaml[test]['cc_args']
+            test_list[test]['isa'] = folder_yaml[test]['isa']
+            test_list[test]['linker_args'] = folder_yaml[test]['linker_args']
+            test_list[test]['mabi'] = folder_yaml[test]['mabi']
+            test_list[test]['march'] = folder_yaml[test]['march']
+            test_list[test]['result'] = folder_yaml[test]['result']
+            test_list[test]['asm_file'] = test_asm + '/' + test + '.S'
+            test_list[test]['linker_file'] = test_asm + '/' + test + '.ld'
+            test_list[test]['work_dir'] = test_asm
 
-    for target in target_list:
-
-        # Copy the files
-        # Search for html and db files
-        # TODO: Check this
-        for db_file in db_files:
-            file_path = os.path.abspath(db_file)
-            database = ''
-            # Database
-            if 'cadence' in config['river_core']['target']:
-                database = glob.glob(file_path + '*.udb')
-            elif 'questa' in config['river_core']['target']:
-                database = glob.glob(file_path + '*.ucm')
-            elif 'verilator' in config['river_core']['target']:
-                database = glob.glob(file_path + '*.dat')
-                logger.debug('Verilator')
-            if not database:
-                logger.info('No DB files found\nExiting framework')
-                raise SystemExit
-            # HTML files
-            html_files = glob.glob(output_dir + '*.html')
-            dest_dir = os.path.abspath(output_dir + '/reports/' + db_file + '/')
-            for files in database:
-                shutil.copy(files, dest_dir)
-            for files in html_files:
-                shutil.copy(files, dest_dir)
+        logger.info('Copied ASM and other necessary files')
+        # Check coverage info
+        # Work in Progress
+        # The plugins should probably take care of this part, they'll get aresultess to the dbs_folder
+        coverage_directory = db_folder + '/final_coverage'
+        if os.path.exists(coverage_directory):
+            # Double check :)
+            coverage_database = glob.glob(db_folder + '/final_coverage/*.udb')
+            coverage_html = glob.glob(db_folder + '/final_html/*.html')
+            coverage_ranked_html = glob.glob(db_folder + '/final_rank/*.html')
+        else:
+            logger.warning('No DB files found')
 
         dutpm = pluggy.PluginManager('dut')
         dutpm.add_hookspecs(DuTSpec)
 
-        isa = config['river_core']['isa']
-        config[target]['isa'] = isa
-        path_to_module = config['river_core']['path_to_target']
-        plugin_target = target + '_plugin'
-        logger.info('Now loading {0}-target'.format(target))
-        abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
-        logger.debug("Loading module from {0}".format(abs_location_module))
+        plugin_target = 'chromite_cadence_plugin'
+        # abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
 
-        try:
-            dutpm_spec = importlib.util.spec_from_file_location(
-                plugin_target, abs_location_module)
-            dutpm_module = importlib.util.module_from_spec(dutpm_spec)
-            dutpm_spec.loader.exec_module(dutpm_module)
+        # try:
+        #     dutpm_spec = importlib.util.spec_from_file_location(
+        #         plugin_target, abs_location_module)
+        #     dutpm_module = importlib.util.module_from_spec(dutpm_spec)
+        #     dutpm_spec.loader.exec_module(dutpm_module)
 
-            plugin_class = "{0}_plugin".format(target)
-            class_to_call = getattr(dutpm_module, plugin_class)
-            dutpm.register(class_to_call())
-        except:
-            logger.error(
-                "Sorry, loading the requested plugin has failed, please check the configuration"
-            )
-            raise SystemExit
+        #     plugin_class = "{0}_plugin".format(target)
+        #     class_to_call = getattr(dutpm_module, plugin_class)
+        #     dutpm.register(class_to_call())
+        # except:
+        #     logger.error(
+        #         "Sorry, loading the requested plugin has failed, please check the configuration"
+        #     )
+        #     raise SystemExit
 
-        # Perform Merge
-        dutpm.hook.merge_db(db_files=db_files,
-                            config=config,
-                            output_db=output_db)
+        # # Perform Merge
+        # dutpm.hook.merge_db(db_files=db_folders,
+        #                     config=config,
+        #                     output_db=output)
 
-        try:
+        # try:
 
-            if 'cadence' in config['river_core']['target']:
-                report_str = './' + output_db + '_html/index.html'
-                ranked_report_str = './' + output_db + '_rank/rank_sub_dir/rank.html'
-                report_html = generate_coverage_report(output_dir, config,
-                                                       report_str,
-                                                       ranked_report_str,
-                                                       html_files)
-            elif 'questa' in config['river_core']['target']:
-                report_str = './' + output_db + '/' + output_db + '_html/index.html'
-                ranked_report_str = './' + output_db + '/rank_html/rank.html'
-                report_html = generate_coverage_report(output_dir, config,
-                                                       report_str,
-                                                       ranked_report_str,
-                                                       html_files)
-            elif 'verilator' in config['river_core']['target']:
-                report_str = './' + output_db + '/' + output_db + '_html/index.html'
-                ranked_report_str = './' + output_db + '/rank_html/rank.html'
-                report_html = generate_coverage_report(output_dir, config,
-                                                       report_str,
-                                                       ranked_report_str,
-                                                       html_files)
-            # Check if web browser
-            if utils.str_2_bool(config['river_core']['open_browser']):
-                try:
-                    import webbrowser
-                    logger.info("Opening test report in web-browser")
-                    webbrowser.open(report_html)
-                except:
-                    return 1
-        except:
+        #     # Check if web browser
+        #     if utils.str_2_bool(config['river_core']['open_browser']):
+        #         try:
+        #             import webbrowser
+        #             logger.info("Opening test report in web-browser")
+        #             webbrowser.open(report_html)
+        #         except:
+        #             return 1
+        # except:
 
-            logger.info('Something went creating the HTML report')
+        #     logger.info('Something went creating the HTML report')
+
+        # Create final test list
+    test_list_file = output + '/test_list.yaml'
+    testfile = open(test_list_file, 'w')
+    utils.yaml.dump(test_list, testfile)
+    testfile.close()
+
+    logger.info('Merged Test list is generated and available at {0}'.format(
+        test_list_file))
