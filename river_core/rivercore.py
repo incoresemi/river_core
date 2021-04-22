@@ -593,7 +593,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                 return 1
 
 
-def rivercore_merge(verbosity, db_folders, output):
+def rivercore_merge(verbosity, db_folders, output, config_file):
     '''
         Work in Progress
 
@@ -613,6 +613,10 @@ def rivercore_merge(verbosity, db_folders, output):
     '''
 
     logger.level(verbosity)
+    config = configparser.ConfigParser()
+    config.read(config_file)
+    logger.debug('Read file from {0}'.format(config_file))
+    target = config['river_core']['target']
 
     logger.info('****** RiVer Core {0} *******'.format(__version__))
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
@@ -640,14 +644,19 @@ def rivercore_merge(verbosity, db_folders, output):
     os.makedirs(output)
     asm_dir = output + '/asm'
     common_dir = output + '/common'
+    coverage_dir = output + '/final_coverage'
     # Create the ASM dir
     os.makedirs(asm_dir)
     # Create the Common dir
     os.makedirs(common_dir)
+    # Create the Common dir
+    os.makedirs(coverage_dir)
     # Create the final test_list dict
     test_list = {}
     # Coverage DB list
-    coverage_db = ''
+    coverage_database = []
+    coverage_html = []
+    coverage_ranked_html = []
     # Copy the files
     # TODO: Check this
     for db_folder in db_folders:
@@ -689,54 +698,76 @@ def rivercore_merge(verbosity, db_folders, output):
         # The plugins should probably take care of this part, they'll get aresultess to the dbs_folder
         coverage_directory = db_folder + '/final_coverage'
         if os.path.exists(coverage_directory):
+            # Check which tool to merge things
+            # IMC
+            if 'cadence' in target:
+                coverage_database.append(
+                    os.path.abspath(
+                        glob.glob(db_folder + '/final_coverage/*.ucd')[0]))
+                # shutil.copy(
+                #     glob.glob(db_folder + '/final_coverage/*.ucd')[0],
+                #     coverage_dir)
+                coverage_database.append(
+                    os.path.abspath(
+                        glob.glob(db_folder + '/final_coverage/*.ucm')[0]))
+                # shutil.copy(
+                #     glob.glob(db_folder + '/final_coverage/*.ucm')[0],
+                #     coverage_dir)
+            # Questa
+            elif 'questa' in target:
+                coverage_database.append(
+                    os.path.abspath(
+                        glob.glob(db_folder + '/final_coverage/*.ucm')[0]))
+                # shutil.copy(
+                #     glob.glob(db_folder + '/final_coverage/*.ucm')[0],
+                #     coverage_dir)
+            # Vertilator
+            elif 'verilator' in target:
+                coverage_database.append(
+                    os.path.abspath(
+                        glob.glob(db_folder + '/final_coverage/*.dat')[0]))
+                # shutil.copy(
+                #     glob.glob(db_folder + '/final_coverage/*.dat')[0],
+                #     coverage_dir)
             # Double check :)
-            coverage_database = glob.glob(db_folder + '/final_coverage/*.udb')
-            coverage_html = glob.glob(db_folder + '/final_html/*.html')
-            coverage_ranked_html = glob.glob(db_folder + '/final_rank/*.html')
+            coverage_html.append(glob.glob(db_folder + '/final_html/*.html'))
+            coverage_ranked_html.append(
+                glob.glob(db_folder + '/final_rank/*.html'))
         else:
-            logger.warning('No DB files found')
+            logger.warning('No DB files found in {0}'.format(db_folder))
 
-        dutpm = pluggy.PluginManager('dut')
-        dutpm.add_hookspecs(DuTSpec)
+    dutpm = pluggy.PluginManager('dut')
+    dutpm.add_hookspecs(DuTSpec)
 
-        plugin_target = 'chromite_cadence_plugin'
-        # abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
+    path_to_module = config['river_core']['path_to_target']
+    plugin_target = target + '_plugin'
+    logger.info('Now running on the Target Plugins')
+    logger.info('Now loading {0}-target'.format(target))
 
-        # try:
-        #     dutpm_spec = importlib.util.spec_from_file_location(
-        #         plugin_target, abs_location_module)
-        #     dutpm_module = importlib.util.module_from_spec(dutpm_spec)
-        #     dutpm_spec.loader.exec_module(dutpm_module)
+    abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
+    logger.debug("Loading module from {0}".format(abs_location_module))
 
-        #     plugin_class = "{0}_plugin".format(target)
-        #     class_to_call = getattr(dutpm_module, plugin_class)
-        #     dutpm.register(class_to_call())
-        # except:
-        #     logger.error(
-        #         "Sorry, loading the requested plugin has failed, please check the configuration"
-        #     )
-        #     raise SystemExit
+    try:
+        dutpm_spec = importlib.util.spec_from_file_location(
+            plugin_target, abs_location_module)
+        dutpm_module = importlib.util.module_from_spec(dutpm_spec)
+        dutpm_spec.loader.exec_module(dutpm_module)
 
-        # # Perform Merge
-        # dutpm.hook.merge_db(db_files=db_folders,
-        #                     config=config,
-        #                     output_db=output)
+        plugin_class = "{0}_plugin".format(target)
+        class_to_call = getattr(dutpm_module, plugin_class)
+        dutpm.register(class_to_call())
+    except:
+        logger.error(
+            "Sorry, loading the requested plugin has failed, please check the configuration"
+        )
+        raise SystemExit
 
-        # try:
+    # Perform Merge
+    dutpm.hook.merge_db(db_files=coverage_database,
+                        config=config,
+                        output_db=output)
 
-        #     # Check if web browser
-        #     if utils.str_2_bool(config['river_core']['open_browser']):
-        #         try:
-        #             import webbrowser
-        #             logger.info("Opening test report in web-browser")
-        #             webbrowser.open(report_html)
-        #         except:
-        #             return 1
-        # except:
-
-        #     logger.info('Something went creating the HTML report')
-
-        # Create final test list
+    # Create final test list
     test_list_file = output + '/test_list.yaml'
     testfile = open(test_list_file, 'w')
     utils.yaml.dump(test_list, testfile)
@@ -744,3 +775,9 @@ def rivercore_merge(verbosity, db_folders, output):
 
     logger.info('Merged Test list is generated and available at {0}'.format(
         test_list_file))
+    try:
+        import webbrowser
+        logger.info("Opening test report in web-browser")
+        # webbrowser.open(report_html)
+    except:
+        logger.info("Couldn't open the browser")
