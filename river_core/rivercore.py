@@ -710,9 +710,9 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
                 # shutil.copy(
                 #     glob.glob(db_folder + '/final_coverage/*.ucd')[0],
                 #     coverage_dir)
-                coverage_database.append(
-                    os.path.abspath(
-                        glob.glob(db_folder + '/final_coverage/*.ucm')[0]))
+                # coverage_database.append(
+                #     os.path.abspath(
+                #         glob.glob(db_folder + '/final_coverage/*.ucm')[0]))
                 # shutil.copy(
                 #     glob.glob(db_folder + '/final_coverage/*.ucm')[0],
                 #     coverage_dir)
@@ -720,7 +720,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
             elif 'questa' in target:
                 coverage_database.append(
                     os.path.abspath(
-                        glob.glob(db_folder + '/final_coverage/*.ucm')[0]))
+                        glob.glob(db_folder + '/final_coverage/*.ucdb')[0]))
                 # shutil.copy(
                 #     glob.glob(db_folder + '/final_coverage/*.ucm')[0],
                 #     coverage_dir)
@@ -734,6 +734,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
                 #     coverage_dir)
             # Double check :)
             coverage_html.append(glob.glob(db_folder + '/final_html/*.html')[0])
+
             coverage_ranked_html.append(
                 glob.glob(db_folder + '/final_rank/*.html'))
         else:
@@ -784,6 +785,6 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
     try:
         import webbrowser
         logger.info("Opening test report in web-browser")
-        # webbrowser.open(report_html)
+        webbrowser.open(report_html)
     except:
         logger.info("Couldn't open the browser")
