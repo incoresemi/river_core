@@ -700,56 +700,56 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
         # Check coverage info
         # Work in Progress
         # The plugins should probably take care of this part, they'll get aresultess to the dbs_folder
-        coverage_directory = db_folder + '/final_coverage'
+        coverage_directory = file_path + '/final_coverage'
         if os.path.exists(coverage_directory):
             # Check which tool to merge things
             # IMC
             if 'cadence' in target:
                 coverage_database.append(
                     os.path.abspath(
-                        glob.glob(db_folder + '/final_coverage/*.ucd')[0]))
+                        glob.glob(file_path + '/final_coverage/*.ucd')[0]))
                 # shutil.copy(
-                #     glob.glob(db_folder + '/final_coverage/*.ucd')[0],
+                #     glob.glob(file_path + '/final_coverage/*.ucd')[0],
                 #     coverage_dir)
                 # coverage_database.append(
                 #     os.path.abspath(
-                #         glob.glob(db_folder + '/final_coverage/*.ucm')[0]))
+                #         glob.glob(file_path + '/final_coverage/*.ucm')[0]))
                 # shutil.copy(
-                #     glob.glob(db_folder + '/final_coverage/*.ucm')[0],
+                #     glob.glob(file_path + '/final_coverage/*.ucm')[0],
                 #     coverage_dir)
             # Questa
             elif 'questa' in target:
                 coverage_database.append(
                     os.path.abspath(
-                        glob.glob(db_folder + '/final_coverage/*.ucdb')[0]))
+                        glob.glob(file_path + '/final_coverage/*.ucdb')[0]))
                 # shutil.copy(
-                #     glob.glob(db_folder + '/final_coverage/*.ucm')[0],
+                #     glob.glob(file_path + '/final_coverage/*.ucm')[0],
                 #     coverage_dir)
             # Vertilator
             elif 'verilator' in target:
                 coverage_database.append(
                     os.path.abspath(
-                        glob.glob(db_folder + '/final_coverage/*.dat')[0]))
+                        glob.glob(file_path + '/final_coverage/*.dat')[0]))
                 # shutil.copy(
-                #     glob.glob(db_folder + '/final_coverage/*.dat')[0],
+                #     glob.glob(file_path + '/final_coverage/*.dat')[0],
                 #     coverage_dir)
             # Double check :)
             # Copy HTML Directory
-            # html_report = os.path.abspath(glob.glob(db_folder + '/final_html/*.html')[0])
+            # html_report = os.path.abspath(glob.glob(file_path + '/final_html/*.html')[0])
             # Copy HTML part only
             ret_val = os.system('cp -r -f {0}/final_html {1}/{2}'.format(
-                db_folder, report_dir, os.path.dirname(db_folder)))
+                file_path, report_dir, os.path.basename(file_path)))
             if ret_val != 0:
                 logger.error('Failed to copy files\nFiles donot exist')
                 raise SystemExit
             coverage_html.append(
-                glob.glob(report_dir + '/' + os.path.dirname(db_folder) +
+                glob.glob(report_dir + '/' + os.path.basename(file_path) +
                           '/*.html')[0])
 
             # coverage_ranked_html.append(
-            #     glob.glob(db_folder + '/final_rank/*.html'))
+            #     glob.glob(file_path + '/final_rank/*.html'))
         else:
-            logger.warning('No DB files found in {0}'.format(db_folder))
+            logger.warning('No DB files found in {0}'.format(file_path))
 
     dutpm = pluggy.PluginManager('dut')
     dutpm.add_hookspecs(DuTSpec)
