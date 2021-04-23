@@ -670,8 +670,11 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
             test_asm = asm_dir + '/' + test
             test_common = common_dir + '/' + test
             # Copy the ASM folder
-            os.system('cp -r -f {0} {1}'.format(folder_yaml[test]['work_dir'],
-                                                test_asm))
+            ret_val = os.system('cp -r -f {0} {1}'.format(
+                folder_yaml[test]['work_dir'], test_asm))
+            if ret_val != 0:
+                logger.error('Failed to copy files\nFiles donot exist')
+                raise SystemExit
             # Check if something common is there
             if folder_yaml[test].get('extra_compile'):
                 for extra in range(0, len(folder_yaml[test]['extra_compile'])):
@@ -730,7 +733,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
                 #     glob.glob(db_folder + '/final_coverage/*.dat')[0],
                 #     coverage_dir)
             # Double check :)
-            coverage_html.append(glob.glob(db_folder + '/final_html/*.html'))
+            coverage_html.append(glob.glob(db_folder + '/final_html/*.html')[0])
             coverage_ranked_html.append(
                 glob.glob(db_folder + '/final_rank/*.html'))
         else:
@@ -763,18 +766,21 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
         raise SystemExit
 
     # Perform Merge
-    dutpm.hook.merge_db(db_files=coverage_database,
-                        config=config,
-                        output_db=output)
+    final_html = dutpm.hook.merge_db(db_files=coverage_database,
+                                     config=config,
+                                     output_db=output)
 
     # Create final test list
     test_list_file = output + '/test_list.yaml'
     testfile = open(test_list_file, 'w')
     utils.yaml.dump(test_list, testfile)
     testfile.close()
-
     logger.info('Merged Test list is generated and available at {0}'.format(
         test_list_file))
+
+    # Coverage Report Generations
+    report_html = generate_coverage_report(output, config, final_html[0][0],
+                                           final_html[0][1], coverage_html)
     try:
         import webbrowser
         logger.info("Opening test report in web-browser")
