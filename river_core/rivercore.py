@@ -50,7 +50,6 @@ def generate_coverage_report(output_dir, config, coverage_report,
     str_report_template = root + '/templates/coverage_report.html'
     str_css_template = root + '/templates/style.css'
     report_file_name = 'coverage_report.html'
-    report_dir = output_dir + '/reports/'
     html_objects = {}
     html_objects['name'] = "RiVer Core Coverage Report"
     html_objects['date'] = (datetime.datetime.now().strftime("%d-%m-%Y"))
@@ -63,17 +62,17 @@ def generate_coverage_report(output_dir, config, coverage_report,
     html_objects['coverage_rank_report'] = coverage_rank_report
     html_objects['db_files'] = db_files
 
-    if not os.path.exists(report_dir):
-        os.makedirs(report_dir)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
     with open(str_report_template, "r") as report_template:
         template = Template(report_template.read())
 
     output = template.render(html_objects)
 
-    shutil.copyfile(str_css_template, report_dir + 'style.css')
+    shutil.copyfile(str_css_template, output_dir + '/style.css')
 
-    report_file_path = report_dir + '/' + report_file_name
+    report_file_path = output_dir + '/' + report_file_name
     with open(report_file_path, "w") as report:
         report.write(output)
 
@@ -645,12 +644,15 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
     asm_dir = output + '/asm'
     common_dir = output + '/common'
     coverage_dir = output + '/final_coverage'
+    report_dir = output + '/reports'
     # Create the ASM dir
     os.makedirs(asm_dir)
     # Create the Common dir
     os.makedirs(common_dir)
     # Create the Common dir
     os.makedirs(coverage_dir)
+    # Create the Report dir
+    os.makedirs(report_dir)
     # Create the final test_list dict
     test_list = {}
     # Coverage DB list
@@ -733,10 +735,20 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
                 #     glob.glob(db_folder + '/final_coverage/*.dat')[0],
                 #     coverage_dir)
             # Double check :)
-            coverage_html.append(glob.glob(db_folder + '/final_html/*.html')[0])
+            # Copy HTML Directory
+            # html_report = os.path.abspath(glob.glob(db_folder + '/final_html/*.html')[0])
+            # Copy HTML part only
+            ret_val = os.system('cp -r -f {0}/final_html {1}/{2}'.format(
+                db_folder, report_dir, os.path.dirname(db_folder)))
+            if ret_val != 0:
+                logger.error('Failed to copy files\nFiles donot exist')
+                raise SystemExit
+            coverage_html.append(
+                glob.glob(report_dir + '/' + os.path.dirname(db_folder) +
+                          '/*.html')[0])
 
-            coverage_ranked_html.append(
-                glob.glob(db_folder + '/final_rank/*.html'))
+            # coverage_ranked_html.append(
+            #     glob.glob(db_folder + '/final_rank/*.html'))
         else:
             logger.warning('No DB files found in {0}'.format(db_folder))
 
@@ -780,7 +792,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
         test_list_file))
 
     # Coverage Report Generations
-    report_html = generate_coverage_report(output, config, final_html[0][0],
+    report_html = generate_coverage_report(report_dir, config, final_html[0][0],
                                            final_html[0][1], coverage_html)
     try:
         import webbrowser
