@@ -36,10 +36,10 @@
             <td class="col-name"><a href={{ coverage_report }}>DuT Coverage Report</a></td>
             <td class="col-rank"><a href={{ coverage_rank_report }}>DuT Ranked Report</a></td>
 
-            <td>List of merged files
+            <td>The list of individual HTMLs from work directories that were merged:
                 <ul>
         {% for test in db_files %}
-        <li><a href={{ test }}>{{ test }}</a></li>
+        <li><a href={{ test }}>{{ test.split('/')[-2] }} </a></li>
         {% endfor %}
                 </ul>
             </tr>
