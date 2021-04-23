@@ -188,8 +188,7 @@ def confirm():
 
 def rivercore_clean(config_file, verbosity):
     '''
-        Alpha
-        Work in Progress
+        Helper function to clear the work_dir 
 
     '''
 
@@ -790,6 +789,16 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
     testfile.close()
     logger.info('Merged Test list is generated and available at {0}'.format(
         test_list_file))
+
+    # Remove existing files
+    logger.info('The following directories will be removed : ' +
+                str(db_folders))
+    logger.info('Hope you took have everything you want')
+    res = confirm()
+    if res:
+        for db_file in db_folders:
+            shutil.rmtree(db_file)
+            logger.info(db_file + ' directory deleted')
 
     # Coverage Report Generations
     report_html = generate_coverage_report(report_dir, config, final_html[0][0],
