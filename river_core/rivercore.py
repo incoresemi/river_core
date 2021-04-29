@@ -700,14 +700,17 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
         # Check coverage info
         # Work in Progress
         # The plugins should probably take care of this part, they'll get aresultess to the dbs_folder
-        coverage_directory = file_path + '/final_coverage'
+        if 'cadence' in target:
+             coverage_directory = file_path + '/reports/final_coverage'
+        else:
+            coverage_directory = file_path + '/final_coverage'
         if os.path.exists(coverage_directory):
             # Check which tool to merge things
             # IMC
             if 'cadence' in target:
                 coverage_database.append(
                     os.path.abspath(
-                        glob.glob(file_path + '/final_coverage/*.ucd')[0]))
+                        glob.glob(file_path + '/reports/final_coverage/*.ucd')[0]))
                 # shutil.copy(
                 #     glob.glob(file_path + '/final_coverage/*.ucd')[0],
                 #     coverage_dir)
@@ -737,14 +740,14 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
             # Copy HTML Directory
             # html_report = os.path.abspath(glob.glob(file_path + '/final_html/*.html')[0])
             # Copy HTML part only
-            ret_val = os.system('cp -r -f {0}/final_html {1}/{2}'.format(
+            '''ret_val = os.system('cp -r -f {0}/final_coverage/cov_html {1}/{2}'.format(
                 file_path, report_dir, os.path.basename(file_path)))
             if ret_val != 0:
                 logger.error('Failed to copy files\nFiles donot exist')
                 raise SystemExit
             coverage_html.append(
                 glob.glob(report_dir + '/' + os.path.basename(file_path) +
-                          '/*.html')[0])
+                          '/*.html')[0])'''
 
             # coverage_ranked_html.append(
             #     glob.glob(file_path + '/final_rank/*.html'))
@@ -793,7 +796,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
     # Remove existing files
     logger.info('The following directories will be removed : ' +
                 str(db_folders))
-    logger.info('Hope you took have everything you want')
+    logger.info('Hope you have took everything you want')
     res = confirm()
     if res:
         for db_file in db_folders:
