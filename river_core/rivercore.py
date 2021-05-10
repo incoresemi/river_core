@@ -691,17 +691,6 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
 
         logger.info('Copied ASM and other necessary files')
 
-        # Temporary hack for cadence merge operation
-        # Need to copy the cov_work from asm_files
-        # Under the assumption that the coverage database is at asm/*/cov_work/scope/*/ copied to cadence_coverage/
-        if 'cadence' in target:
-            cadence_folder = os.path.abspath(output + '/cadence_coverage')
-            os.makedirs(cadence_folder, exist_ok=True)
-            coverage_path = file_path + '/*/asm/*/cov_work/'
-            os.system('cp -rf {0} {1}'.format(
-                coverage_path,
-                cadence_folder + '/' + os.path.basename(file_path)))
-
         # Check coverage info
         # The plugins should probably take care of this part, they'll get aresultess to the dbs_folder
         if 'cadence' in target:
@@ -716,6 +705,10 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
                     os.path.abspath(
                         glob.glob(file_path +
                                   '/reports/final_coverage/*.ucd')[0]))
+                coverage_html.append(
+                    os.path.abspath(
+                        glob.glob(file_path +
+                                  '/reports/final_coverage_html/*.html')[0]))
                 # shutil.copy(
                 #     glob.glob(file_path + '/final_coverage/*.ucd')[0],
                 #     coverage_dir)
@@ -730,6 +723,10 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
                 coverage_database.append(
                     os.path.abspath(
                         glob.glob(file_path + '/final_coverage/*.ucdb')[0]))
+                coverage_html.append(
+                    os.path.abspath(
+                        glob.glob(file_path +
+                                  '/final_coverage/cov_html/*.html')[0]))
                 # shutil.copy(
                 #     glob.glob(file_path + '/final_coverage/*.ucm')[0],
                 #     coverage_dir)
@@ -753,8 +750,6 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
             # coverage_html.append(
             #     glob.glob(report_dir + '/' + os.path.basename(file_path) +
             #               '/*.html')[0])
-            coverage_html.append(
-                os.path.abspath(glob.glob(file_path + '/final_html/*.html')[0]))
             # coverage_ranked_html.append(
             #     glob.glob(file_path + '/final_rank/*.html'))
         else:
