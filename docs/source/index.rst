@@ -7,6 +7,7 @@ RiVer Core's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   introduction
    overview
    installation
    config_ini

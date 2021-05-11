@@ -4,7 +4,7 @@
 Overview
 ########
 
-<Please check if this is correct>
+<CHECK:Please check if this is correct>
 The idea behind RiVer Core framework is to provide a central control point for generating, compiling and simulating tests on different cores. It provides a management surface for generating and comparing various designs on the flow.
 
 The following diagram captures the overall flow of RiVer Core and its components. The XYZ bounding box
