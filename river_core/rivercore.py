@@ -614,14 +614,6 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
     logger.info('All Rights Reserved.')
     logger.info('****** Merge Mode ******')
 
-    # Design DOC:
-    # 1. Create dir / and asm in it
-    # 2. Get contents
-    # 2a. First YAML load
-    # 2b. Then get ASM files
-    # 2c. DuT Files
-    # 2d. Something wy
-    # 3. Create new file
     output = os.path.abspath(output)
     if os.path.exists(output):
         logger.info('Previous directory with same name detected\nOverwrite?')
@@ -709,15 +701,6 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
                     os.path.abspath(
                         glob.glob(file_path +
                                   '/reports/final_coverage_html/*.html')[0]))
-                # shutil.copy(
-                #     glob.glob(file_path + '/final_coverage/*.ucd')[0],
-                #     coverage_dir)
-                # coverage_database.append(
-                #     os.path.abspath(
-                #         glob.glob(file_path + '/final_coverage/*.ucm')[0]))
-                # shutil.copy(
-                #     glob.glob(file_path + '/final_coverage/*.ucm')[0],
-                #     coverage_dir)
             # Questa
             elif 'questa' in target:
                 coverage_database.append(
@@ -727,31 +710,11 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
                     os.path.abspath(
                         glob.glob(file_path +
                                   '/final_coverage/cov_html/*.html')[0]))
-                # shutil.copy(
-                #     glob.glob(file_path + '/final_coverage/*.ucm')[0],
-                #     coverage_dir)
             # Vertilator
             elif 'verilator' in target:
                 coverage_database.append(
                     os.path.abspath(
                         glob.glob(file_path + '/final_coverage/*.dat')[0]))
-                # shutil.copy(
-                #     glob.glob(file_path + '/final_coverage/*.dat')[0],
-                #     coverage_dir)
-            # Double check :)
-            # Copy HTML Directory
-            # html_report = os.path.abspath(glob.glob(file_path + '/final_html/*.html')[0])
-            # Copy HTML part only
-            # ret_val = os.system('cp -r -f {0}/final_html {1}/{2}'.format(
-            #     file_path, report_dir, os.path.basename(file_path)))
-            # if ret_val != 0:
-            #     logger.error('Failed to copy files\nFiles donot exist')
-            #     raise SystemExit
-            # coverage_html.append(
-            #     glob.glob(report_dir + '/' + os.path.basename(file_path) +
-            #               '/*.html')[0])
-            # coverage_ranked_html.append(
-            #     glob.glob(file_path + '/final_rank/*.html'))
         else:
             logger.warning('No DB files found in {0}'.format(file_path))
 
