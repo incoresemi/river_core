@@ -18,11 +18,13 @@ As explained in the :ref:`Overview <overview>`, the plugins are broadly classifi
 To re-iterate the above things in short:
 
 - **Generator plugins**:
+
   These plugins are wrappers aroung existing Random Code Generator tools that generate random ASM files for a design to run. Some of the common examples include:
 
   + AAPG
   + Torture
   + Microtesk
+
 
 - **DuT plugins**:
 
@@ -36,6 +38,7 @@ To re-iterate the above things in short:
 
     + Chromite
     + Your design :)
+
 
 - **Reference Plugins** run the above generated tests on a golden standard. Some of the common examples include:
 
@@ -90,8 +93,7 @@ Taking an example of the ``Chromite Verilator`` plugin:
     ├── __init__.py
     └── README.rst
 
-+ ``boot`` directory contains files related to ``Chromite``
-+ ``sim_main.cpp`` here contains the configuration related to Verilator.
++ ``boot`` directory contains files related to ``core``
 
 Reference Plugins
 """""""""""""""""
@@ -108,34 +110,26 @@ Taking an example of the ``Spike`` plugin:
 
 Plugin API
 ----------
-This topic will explain some of the APIs available for various plugins
+This topic will explain some of the APIs defined for integrating different plugins into RiVer Core.
 
 Generator Plugins
 ^^^^^^^^^^^^^^^^^
+- The generator plugin needs to have 3 different APIs that will be accessed by RiVer Core.
 
-DuT Plugins
-^^^^^^^^^^^
+  The activities of the plugins are divided into the below 3 categories.
 
-
-Reference Plugins
-^^^^^^^^^^^^^^^^^
-
-
-Things to look at while designing a custom plugin
--------------------------------------------------
-
-Generator Plugins
-^^^^^^^^^^^^^^^^^
+.. automodule:: river_core.sim_hookspecs
+   :members: RandomGeneratorSpec
 
 
-DuT Plugins
-^^^^^^^^^^^
 
+DuT and Reference Plugins
+^^^^^^^^^^^^^^^^^^^^^^^^^
+- The DuT plugins needs to have 4 different APIs that will be accessed by RiVer Core.
+- Reference plugin only needs to have the first 3, ``merge`` API is optional.
 
-Reference Plugins
-^^^^^^^^^^^^^^^^^
-
-
+.. automodule:: river_core.sim_hookspecs
+   :members: DuTSpec
 
 Plugin naming
 -------------

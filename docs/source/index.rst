@@ -18,7 +18,7 @@ RiVer Core's documentation!
    chromite
    spike
    code-doc
-   plugin_developer
+   developer
    contributing
    authors
 

@@ -322,7 +322,6 @@ def rivercore_generate(config_file, verbosity):
 
 def rivercore_compile(config_file, test_list, coverage, verbosity):
     '''
-        Work in Progress
 
         Function to compile generated assembly programs using the plugin as configured in the config.ini.
 
@@ -421,6 +420,9 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             except:
                 logger.error(
                     "Sorry, loading the requested plugin has failed, please check the configuration"
+                )
+                logger.debug(
+                    'Hello, it seems you are debugging, this usually indicates that the loading failed.\nCheck whether Python file being loaded is fine i.e. no errors and warnings. etc'
                 )
                 raise SystemExit
 

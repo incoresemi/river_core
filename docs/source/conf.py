@@ -450,3 +450,6 @@ intersphinx_mapping = {'https://docs.python.org/': None}
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
+# Sort by order for API
+autodoc_member_order = 'bysource'
