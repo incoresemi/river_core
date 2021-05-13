@@ -1,4 +1,5 @@
 .. See LICENSE.incore for details
+.. _overview:
 
 ########
 Overview
@@ -12,11 +13,9 @@ denotes the RiVer Core framework. Components outside the box either denote user 
 that RiVer Core can work with. The inputs and components of RiVer Core are discussed in detail in the
 following sections.
 
-..
-   TODO Need to change this
 .. image:: _static/River.png
     :align: center
-    :alt: riscof-flow
+    :alt: river-flow
 
 Inputs to the framework
 =======================
@@ -55,6 +54,11 @@ Subcommands
   The command used to merge a set of different test cases into a single set of tests.
 - **Clean**:
   The command used to clean your workdir.
+
+.. Can move into a different file later
+APIs provided by each plugin
+============================
+In order for the plugins to interact with RiVer Core, RiVer Core, provides APIs for the plugins to call to perform above operations.
 
 Execution flow for Users
 ========================
