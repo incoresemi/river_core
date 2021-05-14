@@ -309,9 +309,6 @@ def rivercore_generate(config_file, verbosity):
         path_to_module = config['river_core']['path_to_suite']
         plugin_suite = suite + '_plugin'
 
-        # Load plugin internal dict for generator
-        internal_config = '{0}_internals'.format(suite)
-
         # Get ISA and pass to plugin
         isa = config['river_core']['isa']
         config[suite]['isa'] = isa
@@ -336,8 +333,7 @@ def rivercore_generate(config_file, verbosity):
 
         generatorpm.hook.pre_gen(spec_config=config[suite],
                                  output_dir='{0}/{1}'.format(output_dir, suite))
-        test_list = generatorpm.hook.gen(gen_config=config[internal_config],
-                                         module_dir=path_to_module,
+        test_list = generatorpm.hook.gen(module_dir=path_to_module,
                                          output_dir=output_dir)
         generatorpm.hook.post_gen(
             output_dir='{0}/{1}'.format(output_dir, suite))
