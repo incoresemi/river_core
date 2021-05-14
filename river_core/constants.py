@@ -50,9 +50,12 @@ extra_compile:
     check_with: filecheck
   empty: True
 include:
-  type: string
-  nullable: True
-  check_with: dircheck
+  type: list
+  schema:
+    type: string
+    nullable: True
+    check_with: dircheck
+  empty: True
 '''
 
 class YamlValidator(Validator):
