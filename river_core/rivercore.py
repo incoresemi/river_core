@@ -312,8 +312,7 @@ def rivercore_generate(config_file, verbosity):
             module_dir=path_to_module,
             output_dir=output_dir)
         generatorpm.hook.post_gen(
-            output_dir='{0}/{1}'.format(output_dir, suite),
-            regressfile='{0}/{1}/regresslist.yaml'.format(output_dir, suite))
+            output_dir='{0}/{1}'.format(output_dir, suite))
 
         test_list_file = output_dir + '/test_list.yaml'
         testfile = open(test_list_file, 'w')

@@ -47,15 +47,11 @@ class RandomGeneratorSpec(object):
         """
 
     @gen_hookspec
-    def post_gen(self, output_dir, regressfile):
+    def post_gen(self, output_dir):
         """ Post generation operations
             :param output_dir:  Output directory for the generated test cases
 
-            :param regressfile: File to store a regression list if required. 
-
             :type output_dir: str 
-
-            :type regressfile: str 
         """
 
 
