@@ -1,5 +1,5 @@
 # See LICENSE file for details
-""" Main file containing all necessary functions of river_core """
+""" Main file containing all functions of river_core """
 import sys
 import os
 import glob
@@ -15,25 +15,22 @@ import river_core.utils as utils
 from river_core.constants import *
 from river_core.__init__ import __version__
 from river_core.sim_hookspecs import *
-# import riscv_config.checker as riscv_config
-# from riscv_config.errors import ValidationError
 from envyaml import EnvYAML
 from jinja2 import Template
-
-# TODO List:
-# [ ] Improve logging errors
 
 
 # Misc Helper Functions
 def sanitise_pytest_json(json):
     '''
-        Function to sanitise pytest JSONs 
+        Function to sanitise pytest JSONs, removes uncessary logs. 
 
         :param json: JSON to sanitise 
 
         :type json: list  
 
-        :return return_data: list  
+        :return: A list of important json_data 
+
+        :rtype: dict
     '''
     return_data = []
     for json_row in json:
@@ -46,6 +43,34 @@ def sanitise_pytest_json(json):
 
 def generate_coverage_report(output_dir, config, coverage_report,
                              coverage_rank_report, db_files):
+    '''
+        Function to generate coverage reports after merging databases. 
+
+        :param json: JSON to sanitise 
+
+        :param config: RiverCore config.ini object 
+
+        :param coverage_report: Final HTML report containing coverage info 
+
+        :param coverage_rank_report: Final Rank HTML report containing containing ranked cverage info 
+
+
+        :param db_files: List of db_files that are merged 
+
+        :type json: list  
+
+        :type config: configparser.SectionProxy 
+
+        :type coverage_report: str 
+
+        :type coverage_rank_report: str 
+
+        :type db_files: list 
+
+        :return: Final HTML path
+
+        :rtype: str 
+    '''
     root = os.path.abspath(os.path.dirname(__file__))
     str_report_template = root + '/templates/coverage_report.html'
     str_css_template = root + '/templates/style.css'
@@ -91,23 +116,32 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
 
         :param output_dir: Output directory for programs generated
 
-        :param json_data: JSON data combined from Plugins 
+        :param gen_json_data: JSON data from Generator Plugin 
+
+        :param target_json_data: JSON data from Target Plugin 
+
+        :param ref_json_data: JSON data from Reference Plugin 
 
         :param config: Config ini with the loaded by the configparser module
 
-        :param test_list: Test List loaded as a dict 
+        :param test_dict: Test List YAML 
 
         :type output_dir: str
 
-        :type json_data: str
+        :type gen_json_data: dict 
 
-        :type config: list
+        :type target_json_data: dict 
+
+        :type ref_json_data: dict 
+
+        :type config: configparser.SectionProxy 
 
         :type test_list: dict 
-    '''
 
-    #DONE:NEEL: This report is currently useless. Need pass fail results per
-    #test. Why not send the test_list here and print the info
+        :return: Final HTML path
+
+        :rtype: str 
+    '''
 
     # Filter JSON files
     gen_json_data = sanitise_pytest_json(gen_json_data)
@@ -129,8 +163,6 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
         except:
             logger.warning("Couldn't get a result from the Test List Dict")
 
-    # DONE:NEEL The below should be constants in constants.py with automatic
-    # absolute path detection. Please check riscof for this.
     root = os.path.abspath(os.path.dirname(__file__))
     str_report_template = root + '/templates/report.html'
     str_css_template = root + '/templates/style.css'
@@ -178,6 +210,7 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
 def confirm():
     """
     Ask user to enter Y or N (case-insensitive).
+
     :return: True if the answer is Y.
     :rtype: bool
     """
@@ -190,6 +223,14 @@ def confirm():
 def rivercore_clean(config_file, verbosity):
     '''
         Helper function to clear the work_dir 
+
+        :param config_file: Config file for the river_core.ini 
+
+        :param verbosity: Verbosity Level for the logger 
+
+        :type config_file: click.Path 
+
+        :type verbosity: str 
 
     '''
 
@@ -225,13 +266,9 @@ def rivercore_generate(config_file, verbosity):
 
         :param config_file: Config.ini file for generation
 
-        :param output_dir: Output directory for programs generated
-
         :param verbosity: Verbosity level for the framework
 
         :type config_file: click.Path
-
-        :type output_dir: click.Path
 
         :type verbosity: str
     '''
@@ -281,7 +318,6 @@ def rivercore_generate(config_file, verbosity):
         logger.info('Now loading {0} Suite'.format(suite))
         abs_location_module = path_to_module + '/' + plugin_suite + '/' + plugin_suite + '.py'
         logger.debug("Loading module from {0}".format(abs_location_module))
-        # generatorpm_name = 'river_core.{0}_plugin.{0}_plugin'.format(suite)
         try:
             generatorpm_spec = importlib.util.spec_from_file_location(
                 plugin_suite, abs_location_module)
@@ -298,19 +334,11 @@ def rivercore_generate(config_file, verbosity):
                          str(txt))
             raise SystemExit
 
-        # DONE:NEEL: I don't like this hard-coding below. Everything should come
-        # from config.ini or the names should be consistant for autodetection.
-
-        #DONE:NEEL isa fields should not be local to plugins. They have to be
-        #common for all plugins
         generatorpm.hook.pre_gen(spec_config=config[suite],
                                  output_dir='{0}/{1}'.format(output_dir, suite))
-        test_list = generatorpm.hook.gen(
-            gen_config=config[internal_config],
-            # gen_config=config['{0}/{1}_plugin/{1}_gen_config.yaml'.format(
-            #     path_to_module, suite),
-            module_dir=path_to_module,
-            output_dir=output_dir)
+        test_list = generatorpm.hook.gen(gen_config=config[internal_config],
+                                         module_dir=path_to_module,
+                                         output_dir=output_dir)
         generatorpm.hook.post_gen(
             output_dir='{0}/{1}'.format(output_dir, suite))
 
@@ -330,8 +358,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
 
         :param config_file: Config.ini file for generation
 
-        :param output_dir: Output directory for programs generated
-
         :param test_list: Test List exported from generate sub-command 
 
         :param coverage: Enable coverage merge and stats from the reports 
@@ -339,8 +365,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
         :param verbosity: Verbosity level for the framework
 
         :type config_file: click.Path
-
-        :type output_dir: click.Path
 
         :type test_list: click.Path
 
@@ -360,10 +384,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
     asm_gen = config['river_core']['generator']
     target_list = config['river_core']['target'].split(',')
     ref_list = config['river_core']['reference'].split(',')
-
-    #DONE:NEEL: REPLACE ; with && to ensure failure handling
-    #DONE:NEEL: Worthwhile to print some useful config values like work_dir,
-    # isa, etc here as logger.info output
 
     logger.info(
         "The river_core is currently configured to run with following parameters"
@@ -414,8 +434,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                 dutpm_spec.loader.exec_module(dutpm_module)
 
                 # DuT Plugins
-                # DONE:NEEL: I don't like this hard-coding below. Everything should come
-                # from config.ini or the names should be consistant for autodetection.
                 # TODO:DOC: Naming for class in plugin
                 plugin_class = "{0}_plugin".format(target)
                 class_to_call = getattr(dutpm_module, plugin_class)
@@ -467,8 +485,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                 refpm_spec.loader.exec_module(refpm_module)
 
                 # DuT Plugins
-                # DONE:NEEL: I don't like this hard-coding below. Everything should come
-                # from config.ini or the names should be consistant for autodetection.
                 # TODO:DOC: Naming for class in plugin
                 plugin_class = "{0}_plugin".format(ref)
                 class_to_call = getattr(refpm_module, plugin_class)
@@ -501,7 +517,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                 continue
             filecmp.clear_cache()
             result = filecmp.cmp(test_wd + '/dut.dump', test_wd + '/ref.dump')
-            # ASK: If we need this in the test-list as well?
             test_dict[test]['result'] = 'Passed' if result else 'Failed'
             utils.save_yaml(test_dict, test_list)
             if not result:
@@ -511,10 +526,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             else:
                 logger.info(
                     "Dumps for test {0} Match. TEST PASSED".format(test))
-
-        # DONE:NEEL: I have replaced the below with the above. The dumps shuold
-        # always be dut.dump and ref.dump. Will come back to this when multiple
-        # dumps need to be checked. If you agree delete the below code.
 
         # Start checking things after running the commands
         # Report generation starts here
@@ -527,9 +538,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             raise SystemExit
 
         json_file = open(target_json[0] + '.json', 'r')
-        # NOTE Ignore first and last lines cause; Fails to load the JSON
-        # target_json_list = json_file.readlines()[1:-1]
-        # json_file.close()
         target_json_list = json_file.readlines()
         json_file.close()
         target_json_data = []
@@ -537,9 +545,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
             target_json_data.append(json.loads(line))
 
         json_file = open(ref_json[0] + '.json', 'r')
-        # NOTE Ignore first and last lines cause; Fails to load the JSON
-        # ref_json_list = json_file.readlines()[1:-1]
-        # json_file.close()
         ref_json_list = json_file.readlines()
         json_file.close()
         ref_json_data = []
@@ -595,17 +600,22 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
 
         Function to merge coverage databases
 
-        :param config_file: Config.ini file for generation
 
         :param verbosity: Verbosity level for the framework
 
-        :param db_files: Tuple containing list of testlists to merge 
+        :param db_folders: Tuple containing list of testlists to merge 
         
-        :param output_db: Final output database name 
+        :param output: Final output database name 
 
-        :type config_file: click.Path
+        :param config_file: Config.ini file for generation
 
         :type verbosity: str
+
+        :type db_folders: tuple 
+        
+        :type output: str 
+
+        :type config_file: click.Path
     '''
 
     logger.level(verbosity)
@@ -652,9 +662,6 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
     # TODO: Check this
     for db_folder in db_folders:
         file_path = os.path.abspath(db_folder)
-        # Would return all values, need to ensure nothing else exists
-        # FIX Maybe an extra feature to load all yamls
-        # folder_yaml = glob.glob(file_path + '/*.yaml')
         folder_yaml = utils.load_yaml(file_path + '/test_list.yaml')
         for test in folder_yaml.keys():
             test_list[test] = {}
@@ -695,8 +702,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
         else:
             coverage_directory = file_path + '/final_coverage'
         if os.path.exists(coverage_directory):
-            # Check which tool to merge things
-            # IMC
+            # Cadence
             if 'cadence' in target:
                 coverage_database.append(
                     os.path.abspath(
@@ -715,7 +721,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
                     os.path.abspath(
                         glob.glob(file_path +
                                   '/final_coverage/cov_html/*.html')[0]))
-            # Vertilator
+            # Verilator
             elif 'verilator' in target:
                 coverage_database.append(
                     os.path.abspath(

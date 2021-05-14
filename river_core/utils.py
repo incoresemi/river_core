@@ -19,6 +19,12 @@ yaml.allow_unicode = True
 def str_2_bool(string):
     """
         Simple String to Bool conversion
+        
+        :param string: A string to convert
+
+        :returns: Boolean value (True or False)
+        
+        :rtype: bool
     """
     return bool(distutils.util.strtobool(string))
 
@@ -26,6 +32,14 @@ def str_2_bool(string):
 def save_yaml(data, out_file):
     """
         Save a dict to a file
+
+        :param data: Input data 
+
+        :param out_file: Full/Abs path of Output file 
+
+        :type data: dict 
+
+        :type out_file: str 
     """
     try:
         with open(out_file, 'w') as outfile:
@@ -34,9 +48,20 @@ def save_yaml(data, out_file):
         logger.error("File doesn't exist")
 
 
-def load_yaml(foo):
+def load_yaml(input_yaml):
+    """
+        Save a dict to a file
+
+        :param input_yaml: YAML file to read 
+
+        :type input_yaml: str 
+
+        :returns: The loaded yaml 
+
+        :rtype: dict
+    """
     try:
-        with open(foo, "r") as file:
+        with open(input_yaml, "r") as file:
             return dict(yaml.load(file))
     except ruamel.yaml.constructor.DuplicateKeyError as msg:
         raise SystemExit
@@ -53,15 +78,15 @@ def sys_command(command, timeout=240):
         :param timeout: The value after which the framework exits.
         Default set to configured to 240 seconds
 
-        :type file1: list
+        :type command: list
 
-        :type file2: int
+        :type timeout: int
 
-        :return: Error Code (int) ; STDOUT ; STDERR
+        :returns: Error Code (int) ; STDOUT ; STDERR
+
+        :rtype: list
 
     '''
-    # test = 'exec ' + command
-    # logger.debug(test)
     logger.warning('$ timeout={1} {0} '.format(' '.join(shlex.split(command)),
                                                timeout))
     out = ''
@@ -77,20 +102,6 @@ def sys_command(command, timeout=240):
             pgrp = os.getpgid(process.pid)
             os.killpg(pgrp, signal.SIGTERM)
             return 1, "GuruMeditation", "TimeoutExpired"
-
-    # timer = Timer(timeout, process.kill)
-    # try:
-    #     timer.start()
-    #     out, err = process.communicate()
-    # finally:
-    #     timer.cancel()
-
-    #eprocess.ept subprocess.TimeoutExpired:
-    #    process.kill()
-    #    out, err = process.communicate()
-
-    # out = process.stdout
-    # err = process.stderr
 
     out = out.rstrip()
     err = err.rstrip()
@@ -108,6 +119,29 @@ def sys_command(command, timeout=240):
 
 
 def sys_command_file(command, filename, timeout=500):
+    '''
+        Wrapper function to run shell commands with a timeout which involve operating witha file.
+        Uses :py:mod:`subprocess`, :py:mod:`shlex`, :py:mod:`os`
+        to ensure proper termination on timeout
+
+        :param command: The shell command to run.
+
+        :param filename: File on which the operation is performed. 
+
+        :param timeout: The value after which the framework exits.
+        Default set to configured to 240 seconds
+
+        :type command: list
+
+        :type filename: str 
+
+        :type timeout: int
+
+        :returns: Error Code (int) ; None ; None 
+
+        :rtype: list
+
+    '''
     cmd = command.split(' ')
     cmd = [x.strip(' ') for x in cmd]
     cmd = [i for i in cmd if i]

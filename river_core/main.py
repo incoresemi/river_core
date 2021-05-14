@@ -11,8 +11,9 @@ from river_core.__init__ import __version__
 
 def check_config():
     """ Checks if 
-    1. ~/river_core.ini
-    2. (pwd)/river_core.ini exists """
+    1. ~/river_core.ini\n
+    2. (pwd)/river_core.ini exists
+    """
     if os.path.exists(os.path.expanduser('~/river_core.ini')):
         logger.info('Loading config from ~/river_core.ini')
         return '~/river_core.ini'
