@@ -26,16 +26,12 @@ class RandomGeneratorSpec(object):
         """
 
     @gen_hookspec
-    def gen(self, gen_config, module_dir, output_dir):
+    def gen(self, module_dir, output_dir):
         """ Generation (command execution, file generation etc)
-
-            :param gen_config: Config YAML file path specific to the Plugin 
 
             :param module_dir:  Module directory location of the module to be loaded 
 
             :param output_dir:  Output directory for the generated test cases
-
-            :type gen_config: str 
 
             :type module_dir: str 
 
