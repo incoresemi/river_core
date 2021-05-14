@@ -125,7 +125,7 @@ class DuTSpec(object):
 
     @dut_hookspec
     def merge_db(self, db_files, output_db, config):
-        """ Merging differentt databases together 
+        """ Merging different databases together 
             
             :param db_files: List of coverage files detected. 
 
