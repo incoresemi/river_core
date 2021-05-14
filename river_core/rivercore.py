@@ -18,6 +18,14 @@ from river_core.sim_hookspecs import *
 from envyaml import EnvYAML
 from jinja2 import Template
 
+from cerberus import Validator
+from ruamel.yaml import YAML
+yaml = YAML(typ="rt")
+yaml.default_flow_style = False
+yaml.allow_unicode = True
+yaml.compact(seq_seq=False, seq_map=False)
+
+
 
 # Misc Helper Functions
 def sanitise_pytest_json(json):
@@ -334,17 +342,32 @@ def rivercore_generate(config_file, verbosity):
         generatorpm.hook.pre_gen(spec_config=config[suite],
                                  output_dir='{0}/{1}'.format(output_dir, suite))
         test_list = generatorpm.hook.gen(module_dir=path_to_module,
-                                         output_dir=output_dir)
-        generatorpm.hook.post_gen(
-            output_dir='{0}/{1}'.format(output_dir, suite))
+                                         output_dir=output_dir)[0]
+        if not isinstance(test_list,dict):
+            logger.error('Test List returned by the gen hook of Generator is of type: '+str(type(test_list))+'. Expected Dict')
+            raise SystemExit
+
+        generatorpm.hook.post_gen(output_dir='{0}/{1}'.format(output_dir, suite))
 
         test_list_file = output_dir + '/test_list.yaml'
+        logger.info('Dumping generated Test-List at: '+str(test_list_file))
         testfile = open(test_list_file, 'w')
-        utils.yaml.dump(test_list[0], testfile)
+        utils.yaml.dump(test_list, testfile)
         testfile.close()
 
-        logger.info('Test list is generated and available at {0}'.format(
-            test_list_file))
+        logger.info('Validating Generated Test-List')
+        testschema = yaml.load(testlist_schema)
+        validator = YamlValidator(testschema)
+        validator.allow_unknown = False   
+        for test,fields in test_list.items():
+            valid = validator.validate(fields)
+            if not valid:
+                logger.error('Test List Validation failed:')
+                error_list = validator.errors
+                for x in error_list:
+                    logger.error('{0} [ {1} ] : {2}'.format(test,x, error_list[x]))
+                raise SystemExit
+        logger.info('Test List Validated successfully')
 
 
 def rivercore_compile(config_file, test_list, coverage, verbosity):
