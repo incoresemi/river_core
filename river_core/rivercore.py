@@ -296,7 +296,7 @@ def rivercore_generate(config_file, verbosity):
     # TODO Test multiple plugin cases
     # Current implementation is using for loop, which might be a bad idea for parallel processing.
 
-    suite_list = config['river_core']['generator'].split(',')
+    suite_list = config['river_core']['generator'].replace(' ','').split(',')
 
     logger.info(
         "The river_core is currently configured to run with following parameters"
