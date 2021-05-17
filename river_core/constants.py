@@ -56,14 +56,18 @@ include:
     nullable: True
     check_with: dircheck
   empty: True
-'''
+''' #: This contains the schema for validation
+
 
 class YamlValidator(Validator):
+
     def _check_with_filecheck(self, field, value):
         if not os.path.isfile(value):
             self._error(field, 'File {0} not found'.format(value))
+
     def _check_with_dircheck(self, field, value):
         if not os.path.isdir(value):
             self._error(field, 'Dir {0} not found'.format(value))
+
 
 cwd = os.getcwd()
