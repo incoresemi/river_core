@@ -13,10 +13,7 @@ RiVer Core's documentation!
    config_ini
    coverage
    test_list
-   aapg
-   microtesk
-   chromite
-   spike
+   plugins
    code-doc
    developer
    contributing
