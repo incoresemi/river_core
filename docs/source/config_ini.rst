@@ -26,16 +26,16 @@ Configuration options for river_core
   - **isa** -> ISA for the arch, all of the plugins will use the same ISA.
   - **open_browser** -> Opens the final report automatically in your default browser [Boolean]
   - **space_saver** -> ISA for the arch, all of the plugins will use the same ISA. [Boolean]
-  - **Coverage** -> Enable Coverage mode. More info in :ref:`Coverage<coverage>`
+  - **coverage** -> Enable Coverage mode. More info in :ref:`Coverage<coverage>`
 
 Configuration options for plugins
 ####################################
 
-Some of the necessary configuration options
+Since the plugins decide what all parameters to choose, it is upto the developers of the plugins to decide what all parameters should be available in the `config.ini`.
 
-- **plugin** specific options
+Some of the recommended configuration options:
 
-  - **jobs** -> Number of jobs to use while generating the tests
-  - **filter** -> This option is to select tests. More info `here <https://docs.pytest.org/en/latest/example/markers.html#using-k-expr-to-select-tests-based-on-their-name>`_ 
-  - **seed** -> A seed for generating the programs (Can be *random*)
-  - **count** -> The number of times the test needs to be run
+- **jobs** -> Number of jobs to use while generating the tests
+- **filter** -> This option is to select tests.
+- **seed** -> A seed for generating the programs (Can be *random*)
+- **count** -> The number of times the test needs to be run
