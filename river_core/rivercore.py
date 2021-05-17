@@ -709,7 +709,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
                 coverage_html.append(
                     os.path.abspath(
                         glob.glob(file_path +
-                                  '/final_coverage/cov_html/*.html')[0]))
+                                  '/cov_html/*.html')[0]))
             # Vertilator
             elif 'verilator' in target:
                 coverage_database.append(
