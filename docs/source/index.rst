@@ -11,7 +11,6 @@ RiVer Core's documentation!
    overview
    installation
    config_ini
-   coverage
    test_list
    plugins
    merge

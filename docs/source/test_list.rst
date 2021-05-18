@@ -1,3 +1,4 @@
+.. _testlist:
 ===============
 Test-List Spec
 ===============
@@ -35,4 +36,9 @@ These plugins have a YAML Schema that needs to be verified, this part is handled
 
 .. autofunction:: river_core.constants.YamlValidator
 
-.. autodata:: river_core.constants.testlist_schema
+
+The current schema looks like this:
+
+.. literalinclude:: ../../river_core/constants.py
+   :language: python
+   :lines: 8-58

@@ -25,7 +25,6 @@ To re-iterate the above things in short:
   + Torture
   + Microtesk
 
-
 - **DuT plugins**:
 
   These Plugins help in running the above generated tests on a design and compiler that you want. Some of the common compiler plugins include:
@@ -109,11 +108,12 @@ Taking an example of the ``Spike`` plugin:
 
 
 Plugin API
-----------
+^^^^^^^^^^
 This topic will explain some of the APIs defined for integrating different plugins into RiVer Core.
 
 Generator Plugins
-^^^^^^^^^^^^^^^^^
+"""""""""""""""""
+
 - The generator plugin needs to have 3 different APIs that will be accessed by RiVer Core.
 
   The activities of the plugins are divided into the below 3 categories.
@@ -122,16 +122,37 @@ Generator Plugins
    :members: RandomGeneratorSpec
 
 
-
 DuT and Reference Plugins
-^^^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""
+
 - The DuT plugins needs to have 4 different APIs that will be accessed by RiVer Core.
 - Reference plugin only needs to have the first 3, ``merge`` API is optional.
 
 .. automodule:: river_core.sim_hookspecs
    :members: DuTSpec
 
-Plugin naming
--------------
 
-The class for the plugin has to be `plugin_name`+`plugin`. Keeping all the plugins in lowercase.
+Things to consider while designing plugins
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. Plugin naming
+"""""""""""""""""
+
+The class for the plugin has to be `plugin_name` + `plugin`. Keeping all the plugins in lowercase.
+
+This is because the `RiVer Core` is designed to load all plugins in a similar format.
+
+.. literalinclude:: ../../river_core/rivercore.py
+   :language: python
+   :lines: 328-336
+
+2. Use `pre_gen` and `init` to load and get all values
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Like the current plugins call and load the required config from the `.ini` and `YAML` files, you s should `ideally` be loading all the required configuration in the initial hooks of the plugins.
+
+3. Return a test_list dict for gen phase
+"""""""""""""""""""""""""""""""""""""""""
+
+All the generators should be generating a corresponding test-list, conforming to the schema mentioned in the :ref:`Test-List <testlist>`
+
