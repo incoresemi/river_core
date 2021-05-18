@@ -3,7 +3,9 @@
 Plugins
 #######
 
-Types of plugins:
+.. note:: Rest of the document assumes you already have cloned `RiVer Core` and its plugins.
+
+Types of plugins available with `River Core`:
 
 Generator Plugins
 *****************
@@ -477,12 +479,13 @@ To ``boot.mem`` file is generated in the ``bin`` folder using the following comm
 
 Chromite [Verilator]
 ====================
-This section will help you setup the `chromite_verilator`` plugin.
+This section will help you setup the `chromite_verilator` plugin.
 
 Installation
 ------------
 1. Install :ref:`Chromite <chromite>`
-2. Configure `chromite_verilator.py`
+2. Install `Verilator 4.08+ <https://www.veripool.org/projects/verilator/wiki/Installing>`_
+3. Configure `river_core.ini`
 
 
 Configuring river_core.ini
@@ -495,11 +498,11 @@ Things to configure
 
   1. `src_dir` = Absolute paths to following directories, seperated by commas
 
-    [0] - Verilog Dir [ending with 'build/hw/verilog/']
+    [0] - Verilog Dir [ending with `build/hw/verilog/`]
 
-    [1] - BSC Path [ending with 'lib/Verilog']
+    [1] - BSC Path [ending with `lib/Verilog`]
 
-    [2] - Wrapper path [ending with 'chromite/bsvwrappers/common_lib']
+    [2] - Wrapper path [ending with `chromite/bsvwrappers/common_lib`]
 
     An example:
 
@@ -519,6 +522,117 @@ Things to configure
         # Top Module for simulation
         top_module = mkTbSoc
 
+
+Chromite [Cadence]
+====================
+This section will help you setup the `chromite_cadence` plugin.
+
+Installation
+------------
+1. Install :ref:`Chromite <chromite>`
+2. Ensure you have setup `Cadence` in your path. Binaries used by this plugin:
+
+   - `ncvlog`
+
+   - `ncelab`
+
+   - `imc`
+
+.. note:: The user is advised to ensure all of the above binaries are accessible via the shell that will be running `RiVer Core`.
+
+3. Configure `chromite_verilator.py`
+
+
+Configuring river_core.ini
+----------------------------
+
+Things to configure
+^^^^^^^^^^^^^^^^^^^
+
+- In `river_core.ini`, you will have to configure
+
+  1. `src_dir` = Absolute paths to following directories, seperated by commas
+
+    [0] - Verilog Dir [ending with `build/hw/verilog/`]
+
+    [1] - BSC Path [ending with `lib/Verilog`]
+
+    [2] - Wrapper path [ending with `chromite/bsvwrappers/common_lib`]
+
+    An example:
+
+    .. code-block:: bash
+
+        # src dir
+        # Verilog Dir
+        # BSC Path
+        # Wrapper path
+        src_dir = /home/vagrant/core/chromite/build/hw/verilog/,/home/vagrant/tools/bsc/inst/lib/Verilog,/home/vagrant/core/chromite/bsvwrappers/common_lib
+
+
+  2. `top_module` = The top most module for simulation
+
+    .. code-block:: bash
+
+        # Top Module for simulation
+        top_module = mkTbSoc
+
+
+Chromite [Questa]
+====================
+This section will help you setup the `chromite_questa` plugin.
+
+Installation
+------------
+1. Install :ref:`Chromite <chromite>`
+2. Ensure you have setup `Questa` in your path. Binaries used by this plugin:
+
+   - `vlib`
+
+   - `vlvog`
+
+   - `vsim`
+
+   - `vcover`
+
+.. note:: The user is advised to ensure all of the above binaries are accessible via the shell that will be running `RiVer Core`.
+
+3. Configure `river_core.ini`
+
+
+Configuring river_core.ini
+----------------------------
+
+Things to configure
+^^^^^^^^^^^^^^^^^^^
+
+- In `river_core.ini`, you will have to configure
+
+  1. `src_dir` = Absolute paths to following directories, seperated by commas
+
+    [0] - Verilog Dir [ending with `build/hw/verilog/`]
+
+    [1] - BSC Path [ending with `lib/Verilog`]
+
+    [2] - Wrapper path [ending with `chromite/bsvwrappers/common_lib`]
+
+    An example:
+
+    .. code-block:: bash
+
+        # src dir
+        # Verilog Dir
+        # BSC Path
+        # Wrapper path
+        src_dir = /home/vagrant/core/chromite/build/hw/verilog/,/home/vagrant/tools/bsc/inst/lib/Verilog,/home/vagrant/core/chromite/bsvwrappers/common_lib
+
+
+  2. `top_module` = The top most module for simulation
+
+    .. code-block:: bash
+
+        # Top Module for simulation
+        top_module = mkTbSoc
 
 Reference Plugins
 *****************
