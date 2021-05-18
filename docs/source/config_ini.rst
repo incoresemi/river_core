@@ -9,7 +9,7 @@ Config.ini Spec
 This chapter will discuss the syntax and structure of the config.ini file used by river_core.
 A sample `config-file`_ is present in the **examples** directory of the Git Repository.
 
-.. note:: `RiVer Core` can automatically detect the confiugration file present in the current directory.
+.. note:: `RiVer Core` can automatically detect the configuration file present in the current directory.
 
 
 Configuration options for river_core
@@ -27,7 +27,7 @@ Configuration options for river_core
   - **isa** -> ISA for the arch, all of the plugins will use the same ISA.
   - **open_browser** -> Opens the final report automatically in your default browser [Boolean]
   - **space_saver** -> ISA for the arch, all of the plugins will use the same ISA. [Boolean]
-  - **coverage** -> Enable Coverage mode. More info in :ref:`Coverage<coverage>`
+  - **coverage** -> Enable Coverage mode.
 
 .. note:: The standard delimiter for options having mutliple values is **,** (comma) .
 
