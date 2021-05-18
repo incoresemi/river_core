@@ -1,4 +1,6 @@
 .. See LICENSE.incore for details
+.. _plugins:
+
 
 Plugins
 #######

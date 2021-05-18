@@ -1,5 +1,4 @@
 .. See LICENSE.incore for details
-.. _overview:
 
 ########
 Overview
@@ -15,7 +14,7 @@ following sections.
 
 .. image:: _static/River.png
     :align: center
-    :alt: river-flow
+    :alt: riscof-flow
 
 Inputs to the framework
 =======================
@@ -54,11 +53,6 @@ Subcommands
   The command used to merge a set of different test cases into a single set of tests.
 - **Clean**:
   The command used to clean your workdir.
-
-.. Can move into a different file later
-APIs provided by each plugin
-============================
-In order for the plugins to interact with RiVer Core, RiVer Core, provides APIs for the plugins to call to perform above operations.
 
 Execution flow for Users
 ========================

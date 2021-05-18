@@ -168,6 +168,18 @@ Install RIVER_CORE
      
      .. _Gitlab repo: https://gitlab.com/incoresemi/river-framework/core-verification/river_core
 
+
+
+Install RIVER_CORE Plugins
+==========================
+
+You can install the plugins, by cloning the plugin code from the `Gitlab Repo <https://gitlab.com/incoresemi/river-framework/core-verification/river_core_plugins.git>`_
+
+     .. code-block:: console
+
+         $ git clone https://gitlab.com/incoresemi/river-framework/core-verification/river_core_plugins.git
+
+
 Test RIVER_CORE
 ===============
 
@@ -181,7 +193,7 @@ Once you have installed RIVER_CORE you can execute ``river_core --help`` to prin
   
     See LICENSE for details 
   
-    Is your config.ini ready? Configure RiVer Core there!
+    Is your river_core.ini ready? Configure RiVer Core there!
   
   Options:
     --help  Show this message and exit.
@@ -250,36 +262,35 @@ With this you should now have all the following available as command line argume
 .. note:: Each of the generators have their own unique config.yamls to configure their plugin specific details, ensure you have changed them as required.
 
 
-Test Generators
-=======================
-Some of the existing generator plugins include:
 
-- :ref:`Microtesk Plugin <microtesk>`
-
-- :ref:`AAPG Plugin <aapg>`
-
-Plugin Models
-=====================
-Some of the existing plugin models are:
-
-- :ref:`Chromite Plugin <chromite>`
-
-Reference Models
-========================
-Some of the existing reference models are:
-
-- :ref:`Spike Plugin <spike>`
-
-
-Create a config.ini file
+Create a river_core.ini file
 ========================
 
 .. _config-file: https://gitlab.com/incoresemi/river-framework/core-verification/river_core/-/blob/dev/examples/sample-config.ini
 
-This chapter will discuss the syntax and structure of the config.ini file used by river_core.
+`RiVer Core` can be easily configured with `river_core.ini` to control various aspects of tests run on the framework.
 A sample `config-file`_ is present in the **examples** directory of the Git Repository.
 
 More info on the :ref:`Config Spec<config_ini>`.
+
+Setup the Plugins
+================
+
+Plugins are divided into 3 categories in `RiVer Core` framework:
+
+1. Generator Plugins
+
+2. DuT Plugins
+
+3. Reference Plugins
+
+Each of the plugins `YAML` file associated to configure options specific to the plugin.
+
+    .. Note:: To get `RiVer Core` up and running, you are required to have atleast 1 of each type of plugins.
+
+All the plugins are configured with basic settings.
+
+More information about setting up and installing the plugins on :ref:`Plugins <plugins>`
 
 Running RIVER_CORE
 ==================
