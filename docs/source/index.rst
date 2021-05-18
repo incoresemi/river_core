@@ -14,6 +14,7 @@ RiVer Core's documentation!
    coverage
    test_list
    plugins
+   merge
    code-doc
    developer
    contributing
