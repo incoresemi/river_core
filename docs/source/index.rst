@@ -34,6 +34,7 @@ Welcome to the RIVER CORE Verification Framework Manual.
    :numbered:
 
    introduction
+   overview
    installation
    config_ini
    test_list
