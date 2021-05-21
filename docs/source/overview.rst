@@ -1,39 +1,102 @@
 .. See LICENSE.incore for details
 
-########
-Overview
-########
+##################
+Framework Overview
+##################
 
 .. image:: _static/River.png
     :align: center
     :alt: riscof-flow
 
-RIVER CORE
+RIVER CORE splits the verification flow into the following stages:
 
-1. Test Generation: This phase uses multiple generators of different kind to
-   generate tests and maintain them as a test-list. This now becomes a sort of a
-   regression suite that needs to be run on the target.
-2. Target Run: The generated tests from the previous stage are compiled and
+1. **Test Generation**: This phase uses multiple user configured generators of 
+   different kind to generate tests and create a combined test-list. This now 
+   becomes a sort of a regression suite that needs to be run on the target and
+   the reference.
+2. **Target Run**: The generated tests from the previous stage are compiled and
    loaded into the target's custom test-bench and simulated. The execution logs for 
-   each test are saved.
-3. Reference Run: The same tests are compiled and run on the reference model of
-  choice and the execution logs are saved.
+   each test are saved. All of the above steps are encapsulated inside a python
+   plugin and thus any core with any environment can easily be integrated into
+   RIVER CORE as a target.
+3. **Reference Run**: The same tests are compiled and run on the reference model of
+   choice and the execution logs are saved.
+4. **Compare Logs**: The execution logs for each test from the target and the
+   reference model are compared and a Fail result is captured is the logs are
+   different. 
+5. **Report Generation**: Generate an html report capturing the results of all
+   of the above steps.
 
 
+The Input Config File
+=====================
+
+The entire configuration and flow of the framework is controlled via the input
+``config.ini`` file. This file is used to capture some of the following
+parameters:
+  - The work directory where all artifacts of generation and simulation are
+    kept.
+  - The overvall ISA string supported by the target
+  - The list of generators to be used and their configurations to generate
+    tests.
+  - Configuration parameters of the Target. This is particularly useful when working with core generators 
+  - Configuration parameters of the reference model.
+  - Whether coverage shuold be enabled by the target and if so, what metrics ?
+
+A sample template of the config.ini file is shown below. More details of syntax
+can be found here :ref:`Config Spec<config_ini>`.
+
+.. code-block:: ini
+
+  work_dir = test 
+
+  target = chromite_verilator
+  reference = spike 
+  generator = testfloat, aapg
+  isa = rv64imafdc
+  
+  # Set paths for each plugin
+  path_to_target = ~/river_core_plugins/dut_plugins
+  path_to_ref = ~/river_core_plugins/reference_plugins
+  path_to_suite = ~/river_core_plugins/generator_plugins
+  
+  open_browser = True
+  space_saver = True
+  
+  [coverage]
+  code = False
+  functional = False
+  
+  [testfloat]
+  jobs=8
+  seed = random
+  count = 1
+  filter = 
+  config_yaml = ~/river_core_plugins/generator_plugins/testfloat_plugin/testfloat_gen_config.yaml
+  
+  [aapg]
+  jobs = 8
+  filter = rv64imafdc_hazards_s
+  seed = random
+  count = 2
+  config_yaml = ~/river_core_plugins/generator_plugins/aapg_plugin/aapg_gen_config.yaml
+  
+  [chromite_verilator]
+  jobs = 8
+  filter = 
+  count = 1
+  src_dir = ~/chromite/build/hw/verilog/,~/bsc/inst/lib/Verilog,~/chromite/bsvwrappers/common_lib
+  top_module = mkTbSoc
+  
+  [spike]
+  jobs = 1
+  filter =
+  count = 1
 
 
-RIVER CORE is a python based tool aimed at provide a neutral framework which can
-enable verification and testing of a RISC-V target (hard or soft implementations) against a reference model
+  
 
 
-The following diagram captures the overall flow of RiVer Core and its components. The XYZ bounding box
-denotes the RiVer Core framework. Components outside the box either denote user inputs or external tools
-that RiVer Core can work with. The inputs and components of RiVer Core are discussed in detail in the
-following sections.
-
-.. image:: _static/River.png
-    :align: center
-    :alt: riscof-flow
 
 Inputs to the framework
 =======================
