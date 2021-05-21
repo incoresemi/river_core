@@ -14,13 +14,13 @@ Installation
 
       .. code-block:: shell-session
 
-        $ git clone https://gitlab.com/shaktiproject/tools/mod-spike.git  
+        $ git clone https://gitlab.com/shaktiproject/tools/mod-spike.git
 
 2. Checkout to the `bump-to-latest` branch
 
       .. code-block:: shell-session
 
-        $ cd mod-spike                                                                                    
+        $ cd mod-spike
         $ git checkout bump-to-latest
 
 3. Now clone the latest spike repo from Github.
@@ -40,7 +40,7 @@ Installation
 5. Now export `RISCV` path and create a `build` to store the new compiled executable.
 
       .. code-block:: shell-session
-      
+
         $ export RISCV=<path you to install spike>
         $ mkdir build
         $ cd build
@@ -48,10 +48,10 @@ Installation
 6. Configure and build the new spike with the modifications. Optionally you can install with `sudo` permissions.
 
       .. code-block:: shell-session
-      
+
          $ ../configure --prefix=$RISCV
          $ make
-         $ [sudo] make install 
+         $ [sudo] make install
 
 
 
@@ -62,4 +62,5 @@ Design
 The plugin creates a Makefile in your `workdir` based on the parameters set in `config.ini`, this is then called by the pytest framework which creates a JSON file containing the file report and runs the makefile in the order.
 The framework returns a JSON which is then parsed to create a final HTML report.
 Currently it also returns a `dut.dump` which is used to compare the working of the design.
+
 

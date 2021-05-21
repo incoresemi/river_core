@@ -38,7 +38,13 @@ Welcome to the RIVER CORE Verification Framework Manual.
    installation
    config_ini
    test_list
-   plugins
+   aapg 
+   microtesk
+   testfloat
+   chromite_verilator
+   chromite_cadence
+   chromite_questa
+   spike
    merge
    code-doc
    developer
