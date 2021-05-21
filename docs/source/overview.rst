@@ -4,8 +4,27 @@
 Overview
 ########
 
-<CHECK:Please check if this is correct>
-The idea behind RiVer Core framework is to provide a central control point for generating, compiling and simulating tests on different cores. It provides a management surface for generating and comparing various designs on the flow.
+.. image:: _static/River.png
+    :align: center
+    :alt: riscof-flow
+
+RIVER CORE
+
+1. Test Generation: This phase uses multiple generators of different kind to
+   generate tests and maintain them as a test-list. This now becomes a sort of a
+   regression suite that needs to be run on the target.
+2. Target Run: The generated tests from the previous stage are compiled and
+   loaded into the target's custom test-bench and simulated. The execution logs for 
+   each test are saved.
+3. Reference Run: The same tests are compiled and run on the reference model of
+  choice and the execution logs are saved.
+
+
+
+
+RIVER CORE is a python based tool aimed at provide a neutral framework which can
+enable verification and testing of a RISC-V target (hard or soft implementations) against a reference model
+
 
 The following diagram captures the overall flow of RiVer Core and its components. The XYZ bounding box
 denotes the RiVer Core framework. Components outside the box either denote user inputs or external tools

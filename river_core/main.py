@@ -28,13 +28,11 @@ def check_config():
 @click.group()
 @click.version_option(version=__version__)
 def cli():
-    """ RiVer Core verification framework
-        \b
+    """  
+    ===== RiVer Core Verification Framework =====
+    \b
 
-        See LICENSE for details
-        \b
-
-        Is your river_core.ini ready? Configure RiVer Core there!
+    Visit river_core.readthedocs.io for more info
     """
 
 
@@ -46,7 +44,7 @@ def cli():
 @click.option('-c',
               '--config',
               type=click.Path(dir_okay=False, exists=True),
-              help='Read option defaults from the specified INI file',
+              help='Read option defaults from the INI file',
               show_default=True)
 @cli.command()
 def clean(config, verbosity):
@@ -72,7 +70,7 @@ def clean(config, verbosity):
 @click.option('-c',
               '--config',
               type=click.Path(dir_okay=False, exists=True),
-              help='Read option defaults from the specified INI file')
+              help='Read option defaults from the INI file')
 @click.option('--coverage', is_flag=True)
 @cli.command()
 def compile(config, test_list, coverage, verbosity):
@@ -92,7 +90,7 @@ def compile(config, test_list, coverage, verbosity):
 @click.option('-c',
               '--config',
               type=click.Path(dir_okay=False, exists=True),
-              help='Read option defaults from the specified INI file',
+              help='Read option defaults from the INI file',
               show_default=True)
 @cli.command()
 def generate(config, verbosity):
@@ -108,7 +106,7 @@ def generate(config, verbosity):
 @click.option('-c',
               '--config',
               type=click.Path(dir_okay=False, exists=True),
-              help='Read option defaults from the specified INI file',
+              help='Read option defaults from the INI file',
               show_default=True)
 @click.option('-v',
               '--verbosity',

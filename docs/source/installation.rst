@@ -150,7 +150,7 @@ Install RIVER_CORE
 
    .. tab:: for Dev
 
-     The sources for RIVER_CORE can be downloaded from the `GitLab repo`_.
+     The sources for RIVER_CORE can be downloaded from the `Gitlab repo`_.
      
      You can clone the repository:
      
@@ -168,40 +168,38 @@ Install RIVER_CORE
      
      .. _Gitlab repo: https://gitlab.com/incoresemi/river-framework/core-verification/river_core
 
+Testing Installation
+--------------------
 
+Output for ``river_core --help``:
+
+.. program-output:: river_core --help
+
+Output for ``river_core clean --help``:
+
+.. program-output:: river_core clean --help
+
+Output for ``river_core generate --help``:
+
+.. program-output:: river_core generate --help
+
+Output for ``river_core compile --help``:
+
+.. program-output:: river_core compile --help
+
+Output for ``river_core merge --help``:
+
+.. program-output:: river_core merge --help
 
 Install RIVER_CORE Plugins
 ==========================
 
 You can install the plugins, by cloning the plugin code from the `Gitlab Repo <https://gitlab.com/incoresemi/river-framework/core-verification/river_core_plugins.git>`_
 
-     .. code-block:: console
+.. code-block:: console
 
-         $ git clone https://gitlab.com/incoresemi/river-framework/core-verification/river_core_plugins.git
+    $ git clone https://gitlab.com/incoresemi/river-framework/core-verification/river_core_plugins.git
 
-
-Test RIVER_CORE
-===============
-
-Once you have installed RIVER_CORE you can execute ``river_core --help`` to print the help routine:
-
-.. code-block:: bash
-
-  Usage: river_core [OPTIONS] COMMAND [ARGS]...
-  
-    RiVer Core verification framework 
-  
-    See LICENSE for details 
-  
-    Is your river_core.ini ready? Configure RiVer Core there!
-  
-  Options:
-    --help  Show this message and exit.
-  
-  Commands:
-    clean     subcommand to clean generated programs.
-    compile   subcommand to compile generated programs.
-    generate  subcommand to generate programs.
 
 Install RISCV-GNU Toolchain
 ===========================
@@ -264,17 +262,19 @@ With this you should now have all the following available as command line argume
 
 
 Create a river_core.ini file
-========================
+============================
 
 .. _config-file: https://gitlab.com/incoresemi/river-framework/core-verification/river_core/-/blob/dev/examples/sample-config.ini
 
 `RiVer Core` can be easily configured with `river_core.ini` to control various aspects of tests run on the framework.
-A sample `config-file`_ is present in the **examples** directory of the Git Repository.
+A sample `config-file`_ present in the **examples** directory is captured below for reference:
 
-More info on the :ref:`Config Spec<config_ini>`.
+.. program-output:: cat ../../examples/sample-config.ini
+
+Details and further specification of the config file syntax is available at :ref:`Config Spec<config_ini>`.
 
 Setup the Plugins
-================
+=================
 
 Plugins are divided into 3 categories in `RiVer Core` framework:
 

@@ -3,6 +3,7 @@ Developer Documentation
 =======================
 
 .. _test-file: https://gitlab.com/incoresemi/river-framework/core-verification/river_core/-/blob/dev/examples/sample-config.ini
+
 This chapter will discuss about the nuances of the river_core framework and how to add more plugins or create customizations in the framework.
 
 
@@ -47,6 +48,7 @@ To re-iterate the above things in short:
 
 Example Plugin Directory
 ^^^^^^^^^^^^^^^^^^^^^^^^
+
 Common Files
 """"""""""""
 
