@@ -6,7 +6,7 @@ Framework Overview
 
 .. image:: _static/River.png
     :align: center
-    :alt: riscof-flow
+    :alt: river-flow
 
 RIVER CORE splits the verification flow into the following stages:
 
@@ -95,17 +95,52 @@ can be found here :ref:`Config Spec<config_ini>`.
 
 
   
+Generator Plugin
+================
 
+.. image:: _static/generator_plugin.png
+    :align: center
+    :alt: Generator Plugin
 
+This plugin is used encapsulate various test-generators. These generators can be
+either random program generators like `AAPG <>`_, `RISC-V Torture <>`_ , 
+`Csmit <>`_ , `MicroTesk <>`_ , `Test Float <>`_ etc. OR may include a directed
+test-generators like `CTG <>`_ OR a static test suite like the ones hosted 
+at the `RISC-V TESTS <>`_ .
 
-Inputs to the framework
-=======================
+Each test generator is a python plugin which support 3 hooks, called in the
+following sequence:
 
-As can seen in the image above, the framework takes multiple inputs from the user:
+1. **Pre-gen**: This stage is used to configure the generator, check and install
+   dependencies, download artifacts, create work directories, parse the plugin 
+   specific parameters present in the ``config.ini``  etc. 
 
-1. A RiVer Core config.ini which contains details use to configure the framework. The options and other configurations can be found at :ref:`Config Spec<config_ini>`.
+2. **Gen**: This stage is where the actual tests are generated. RIVER CORE uses
+   the inherent pytest framework to run parallelized commands. Using pytest,
+   enables using default report templates which are quite verbose and helpful in
+   debugging as well. 
 
-2. A Python plugin which can be used by the framework to generate tests, compile and simulate them, and compare the results. Plugins also offer additional features like merging various tests. More info about the plugins can be found in <TODO> :ref:`plugins` section.
+   The major output of this stage is a test-list YAML which
+   follows the syntax/schema mentioned in :ref:`Test List Format<testlist>`.
+   this test list capture all the information about the test and necessary
+   collaterals required to compile each test. By adopting a standard format, we
+   inherently allow any source of tests to be integrated into RIVER CORE as a
+   generator plugin as long as a valid test list is created.
+
+3. **Post-Gen**: This stage is called after all the tests are generated and can
+   be used to post-process the tests, validate the tests, profile the tests, remove
+   unwanted artifacts, etc.
+
+At the end of the 3 phases RIVER CORE also generates an HTML reports which
+captures the log of each test generation and any errors that were caught,
+thereby providing a complete database of information on the test-generation
+aspect. 
+
+The generated tests are available in the directory mentioned in the ``work_dir``
+parameter of the ``config.ini`` file passed to the ``generate`` command.
+
+.. warning:: It is not advised to modify the tests or directory structures in
+   the the work_dir manually. 
 
 Types of plugins
 ----------------
