@@ -283,9 +283,6 @@ def rivercore_generate(config_file, verbosity):
 
     output_dir = config['river_core']['work_dir']
 
-    logger.info('****** RiVer Core {0} *******'.format(__version__))
-    logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
-    logger.info('All Rights Reserved.')
     logger.info('****** Generation Mode ****** ')
 
     # TODO Test multiple plugin cases
@@ -370,7 +367,8 @@ def rivercore_generate(config_file, verbosity):
     logger.info('Test List Validated successfully')
 
 
-def rivercore_compile(config_file, test_list, coverage, verbosity):
+def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
+                      ref_flags, compare):
     '''
 
         Function to compile generated assembly programs using the plugin as configured in the config.ini.
@@ -383,20 +381,31 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
 
         :param verbosity: Verbosity level for the framework
 
+        :param dut_flags: Verbosity level for the framework
+
+        :param ref_flags: Verbosity level for the framework
+
+        :param compare: Verbosity level for the framework
+
         :type config_file: click.Path
 
         :type test_list: click.Path
 
+        :type coverage: bool 
+
         :type verbosity: str
+
+        :type dut_flags: click.Choice 
+
+        :type ref_flags: click.Choice 
+
+        :type compare: bool 
     '''
     logger.level(verbosity)
     config = configparser.ConfigParser()
     config.read(config_file)
     logger.debug('Read file from {0}'.format(config_file))
 
-    logger.info('****** RiVer Core {0} *******'.format(__version__))
-    logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
-    logger.info('All Rights Reserved.')
     logger.info('****** Compilation Mode ******')
 
     output_dir = config['river_core']['work_dir']
@@ -413,14 +422,12 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
     logger.info("Target Plugin : {0}".format(target_list))
     logger.info("Reference Plugin : {0}".format(ref_list))
 
-    if coverage:
-        logger.info("Coverage mode is enabled")
-        logger.info(
-            "Just a reminder to ensrue that you have installed things with coverage enabled"
-        )
-
+    # Set default values:
+    target_json = None
+    ref_json = None
     # Load coverage stats
     if coverage:
+        logger.info("Coverage mode is enabled")
         coverage_config = config['coverage']
     else:
         coverage_config = None
@@ -465,14 +472,30 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                     'Hello, it seems you are debugging, this usually indicates that the loading failed.\nCheck whether Python file being loaded is fine i.e. no errors and warnings. etc'
                 )
                 raise SystemExit
-
-            dutpm.hook.init(ini_config=config[target],
-                            test_list=test_list,
-                            work_dir=output_dir,
-                            coverage_config=coverage_config,
-                            plugin_path=path_to_module)
-            dutpm.hook.build()
-            target_json = dutpm.hook.run(module_dir=path_to_module)
+            if dut_flags == 'init':
+                logger.debug('Single mode flag detected\nRunning init')
+                dutpm.hook.init(ini_config=config[target],
+                                test_list=test_list,
+                                work_dir=output_dir,
+                                coverage_config=coverage_config,
+                                plugin_path=path_to_module)
+            elif dut_flags == 'build':
+                logger.debug('Single mode flag detected\nRunning build')
+                dutpm.hook.build()
+            elif dut_flags == 'run':
+                logger.debug('Single mode flag detected\nRunning run')
+                target_json = dutpm.hook.run(module_dir=path_to_module)
+            elif dut_flags == 'all':
+                logger.debug('All mode flag detected\nRunning all operations')
+                dutpm.hook.init(ini_config=config[target],
+                                test_list=test_list,
+                                work_dir=output_dir,
+                                coverage_config=coverage_config,
+                                plugin_path=path_to_module)
+                dutpm.hook.build()
+                target_json = dutpm.hook.run(module_dir=path_to_module)
+            else:
+                logger.warning('DuT was disabled manually')
 
     if '' in ref_list:
         logger.info('No references, so exiting the framework')
@@ -514,103 +537,130 @@ def rivercore_compile(config_file, test_list, coverage, verbosity):
                 )
                 raise SystemExit
 
-            refpm.hook.init(ini_config=config[ref],
-                            test_list=test_list,
-                            work_dir=output_dir,
-                            coverage_config=coverage_config,
-                            plugin_path=path_to_module)
-            refpm.hook.build()
-            ref_json = refpm.hook.run(module_dir=path_to_module)
+            if ref_flags == 'init':
+                logger.debug('Single mode flag detected\nRunning init')
+                refpm.hook.init(ini_config=config[ref],
+                                test_list=test_list,
+                                work_dir=output_dir,
+                                coverage_config=coverage_config,
+                                plugin_path=path_to_module)
+            elif ref_flags == 'build':
+                logger.debug('Single mode flag detected\nRunning build')
+                refpm.hook.build()
+            elif ref_flags == 'run':
+                logger.debug('Single mode flag detected\nRunning build')
+                ref_json = refpm.hook.run(module_dir=path_to_module)
+            elif ref_flags == 'all':
+                logger.debug('All mode flag detected\nRunning all operations')
+                refpm.hook.init(ini_config=config[ref],
+                                test_list=test_list,
+                                work_dir=output_dir,
+                                coverage_config=coverage_config,
+                                plugin_path=path_to_module)
+                refpm.hook.build()
+                ref_json = refpm.hook.run(module_dir=path_to_module)
+            else:
+                logger.warning('Ref Plugin was disabled')
 
         ## Comparing Dumps
+        if compare:
+            result = 'Unavailable'
+            test_dict = utils.load_yaml(test_list)
+            for test, attr in test_dict.items():
+                test_wd = attr['work_dir']
+                if not os.path.isfile(test_wd + '/dut.dump'):
+                    logger.error(
+                        'Dut dump for Test: {0} is missing'.format(test))
+                    continue
+                if not os.path.isfile(test_wd + '/ref.dump'):
+                    logger.error(
+                        'Ref dump for Test: {0} is missing'.format(test))
+                    continue
+                filecmp.clear_cache()
+                result = filecmp.cmp(test_wd + '/dut.dump',
+                                     test_wd + '/ref.dump')
+                test_dict[test]['result'] = 'Passed' if result else 'Failed'
+                utils.save_yaml(test_dict, test_list)
+                if not result:
+                    logger.error(
+                        "Dumps for test {0}. Do not match. TEST FAILED".format(
+                            test))
+                else:
+                    logger.info(
+                        "Dumps for test {0} Match. TEST PASSED".format(test))
 
-        result = 'Unavailable'
-        test_dict = utils.load_yaml(test_list)
-        for test, attr in test_dict.items():
-            test_wd = attr['work_dir']
-            if not os.path.isfile(test_wd + '/dut.dump'):
-                logger.error('Dut dump for Test: {0} is missing'.format(test))
-                continue
-            if not os.path.isfile(test_wd + '/ref.dump'):
-                logger.error('Ref dump for Test: {0} is missing'.format(test))
-                continue
-            filecmp.clear_cache()
-            result = filecmp.cmp(test_wd + '/dut.dump', test_wd + '/ref.dump')
-            test_dict[test]['result'] = 'Passed' if result else 'Failed'
-            utils.save_yaml(test_dict, test_list)
-            if not result:
-                logger.error(
-                    "Dumps for test {0}. Do not match. TEST FAILED".format(
-                        test))
+            # Start checking things after running the commands
+            # Report generation starts here
+            # Target
+            # Move this into a function
+            if target_json or ref_json:
+
+                json_file = open(target_json[0] + '.json', 'r')
+                target_json_list = json_file.readlines()
+                json_file.close()
+                target_json_data = []
+                for line in target_json_list:
+                    target_json_data.append(json.loads(line))
+
+                json_file = open(ref_json[0] + '.json', 'r')
+                ref_json_list = json_file.readlines()
+                json_file.close()
+                ref_json_data = []
+                for line in ref_json_list:
+                    ref_json_data.append(json.loads(line))
+
+                # Need to an Gen json file for final report
+                # TODO:CHECK: Only issue is that this can ideally be a wrong approach
+
+                try:
+                    logger.info(
+                        "Checking for a generator json to create final report")
+                    json_files = glob.glob(
+                        output_dir + '/.json/{0}*.json'.format(
+                            config['river_core']['generator']))
+                    logger.debug(
+                        "Detected generated JSON Files: {0}".format(json_files))
+
+                    # Can only get one file back
+                    gen_json_file = max(json_files, key=os.path.getctime)
+                    json_file = open(gen_json_file, 'r')
+                    target_json_list = json_file.readlines()
+                    json_file.close()
+                    gen_json_data = []
+                    for line in target_json_list:
+                        gen_json_data.append(json.loads(line))
+
+                except:
+                    logger.warning("Couldn't find a generator JSON file")
+                    gen_json_data = []
+
             else:
-                logger.info(
-                    "Dumps for test {0} Match. TEST PASSED".format(test))
+                logger.error(
+                    'JSON files not available hence, exiting framework\nUnless the run API is called, a JSON is not generated.\nNo HTML reports generated'
+                )
+                logger.debug(
+                    'Possible reasons:\n1. Pytest crashed internally\n2. Log files are were not returned by the called plugin.'
+                )
+                raise SystemExit
+            # See if space saver is enabled
+            dutpm.hook.post_run(test_dict=test_dict, config=config)
+            refpm.hook.post_run(test_dict=test_dict, config=config)
 
-        # Start checking things after running the commands
-        # Report generation starts here
-        # Target
-        # Move this into a function
-        if not target_json[0] or not ref_json[0]:
-            logger.error(
-                'JSON files not available exiting\nPossible reasons:\n1. Pytest crashed internally\n2. Log files are were not returned by the called plugin.\nI\'m sorry, no HTML reports for you :('
-            )
-            raise SystemExit
+            logger.info("Now generating some good HTML reports for you")
+            report_html = generate_report(output_dir, gen_json_data,
+                                          target_json_data, ref_json_data,
+                                          config, test_dict)
 
-        json_file = open(target_json[0] + '.json', 'r')
-        target_json_list = json_file.readlines()
-        json_file.close()
-        target_json_data = []
-        for line in target_json_list:
-            target_json_data.append(json.loads(line))
-
-        json_file = open(ref_json[0] + '.json', 'r')
-        ref_json_list = json_file.readlines()
-        json_file.close()
-        ref_json_data = []
-        for line in ref_json_list:
-            ref_json_data.append(json.loads(line))
-
-        # Need to an Gen json file for final report
-        # TODO:CHECK: Only issue is that this can ideally be a wrong approach
-
-        try:
-            logger.info("Checking for a generator json to create final report")
-            json_files = glob.glob(
-                output_dir +
-                '/.json/{0}*.json'.format(config['river_core']['generator']))
-            logger.debug(
-                "Detected generated JSON Files: {0}".format(json_files))
-
-            # Can only get one file back
-            gen_json_file = max(json_files, key=os.path.getctime)
-            json_file = open(gen_json_file, 'r')
-            target_json_list = json_file.readlines()
-            json_file.close()
-            gen_json_data = []
-            for line in target_json_list:
-                gen_json_data.append(json.loads(line))
-
-        except:
-            logger.warning("Couldn't find a generator JSON file")
-            gen_json_data = []
-
-        # See if space saver is enabled
-        dutpm.hook.post_run(test_dict=test_dict, config=config)
-        refpm.hook.post_run(test_dict=test_dict, config=config)
-
-        logger.info("Now generating some good HTML reports for you")
-        report_html = generate_report(output_dir, gen_json_data,
-                                      target_json_data, ref_json_data, config,
-                                      test_dict)
-
-        # Check if web browser
-        if utils.str_2_bool(config['river_core']['open_browser']):
-            try:
-                import webbrowser
-                logger.info("Openning test report in web-browser")
-                webbrowser.open(report_html)
-            except:
-                return 1
+            # Check if web browser
+            if utils.str_2_bool(config['river_core']['open_browser']):
+                try:
+                    import webbrowser
+                    logger.info("Openning test report in web-browser")
+                    webbrowser.open(report_html)
+                except:
+                    return 1
+        else:
+            logger.info('Comparison was disabled\nHence no report is generated')
 
 
 def rivercore_merge(verbosity, db_folders, output, config_file):
@@ -643,9 +693,6 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
     logger.debug('Read file from {0}'.format(config_file))
     target = config['river_core']['target']
 
-    logger.info('****** RiVer Core {0} *******'.format(__version__))
-    logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
-    logger.info('All Rights Reserved.')
     logger.info('****** Merge Mode ******')
 
     output = os.path.abspath(output)

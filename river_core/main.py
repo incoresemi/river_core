@@ -52,7 +52,9 @@ def clean(config, verbosity):
         config = check_config()
     rivercore_clean(config, verbosity)
 
+
 # -------------------------
+
 
 @click.version_option(version=__version__)
 @click.option('-v',
@@ -66,9 +68,10 @@ def setup(verbosity):
     '''
     logger.info(constants.header_temp.format(__version__))
     logger.info('Creating sample config file: "config.ini"')
-    with open('config.ini','w') as file:
+    with open('config.ini', 'w') as file:
         file.write(constants.sample_config)
     logger.info('config.ini file created successfully')
+
 
 # -------------------------
 
@@ -88,16 +91,32 @@ def setup(verbosity):
               '--config',
               type=click.Path(dir_okay=False, exists=True),
               help='Read option defaults from the INI file')
-@click.option('--coverage', is_flag=True)
+@click.option('--dut_stage',
+              type=click.Choice(['init', 'build', 'run', 'all', 'None'],
+                                case_sensitive=False),
+              default='all',
+              help='Stages to run on configured DuT Plugin')
+@click.option('--ref_stage',
+              type=click.Choice(['init', 'build', 'run', 'all', 'None'],
+                                case_sensitive=False),
+              default='all',
+              help='Stages to run on configured reference Plugin')
+@click.option(
+    '--compare/--no-compare',
+    default=True,
+    help='Toggle comparison between logs from DuT and Reference Plugin')
+@click.option('--coverage', is_flag=True, help='Enable coverage for DuT')
 @cli.command()
-def compile(config, test_list, coverage, verbosity):
+def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
+            compare):
     '''
         subcommand to compile generated programs.
     '''
     logger.info(constants.header_temp.format(__version__))
     if not config:
         config = check_config()
-    rivercore_compile(config, test_list, coverage, verbosity)
+    rivercore_compile(config, test_list, coverage, verbosity, dut_stage,
+                      ref_stage, compare)
 
 
 @click.version_option(version=__version__)
@@ -131,7 +150,6 @@ def generate(config, verbosity):
               '--verbosity',
               default='info',
               help='set the verbosity level for the framework')
-
 @click.argument('db_files', nargs=-1, type=click.Path(exists=True))
 @click.argument('output', nargs=1, type=click.Path())
 @cli.command()
@@ -143,8 +161,6 @@ def merge(verbosity, db_files, output, config):
     if not config:
         config = check_config()
     rivercore_merge(verbosity, db_files, output, config)
-
-
 
 
 if __name__ == '__main__':
