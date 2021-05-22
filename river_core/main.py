@@ -7,6 +7,7 @@ import os
 from river_core.log import *
 from river_core.rivercore import rivercore_clean, rivercore_compile, rivercore_generate, rivercore_merge
 from river_core.__init__ import __version__
+import river_core.constants as constants
 
 
 def check_config():
@@ -49,6 +50,26 @@ def clean(config, verbosity):
     if not config:
         config = check_config()
     rivercore_clean(config, verbosity)
+
+# -------------------------
+
+@click.version_option(version=__version__)
+@click.option('-v',
+              '--verbosity',
+              default='info',
+              help='Set the verbosity level for the framework')
+@cli.command()
+def setup(verbosity):
+    '''
+        subcommand to generate template setup files
+    '''
+    logger.info(constants.header_temp.format(__version__))
+    logger.info('Creating sample config file: "config.ini"')
+    with open('config.ini','w') as file:
+        file.write(constants.sample_config)
+    logger.info('config.ini file created successfully')
+
+# -------------------------
 
 
 @click.version_option(version=__version__)
@@ -107,6 +128,7 @@ def generate(config, verbosity):
               '--verbosity',
               default='info',
               help='set the verbosity level for the framework')
+
 @click.argument('db_files', nargs=-1, type=click.Path(exists=True))
 @click.argument('output', nargs=1, type=click.Path())
 @cli.command()
@@ -117,6 +139,8 @@ def merge(verbosity, db_files, output, config):
     if not config:
         config = check_config()
     rivercore_merge(verbosity, db_files, output, config)
+
+
 
 
 if __name__ == '__main__':
