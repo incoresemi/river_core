@@ -100,15 +100,16 @@ Generator Plugin
 
 .. image:: _static/generator_plugin.png
     :align: center
+    :height: 300
     :alt: Generator Plugin
 
 This plugin is used encapsulate various test-generators. These generators can be
 either random program generators like `AAPG <>`_, `RISC-V Torture <>`_ , 
-`Csmit <>`_ , `MicroTesk <>`_ , `Test Float <>`_ etc. OR may include a directed
+`Csmith <>`_ , `MicroTesk <>`_ , `Test Float <>`_ etc. OR may include a directed
 test-generators like `CTG <>`_ OR a static test suite like the ones hosted 
 at the `RISC-V TESTS <>`_ .
 
-Each test generator is a python plugin which support 3 hooks, called in the
+Each test generator is a python plugin which supports 3 hooks, called in the
 following sequence:
 
 1. **Pre-gen**: This stage is used to configure the generator, check and install
@@ -123,9 +124,9 @@ following sequence:
    The major output of this stage is a test-list YAML which
    follows the syntax/schema mentioned in :ref:`Test List Format<testlist>`.
    this test list capture all the information about the test and necessary
-   collaterals required to compile each test. By adopting a standard format, we
-   inherently allow any source of tests to be integrated into RIVER CORE as a
-   generator plugin as long as a valid test list is created.
+   collaterals required to compile each test. By adopting a standard test-list 
+   format, we inherently allow any source of tests to be integrated into RIVER 
+   CORE as a generator plugin as long as a valid test list is created.
 
 3. **Post-Gen**: This stage is called after all the tests are generated and can
    be used to post-process the tests, validate the tests, profile the tests, remove
