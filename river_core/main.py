@@ -47,6 +47,7 @@ def clean(config, verbosity):
     '''
         subcommand to clean generated programs.
     '''
+    logger.info(constants.header_temp.format(__version__))
     if not config:
         config = check_config()
     rivercore_clean(config, verbosity)
@@ -93,6 +94,7 @@ def compile(config, test_list, coverage, verbosity):
     '''
         subcommand to compile generated programs.
     '''
+    logger.info(constants.header_temp.format(__version__))
     if not config:
         config = check_config()
     rivercore_compile(config, test_list, coverage, verbosity)
@@ -113,6 +115,7 @@ def generate(config, verbosity):
     """
     subcommand to generate programs.
     """
+    logger.info(constants.header_temp.format(__version__))
     if not config:
         config = check_config()
     rivercore_generate(config, verbosity)
@@ -136,6 +139,7 @@ def merge(verbosity, db_files, output, config):
     """
     subcommand to merge coverage databases.
     """
+    logger.info(constants.header_temp.format(__version__))
     if not config:
         config = check_config()
     rivercore_merge(verbosity, db_files, output, config)

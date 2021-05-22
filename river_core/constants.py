@@ -77,9 +77,9 @@ isa = rv64imafdc
 
 # Set paths for each plugin
 # TODO Change the following paths
-path_to_target = ~/myquickstart/river_core_plugins/dut_plugins
-path_to_ref = ~/myquickstart/river_core_plugins/reference_plugins
-path_to_suite = ~/myquickstart/river_core_plugins/generator_plugins
+path_to_target = /home/user/myquickstart/river_core_plugins/dut_plugins
+path_to_ref = /home/user/myquickstart/river_core_plugins/reference_plugins
+path_to_suite = /home/user/myquickstart/river_core_plugins/generator_plugins
 
 # To open the report automatically in the browser
 open_browser = True
@@ -99,14 +99,14 @@ jobs = 8
 filter = rv64imafdc_hazards_s
 seed = random
 count = 2
-config_yaml = ~/myquickstart/river_core_plugins/generator_plugins/aapg_plugin/aapg_gen_config.yaml
+config_yaml = /home/user/myquickstart/river_core_plugins/generator_plugins/aapg_plugin/aapg_gen_config.yaml
 
 [chromite_verilator]
 jobs = 8
 filter = 
 count = 1
 # src dir: Verilog Dir, BSC Path, Wrapper path
-src_dir = ~/myquickstart/chromite/build/hw/verilog/,~/tools/bsc/inst/lib/Verilog,~/myquickstart/chromite/bsvwrappers/common_lib
+src_dir = /home/user/myquickstart/chromite/build/hw/verilog/,/tools/bsc/inst/lib/Verilog,/home/user/myquickstart/chromite/bsvwrappers/common_lib
 top_module = mkTbSoc
 
 [spike]
