@@ -46,19 +46,13 @@ Ready to contribute? Here's how to set up `river_core` for local development.
 
    Now you can make your changes locally.
 
-4. When you're done making changes, check that your changes pass pytest
-   tests, including testing other Python versions with tox::
-
-    $ cd tests
-    $ pytest test_river_core.py -v
-
-5. Commit your changes and push your branch to GitLab::
+4. Commit your changes and push your branch to GitLab::
 
     $ git add .
     $ git commit -m "Your detailed description of your changes."
     $ git push origin name-of-your-bugfix-or-feature
 
-6. Submit a merge request through the GitLab website.
+5. Submit a merge request through the GitLab website.
 
 Merge Request Guidelines
 ----------------------------
@@ -69,13 +63,6 @@ Before you submit a merge request, check that it meets these guidelines:
 2. If the merge request adds functionality, the docs should be updated. 
 3. The merge request should work for Python 3.6, 3.7 and 3.8, and for PyPy. 
    and make sure that the tests pass for all supported Python versions.
-
-Tips
-----
-
-To run a subset of tests::
-
-    $ pytest tests.test_river_core
 
 
 Deploying
