@@ -230,3 +230,6 @@ Once the test results are obtained and updated in the test-list, an HTML report 
 informatino of each of the above steps is generated for the user. The automatic browser pop-up can
 be disabled by setting the ``open_browser`` parameter to false in the input ``config.ini`` file.
 
+Each plugin run (generator, dut or reference) also creates a json report of the run which can
+easiliy be populated into html files for better visualization.
+

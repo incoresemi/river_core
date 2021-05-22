@@ -681,6 +681,7 @@ You should see the following log on the console:
              info  | Openning test report in web-browser
   
 At the end you shall also see a html report open up in your default browser
-containing information of all the runs.
+containing information of all the runs. The reports folder will have additional
+reports generated as well.
 
 Congratulations.. you have successfully completed this guide
