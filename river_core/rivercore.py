@@ -26,7 +26,6 @@ yaml.allow_unicode = True
 yaml.compact(seq_seq=False, seq_map=False)
 
 
-
 # Misc Helper Functions
 def sanitise_pytest_json(json):
     '''
@@ -110,9 +109,7 @@ def generate_coverage_report(output_dir, config, coverage_report,
     with open(report_file_path, "w") as report:
         report.write(output)
 
-    logger.info(
-        'Final coverage report saved at {0}\nHoping for a 100% coverage!'.
-        format(report_file_path))
+    logger.info('Final coverage report saved at {0}!'.format(report_file_path))
 
     return report_file_path
 
@@ -208,9 +205,7 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
     with open(report_file_path, "w") as report:
         report.write(output)
 
-    logger.info(
-        'Final report saved at {0}\nMay the debugging force be with you!'.
-        format(report_file_path))
+    logger.info('Final report saved at {0}'.format(report_file_path))
 
     return report_file_path
 
@@ -296,14 +291,14 @@ def rivercore_generate(config_file, verbosity):
     # TODO Test multiple plugin cases
     # Current implementation is using for loop, which might be a bad idea for parallel processing.
 
-    suite_list = config['river_core']['generator'].replace(' ','').split(',')
+    suite_list = config['river_core']['generator'].replace(' ', '').split(',')
 
     logger.info(
         "The river_core is currently configured to run with following parameters"
     )
     logger.info("The Output Directory (work_dir) : {0}".format(output_dir))
     logger.info("ISA : {0}".format(config['river_core']['isa']))
-    test_list={}
+    test_list = {}
 
     for suite in suite_list:
 
@@ -342,16 +337,20 @@ def rivercore_generate(config_file, verbosity):
 
         generatorpm.hook.pre_gen(spec_config=config[suite],
                                  output_dir='{0}/{1}'.format(output_dir, suite))
-        test_list.update(generatorpm.hook.gen(module_dir=path_to_module,
-                                         output_dir=output_dir)[0])
-        if not isinstance(test_list,dict):
-            logger.error('Test List returned by the gen hook of Generator is of type: '+str(type(test_list))+'. Expected Dict')
+        test_list.update(
+            generatorpm.hook.gen(module_dir=path_to_module,
+                                 output_dir=output_dir)[0])
+        if not isinstance(test_list, dict):
+            logger.error(
+                'Test List returned by the gen hook of Generator is of type: ' +
+                str(type(test_list)) + '. Expected Dict')
             raise SystemExit
 
-        generatorpm.hook.post_gen(output_dir='{0}/{1}'.format(output_dir, suite))
+        generatorpm.hook.post_gen(
+            output_dir='{0}/{1}'.format(output_dir, suite))
 
     test_list_file = output_dir + '/test_list.yaml'
-    logger.info('Dumping generated Test-List at: '+str(test_list_file))
+    logger.info('Dumping generated Test-List at: ' + str(test_list_file))
     testfile = open(test_list_file, 'w')
     utils.yaml.dump(test_list, testfile)
     testfile.close()
@@ -359,14 +358,14 @@ def rivercore_generate(config_file, verbosity):
     logger.info('Validating Generated Test-List')
     testschema = yaml.load(testlist_schema)
     validator = YamlValidator(testschema)
-    validator.allow_unknown = False   
-    for test,fields in test_list.items():
+    validator.allow_unknown = False
+    for test, fields in test_list.items():
         valid = validator.validate(fields)
         if not valid:
             logger.error('Test List Validation failed:')
             error_list = validator.errors
             for x in error_list:
-                logger.error('{0} [ {1} ] : {2}'.format(test,x, error_list[x]))
+                logger.error('{0} [ {1} ] : {2}'.format(test, x, error_list[x]))
             raise SystemExit
     logger.info('Test List Validated successfully')
 

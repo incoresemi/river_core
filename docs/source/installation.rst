@@ -212,7 +212,7 @@ If you already have the 32-bit gnu-toolchain available, you can skip to the next
    https://github.com/riscv/riscv-gnu-toolchain for further help in installation.
 
 .. tabs::
-   .. tab:: Ubuntu
+   .. tab:: Ubuntu (32/64bit)
 
      .. code-block:: bash
        
@@ -222,10 +222,10 @@ If you already have the 32-bit gnu-toolchain available, you can skip to the next
        $ git clone --recursive https://github.com/riscv/riscv-gnu-toolchain
        $ git clone --recursive https://github.com/riscv/riscv-opcodes.git
        $ cd riscv-gnu-toolchain
-       $ ./configure --prefix=/path/to/install --with-arch=rv32gc --with-abi=ilp32d # for 32-bit toolchain
+       $ ./configure --prefix=/path/to/install --enable-multilib # for both 32 and 64bit
        $ [sudo] make # sudo is required depending on the path chosen in the previous setup
      
-   .. tab:: CentosOS/RHEL
+   .. tab:: CentosOS/RHEL (32/64bit)
      
      .. code-block:: bash
      
@@ -234,27 +234,29 @@ If you already have the 32-bit gnu-toolchain available, you can skip to the next
        $ git clone --recursive https://github.com/riscv/riscv-gnu-toolchain
        $ git clone --recursive https://github.com/riscv/riscv-opcodes.git
        $ cd riscv-gnu-toolchain
-       $ ./configure --prefix=/path/to/install --with-arch=rv32gc --with-abi=ilp32d # for 32-bit toolchain
+       $ ./configure --prefix=/path/to/install --enable-multilib # for both 32 and 64bit
+toolchain
        $ [sudo] make # sudo is required depending on the path chosen in the previous setup
+
 
 Make sure to add the path ``/path/to/install`` to your `$PATH` in the .bashrc/cshrc
 With this you should now have all the following available as command line arguments::
 
-  riscv32-unknown-elf-addr2line      riscv32-unknown-elf-elfedit
-  riscv32-unknown-elf-ar             riscv32-unknown-elf-g++
-  riscv32-unknown-elf-as             riscv32-unknown-elf-gcc
-  riscv32-unknown-elf-c++            riscv32-unknown-elf-gcc-8.3.0
-  riscv32-unknown-elf-c++filt        riscv32-unknown-elf-gcc-ar
-  riscv32-unknown-elf-cpp            riscv32-unknown-elf-gcc-nm
-  riscv32-unknown-elf-gcc-ranlib     riscv32-unknown-elf-gprof
-  riscv32-unknown-elf-gcov           riscv32-unknown-elf-ld
-  riscv32-unknown-elf-gcov-dump      riscv32-unknown-elf-ld.bfd
-  riscv32-unknown-elf-gcov-tool      riscv32-unknown-elf-nm
-  riscv32-unknown-elf-gdb            riscv32-unknown-elf-objcopy
-  riscv32-unknown-elf-gdb-add-index  riscv32-unknown-elf-objdump
-  riscv32-unknown-elf-ranlib         riscv32-unknown-elf-readelf
-  riscv32-unknown-elf-run            riscv32-unknown-elf-size
-  riscv32-unknown-elf-strings        riscv32-unknown-elf-strip
+  riscv64-unknown-elf-addr2line      riscv64-unknown-elf-elfedit
+  riscv64-unknown-elf-ar             riscv64-unknown-elf-g++
+  riscv64-unknown-elf-as             riscv64-unknown-elf-gcc
+  riscv64-unknown-elf-c++            riscv64-unknown-elf-gcc-8.3.0
+  riscv64-unknown-elf-c++filt        riscv64-unknown-elf-gcc-ar
+  riscv64-unknown-elf-cpp            riscv64-unknown-elf-gcc-nm
+  riscv64-unknown-elf-gcc-ranlib     riscv64-unknown-elf-gprof
+  riscv64-unknown-elf-gcov           riscv64-unknown-elf-ld
+  riscv64-unknown-elf-gcov-dump      riscv64-unknown-elf-ld.bfd
+  riscv64-unknown-elf-gcov-tool      riscv64-unknown-elf-nm
+  riscv64-unknown-elf-gdb            riscv64-unknown-elf-objcopy
+  riscv64-unknown-elf-gdb-add-index  riscv64-unknown-elf-objdump
+  riscv64-unknown-elf-ranlib         riscv64-unknown-elf-readelf
+  riscv64-unknown-elf-run            riscv64-unknown-elf-size
+  riscv64-unknown-elf-strings        riscv64-unknown-elf-strip
 
 
 .. note:: Each of the generators have their own unique config.yamls to configure their plugin specific details, ensure you have changed them as required.
