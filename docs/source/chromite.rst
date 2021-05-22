@@ -1,8 +1,5 @@
 .. _chromite:
 
-Chromite
-========
-
 `Chromite Core Generator <https://chromite.readthedocs.io/en/latest/>`_ plugin is based on the Chromite core generator developed by Incore Semiconductors.
 
 Chromite is an open-source core generator, based on the SHAKTI C Class core developed at PS CDISHA at the Indian Institute of Technology Madras . The core generator emits synthesizable, production quality RTL of processors based on the open RISC-V ISA.
@@ -35,13 +32,11 @@ To build a core and to simulate it on a test-soc, you will need the following to
 
 You will need the following as well, the installation of which is presented below:
 
-1. Python 3.6.0+: see python_
-2. DTC version 1.4.7+: see dtc_
+1. Python 3.6.0+
+2. DTC version 1.4.7+
 
 Install Dependencies
 ---------------------
-
-.. _python:
 
 Python
 ^^^^^^
@@ -113,7 +108,6 @@ Python
         pip 20.1 from <user-path>.local/lib/python3.6/site-packages/pip (python 3.6)
 
 
-.. _dtc:
 
 Install DTC (device tree compiler)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

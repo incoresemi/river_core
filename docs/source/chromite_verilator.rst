@@ -1,16 +1,15 @@
 .. _chromite_verilator:
 
-********************
 Chromite [Verilator]
-********************
+====================
 
 This section will help you setup the `chromite_verilator` plugin.
 
 .. include:: ./chromite.rst
 
 
-Plugin Configuration
-====================
+Verilator Plugin Configuration
+===============================
 
 1. Install `Verilator 4.08+ <https://www.veripool.org/projects/verilator/wiki/Installing>`_
 2. Configure `river_core.ini`

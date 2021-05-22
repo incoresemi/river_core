@@ -1,8 +1,7 @@
 .. _chromite_cadence:
 
-******************
 Chromite [Cadence]
-******************
+==================
 
 This section will help you setup the `chromite_cadence` plugin.
 
@@ -10,8 +9,8 @@ This section will help you setup the `chromite_cadence` plugin.
 
 
 
-Plugin Configuration
-====================
+Cadence Plugin Configuration
+============================
 
 1. Ensure you have setup `Cadence` in your path. Binaries used by this plugin:
 

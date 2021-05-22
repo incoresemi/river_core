@@ -1,15 +1,15 @@
 .. _chromite_questa:
 
 
-******************
 Chromite [Questa]
-******************
+====================
+
 This section will help you setup the `chromite_questa` plugin.
 
 .. include:: ./chromite.rst
 
-Plugin Configuration
-====================
+Questa Plugin Configuration
+===========================
 1. Ensure you have setup `Questa` in your path. Binaries used by this plugin:
 
    - `vlib`
