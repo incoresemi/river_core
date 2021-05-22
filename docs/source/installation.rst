@@ -148,9 +148,9 @@ Install RIVER_CORE
      
        $ pip3 install river_core==1.x.x
 
-   .. tab:: for Dev
+   .. tab:: For Dev
 
-     The sources for RIVER_CORE can be downloaded from the `Gitlab repo`_.
+     The sources for RIVER_CORE can be downloaded from the `Gitlab Repo <https://gitlab.com/incoresemi/river-framework/core-verification/river_core>`_.
      
      You can clone the repository:
      
@@ -165,8 +165,6 @@ Install RIVER_CORE
          
          $ cd river_core
          $ pip3 install --editable .
-     
-     .. _Gitlab repo: https://gitlab.com/incoresemi/river-framework/core-verification/river_core
 
 Testing Installation
 --------------------
@@ -268,7 +266,7 @@ Create a river_core.ini file
 
 .. _config-file: https://gitlab.com/incoresemi/river-framework/core-verification/river_core/-/blob/dev/examples/sample-config.ini
 
-`RiVer Core` can be easily configured with `river_core.ini` to control various aspects of tests run on the framework.
+`RIVER CORE` can be easily configured with `river_core.ini` to control various aspects of tests run on the framework.
 A sample `config-file`_ present in the **examples** directory is captured below for reference:
 
 .. program-output:: cat ../../examples/sample-config.ini
@@ -278,7 +276,7 @@ Details and further specification of the config file syntax is available at :ref
 Setup the Plugins
 =================
 
-Plugins are divided into 3 categories in `RiVer Core` framework:
+Plugins are divided into 3 categories in `RIVER CORE` framework:
 
 1. Generator Plugins
 
@@ -288,7 +286,7 @@ Plugins are divided into 3 categories in `RiVer Core` framework:
 
 Each of the plugins `YAML` file associated to configure options specific to the plugin.
 
-    .. Note:: To get `RiVer Core` up and running, you are required to have atleast 1 of each type of plugins.
+    .. Note:: To get `RIVER CORE` up and running, you are required to have atleast 1 of each type of plugins.
 
 All the plugins are configured with basic settings.
 

@@ -28,12 +28,7 @@ def check_config():
 @click.group()
 @click.version_option(version=__version__)
 def cli():
-    """  
-    ===== RiVer Core Verification Framework =====
-    \b
-
-    Visit river_core.readthedocs.io for more info
-    """
+    """RiVer Core Verification Framework"""
 
 
 @click.version_option(version=__version__)

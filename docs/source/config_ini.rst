@@ -15,6 +15,10 @@ A sample `config-file`_ is present in the ``examples`` directory of the Git Repo
 General Configuration Options
 #############################
 
+.. tabularcolumns:: |l|L|
+
+.. table:: General Configuration Options
+
   =================== =========================================================
   Parameter           Description
   =================== =========================================================
@@ -60,14 +64,18 @@ plugin. RIVER CORE simply forwards them to the respective plugin via the hooks.
 
 Some of the recommended configuration options for generators would be:
 
-========== ====================================================================
-Parameters Description
-========== ====================================================================
-jobs       Number of jobs to use while generating the tests
-filter     This option is to select tests.
-seed       A seed for generating the programs (Can be *random*)
-count      The number of times the test needs to be run
-========== ====================================================================
+.. tabularcolumns:: |l|L|
+
+.. table:: Recommended Configuration options
+
+  ========== ====================================================================
+  Parameters Description
+  ========== ====================================================================
+  jobs       Number of jobs to use while generating the tests
+  filter     This option is to select tests.
+  seed       A seed for generating the programs (Can be *random*)
+  count      The number of times the test needs to be run
+  ========== ====================================================================
 
 Sample Config INI
 #################

@@ -20,7 +20,7 @@ Cadence Plugin Configuration
 
    - `imc`
 
-.. note:: The user is advised to ensure all of the above binaries are accessible via the shell that will be running `RiVer Core`.
+.. note:: The user is advised to ensure all of the above binaries are accessible via the shell that will be running `RIVER CORE`.
 
 2. Configure `chromite_verilator.py`
 

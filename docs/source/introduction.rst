@@ -12,7 +12,7 @@ each of these implementations could possible vary from each other in any of the
 following :
 
 - The language chosen to build the target could be classical HDLs like Verilog,
-  VHDL, or advanced languages like `BSV<>`_, `Chisel <>`_, etc all the way to High Level
+  VHDL, or advanced languages like `BSV <https://github.com/B-Lang-org/bsc>`_, `Chisel <https://www.chisel-lang.org/>`_, etc all the way to High Level
   Synthesis langauges. Each of these languages offer a wide variety of features
   which inturn defines the capabilities of target developed.
 - Each implementation can vary in its choice of the sub extensions of the ISA 
@@ -51,24 +51,25 @@ Passing the ATS, would only mean that their interpretation of the spec is
 correct. It does not mean that the processor is bug-free. 
 
 To fill this gap to a certain extent, there have been a few open source random program generators
-like `AAPG <>`_, `RISC-V Torture <>`_, and `Microtesk <>`_. AAPG is a python
+like `AAPG <https://gitlab.com/shaktiproject/tools/aapg>`_, `RISC-V Torture <https://github.com/ucb-bar/riscv-torture>`_, and `Microtesk <http://www.microtesk.org/>`_. AAPG is a python
 based pseudo-random assembly program generator which large number of
 configurable knobs which are controlled by YAML file. 
-Torture and Microtesk on the other have java-based backend to generate random
-assembly programs. Now the challenge in using all of these generators is that
-each produces its own artifacts: linker scripts, header files, libraries, etc.
-and thus each generator would require its own minimal environment to run the
+Torture on the other have java-based backend to generate random
+assembly programs. MicroTESK provides a Ruby-based language to express test scenarios, 
+or so-called templates. Now the challenge in using all of these generators is that
+each requires its own environment to configure and produces its own artifacts: linker scripts, 
+header files, libraries, etc. Therefore,  each generator would require its own minimal environment to run the
 tests on the RISC-V target. **A framework to encapsulate each of these generators
 into a standardized plugin/API which provides a common output interface of
 files, compile commands, environments, etc. which can be easily consumed by a
 target to run these tests would be a great asset for any designer to enable
 early verification**
 
-RVI has recently adopted the `RISC-V SAIL <>`_ formal model as the golden model
+RVI has recently adopted the `RISC-V SAIL <https://github.com/rems-project/sail-riscv>`_ formal model as the golden model
 of the specifications. However, SAIL will require a little more feature update
 to enable it to act as a reference model for verification. The primary blocking
 feature has been the DSL in which SAIL is written which making it less approachable 
-to hack/modify. In view of this, the community has also adopted `Spike <>`_ as a 
+to hack/modify. In view of this, the community has also adopted `Spike <https://github.com/riscv/riscv-isa-sim>`_ as a 
 pseudo golden model owing to its simple implementation and an active
 contribution community. One of the common practices of using these models as a
 reference model in verification has been to generate and compare the execution 

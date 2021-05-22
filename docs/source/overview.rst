@@ -4,9 +4,10 @@
 Framework Overview
 ##################
 
-.. image:: _static/River.png
+.. figure:: _static/River.png
     :align: center
-    :alt: river-flow
+    
+    RIVER CORE Overview Flow
 
 RIVER CORE splits the verification flow into the following stages:
 
@@ -26,6 +27,8 @@ RIVER CORE splits the verification flow into the following stages:
    different. 
 5. **Report Generation**: Generate an html report capturing the results of all
    of the above steps.
+
+RIVER CORE uses the `Pluggy <https://pluggy.readthedocs.io/en/latest/>`_ python package to manage plugins.
 
 
 The Input Config File
@@ -98,22 +101,23 @@ can be found here :ref:`Config Spec<config_ini>`.
 Generator Plugin
 ================
 
-.. image:: _static/generator_plugin.png
+.. figure:: _static/generator_plugin.png
     :align: center
     :height: 300
-    :alt: Generator Plugin
+    
+    Generator Plugin
 
 This plugin is used encapsulate various test-generators. These generators can be
-either random program generators like `AAPG <>`_, `RISC-V Torture <>`_ , 
-`Csmith <>`_ , `MicroTesk <>`_ , `Test Float <>`_ etc. OR may include a directed
-test-generators like `CTG <>`_ OR a static test suite like the ones hosted 
-at the `RISC-V TESTS <>`_ .
+either random program generators like `AAPG <https://gitlab.com/shaktiproject/tools/aapg>`_, `RISC-V Torture <https://github.com/ucb-bar/riscv-torture>`_ , 
+`CSmith <https://embed.cs.utah.edu/csmith/>`_ , `MicroTesk <http://www.microtesk.org/>`_ , `Test Float <http://www.jhauser.us/arithmetic/TestFloat.html>`_ etc. OR may include a directed
+test-generators like `CTG <https://riscv-ctg.readthedocs.io/en/latest/>`_ OR a static test suite like the ones hosted 
+at the `RISC-V TESTS <https://github.com/riscv/riscv-tests>`_ .
 
 Each test generator is a python plugin which supports 3 hooks, called in the
 following sequence:
 
 1. **Pre-gen**: This stage is used to configure the generator, check and install
-   dependencies, download artifacts, create work directories, parse the plugin 
+   dependencies, download artifacts, create necessary directories, parse and capture the plugin 
    specific parameters present in the ``config.ini``  etc. 
 
 2. **Gen**: This stage is where the actual tests are generated. RIVER CORE uses
@@ -143,49 +147,86 @@ parameter of the ``config.ini`` file passed to the ``generate`` command.
 .. warning:: It is not advised to modify the tests or directory structures in
    the the work_dir manually. 
 
-Types of plugins
-----------------
+The plugin hooks usage and arguments are presented below:
 
-On the basis of the functions the plugins perform the plugins are broadly classified into 3 categories:
-
-1. **Generator Plugins**
-   The generator plugins help in generating random test cases.These plugins are built on top of the existing programs, that help in generating random test cases.
-
-   When used with the RiVer Core framework, these generator plugins also generate a Test-List YAML file, which contains all necessary info about the generated test cases and the associated options with them.
+.. automodule:: river_core.sim_hookspecs
+   :members: RandomGeneratorSpec
 
 
-2. **DuT Plugins**
-   DuT Plugins or Device-under-Test plugins help us compile and simulate the generated test cases. This receives the previously generated test-list YAML as an input, and proceeds to compile the files, with required parameters and runs the simulations as well.
+DUT/Target Plugin
+=================
 
-3. **Reference Plugins**
-   Reference Plugins will compile and simulate the generated test cases, this acts as a golden standard for all DuT plugins to follow.
+.. figure:: _static/dut_plugin.png
+    :align: center
+    :height: 300
+    
+    DUT/Target Plugin
 
-Subcommands
-===========
+This plugin encapsulates the DUT's/Target's compile and test environment. The plugin allows a user
+complete control over:
+  - choice of toolchain to be used for compiling the tests: GCC, LLVM, Custom, etc
+  - choice of testbench environment : SVUVM, Cocotb, etc.
+  - choice of simulator : Questa, Cadence, Verilator, etc
+  - choice of coverage metrics to enable: functional, structural, etc
 
-- **Generate**:
-  The command used to generate a list of random test cases for your design to run.
-- **Compile**:
-  The command used to compile and simulate the list of random test cases for your design, it will run the tests and the compare results between the design model and reference model.
-- **Merge**:
-  The command used to merge a set of different test cases into a single set of tests.
-- **Clean**:
-  The command used to clean your workdir.
+The DUT Plugin supports the following hooks:
 
-Execution flow for Users
-========================
+1. **Init**: This stage is used to capture configurations from the input ``config.ini`` and build
+   and set up the environment. If a core generator is the target, then this stage can be used to
+   configure it and generate and instance, build the relevant toolchain, setup simulator args like
+   coverage, verbosity, etc. The test list is also available at this stage. Which must be captured and
+   stored by the plugin for future use.
 
-The primary users of RiVer Core are verification and design engineers who would like to validate their design's features. This subsection will provide an overall working of the RiVer in the context of validating a RISC-V target against a golden reference model.
+2. **Build**: This stage is used to create a Makefile or script to actually compile each test,
+   simulate it on the target. A typical use case is to create a makefile-target for each test
+   that needs to be run on the target. 
 
-.. note:: The following explanation is at an abstract level and assumes that the user has RiVer and
-   the respective tooling available. For a walk-through guide to install RiVer and setting up the
-   required tooling please refer to :ref:`quickstart`
+   .. note:: The target must run all the tests in the test-list provided and should not perform any
+      filtering and skip any tests and should niether modify the tests 
 
-The flow starts with the user generating a set of tests to run on the design, the user can select a generator plugin and configure it to generate the 'n' number of tests. After successfully creating the required files, the generator plugin also provides a test-list YAML, which contains all information about the generated assembly files, and the parameters required to compile the assembly files.
+3. **Run**: This stage is used to run the tests on the DUT. It is recommended to run the tests in
+   parallel. RIVER CORE uses the inherent pytest framework to run terminal commands in parallel
+   fashion. This stage will generate all the artifacts of the simulation like : signature file, 
+   execution logs, test-binary, target executable binary, coverage database, simulation logs, etc. 
 
-Then this YAML, is given as an input to the DuT and Reference plugins, which compile and simulate the ASM files separately. Once this operation is completed, the RiVer Core proceeds to check and compare results from both the plugins.
+4. **Post-Run**: This stage is run after the pass-fail results have been captured. This stage can be
+   used to clean up unwanted artifacts like : elfs, hexfiles, objdumps, logs, etc which are no
+   longer of consequence. One can further choose to only delete artifacts of passed tests and retain
+   it for tests that failed (the pass/fail result is captured in the test-list itself). 
 
-At the end of execution, RiVer Core generates an HTML report which provides details of the
-implementation and tests that were passed/failed by the implementation.
+   This stage can also further also be used to merge coverage databases of all the test runs, rank
+   the tests and generate appropriate reports. This is completely optional and upto the user to
+   define what happens as a "clean-up" process in this stage.
+   
 
-After running a set of these operations, one can actually combine the various test cases generated with the help of the merge command, which helps in creating a set of tests to run to verify the design.
+The plugin hooks usage and arguments are presented below:
+
+.. automodule:: river_core.sim_hookspecs
+   :members: DuTSpec
+
+The Reference Plugins
+=====================
+
+The reference plugins use the same hooks and class as the DUT/Target plugins. Similar operations as
+mentioned above are performed for the reference plugin. However, in terms of coverage, certain
+reference models may have capabilities to generate certain functional coverage metrics. This can be
+exploited in these plugins as well.
+
+Compare Outputs
+===============
+
+In order to declare the tests have passed, the execution logs from the DUT/Target and the reference
+models are compared. A difference in the logs indicates the test has failed, else it has passed. The
+result of the tests is updated in the test-list itself. 
+
+.. note:: RIVER CORE currently only supports compare a single execution log for a test. There is a need
+  however to compare multiple artifacts (like signature contents as well) of a test execution. Future
+  versions of RIVER CORE may include these features.
+
+Test Report Generation
+======================
+
+Once the test results are obtained and updated in the test-list, an HTML report containing
+informatino of each of the above steps is generated for the user. The automatic browser pop-up can
+be disabled by setting the ``open_browser`` parameter to false in the input ``config.ini`` file.
+

@@ -1,6 +1,6 @@
-=======================
-Developer Documentation
-=======================
+#####################
+Build Your Own Plugin
+#####################
 
 .. _test-file: https://gitlab.com/incoresemi/river-framework/core-verification/river_core/-/blob/dev/examples/sample-config.ini
 
@@ -52,7 +52,7 @@ Example Plugin Directory
 Common Files
 """"""""""""
 
-+ ``{name}_plugin.py`` the main Python file that is loaded when the Plugin is loaded into RiVer Core.
++ ``{name}_plugin.py`` the main Python file that is loaded when the Plugin is loaded into RIVER CORE.
 + ``conftest.py`` config file for the Pytest framework
 + ``gen_framework.py`` main file which will be containing the pytest parameters and commands to execute.
 + ``README.md`` README for the plugin
@@ -111,12 +111,12 @@ Taking an example of the ``Spike`` plugin:
 
 Plugin API
 ^^^^^^^^^^
-This topic will explain some of the APIs defined for integrating different plugins into RiVer Core.
+This topic will explain some of the APIs defined for integrating different plugins into RIVER CORE.
 
 Generator Plugins
 """""""""""""""""
 
-- The generator plugin needs to have 3 different APIs that will be accessed by RiVer Core.
+- The generator plugin needs to have 3 different APIs that will be accessed by RIVER CORE.
 
   The activities of the plugins are divided into the below 3 categories.
 
@@ -127,7 +127,7 @@ Generator Plugins
 DuT and Reference Plugins
 """""""""""""""""""""""""
 
-- The DuT plugins needs to have 4 different APIs that will be accessed by RiVer Core.
+- The DuT plugins needs to have 4 different APIs that will be accessed by RIVER CORE.
 - Reference plugin only needs to have the first 3, ``merge`` API is optional.
 
 .. automodule:: river_core.sim_hookspecs
@@ -142,7 +142,7 @@ Things to consider while designing plugins
 
 The class for the plugin has to be `plugin_name` + `plugin`. Keeping all the plugins in lowercase.
 
-This is because the `RiVer Core` is designed to load all plugins in a similar format.
+This is because the `RIVER CORE` is designed to load all plugins in a similar format.
 
 .. literalinclude:: ../../river_core/rivercore.py
    :language: python

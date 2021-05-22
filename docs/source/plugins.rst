@@ -1,13 +1,12 @@
 .. See LICENSE.incore for details
 .. _plugins:
 
-.. note:: Rest of the document assumes you already have cloned `RiVer Core` and its plugins.
+.. note:: Rest of the document assumes you already have cloned `RIVER CORE` and its plugins.
 
-Types of plugins available with `River Core`:
-
-*****************
+#################
 Generator Plugins
-*****************
+#################
+
 .. include:: ./aapg.rst
 
 .. include:: ./microtesk.rst
@@ -16,9 +15,10 @@ Generator Plugins
 
 
 
-***********
+###########
 DuT Plugins
-***********
+###########
+
 .. include:: ./chromite_verilator.rst
 
 .. include:: ./chromite_cadence.rst
@@ -27,8 +27,8 @@ DuT Plugins
 
 
 
-*****************
+#################
 Reference Plugins
-*****************
+#################
 .. include:: ./spike.rst
 
