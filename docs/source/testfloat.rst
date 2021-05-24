@@ -8,35 +8,36 @@ You'll have to install the above Testfloat (Release 3e) and the `Berkeley TestFl
 
 Installation
 ------------
+
 1. Install `Berkeley Testfloat`
 
-    Download the Testfloat and Softfloat ZIP files.
+   Download the Testfloat and Softfloat ZIP files.
 
-    .. code-block:: bash
+   .. code-block:: console
 
-        wget 'http://www.jhauser.us/arithmetic/TestFloat-3e.zip'
-        wget 'http://www.jhauser.us/arithmetic/SoftFloat-3e.zip'
+      $ wget 'http://www.jhauser.us/arithmetic/TestFloat-3e.zip'
+      $ wget 'http://www.jhauser.us/arithmetic/SoftFloat-3e.zip'
 
 2. Unzip both the ZIP files
 
-    .. code-block:: bash
+   .. code-block:: console
 
-       unzip TestFloat-3e.zip
-       unzip SoftFloat-3e.zip
+      $ unzip TestFloat-3e.zip
+      $ unzip SoftFloat-3e.zip
 
 3. Build the Testfloat and Softfloat utilities.
 
-    .. code-block:: bash
+   .. code-block:: console
 
-       # Assuming that your system is a x86-64 system with GCC
-       cd SoftFloat-3e/build/Linux-x86_64-GCC/
-       # Other alternatives are available in build, please check your system configuration before running make
-       make
+      #Assuming that your system is a x86-64 system with GCC
+      $ cd SoftFloat-3e/build/Linux-x86_64-GCC/
+      #Other alternatives are available in build, please check your system configuration before running make
+      $ make
 
-       # Assuming that your system is a x86-64 system with GCC
-       cd TestFloat-3e/build/Linux-x86_64-GCC/
-       # Other alternatives are available in build, please check your system configuration before running make
-       make
+      #Assuming that your system is a x86-64 system with GCC
+      $ cd TestFloat-3e/build/Linux-x86_64-GCC/
+      #Other alternatives are available in build, please check your system configuration before running make
+      $ make
 
 
 
@@ -50,29 +51,56 @@ As for the instructions to be generated using the plugin, one has to follow the 
 
 .. code-block:: yaml
 
-    # Essential to start set_* for naming, that's how the plugin detects the name
-    set_1:
-        # Instruction to generate using the plugin
-        inst: [fadd.s, fsub.s, fmul.s, fdiv.s]
-        # Range of possible values for the destination register
-        dest: 0,31
-        # Range of possible values for the source register 1
-        reg1: 0,31
-        # Range of possible values for the source register 2
-        reg2: 0,31
-        # Rounding mode for the floating point operation
-        rounding-mode: [RNE]
-        # Needs to be above 46464
-        tests_per_instruction: 46464
-        # Number of tests generated
-        num_tests: 4
+   # path to where the testfloat_gen path. The following is enough if it exists in your $PATH
+   gen_binary_path: testfloat_gen
+   
+   # Essential to start set_* for naming, that's how the plugin detects the name
+   set_1:
+       # Instruction to generate using the plugin
+       inst: [fadd.s, fsub.s, fmul.s, fdiv.s]
+       # Range of possible values for the destination register
+       dest: 0,31
+       # Range of possible values for the source register 1
+       reg1: 0,31
+       # Range of possible values for the source register 2
+       reg2: 0,31
+       # Rounding mode for the floating point operation. Legal values are: RNE, RTZ, RDN, RUP, RMM
+       rounding-mode: [RNE]
+       # Needs to be above 46464. this is a testfloat limitation.
+       tests_per_instruction: 46464
+       # Number of tests generated per instruction per rounding mode combination
+       num_tests: 4
+
+   # you can define a new set with new combinations in the same file. Generator will parse through all sets
+   set_5:
+        inst: [fmadd.s]
+        dest: 0,9
+        reg1: 0,12
+        reg2: 0,10
+        reg3: 0,10
+        rounding-mode: [RUP]
+        tests_per_instruction: 6133248 # needs to above minimum definition required by testfloat
+        num_tests: 8 
 
 
-Output
-------
+Instance in Config.ini
+----------------------
 
-This plugin will generate a `test-list` containing all necessary information for the framework to compile and test code.
+To use TestFloat in the config.ini the following template can be followed:
 
-This can be useful to share test cases across machines. In order to share the tests, one only needs to share the original finals and test-list which contains all necessary infomation about the tests run.
+.. code-block:: ini
 
+   path_to_suite = ~/river_core_plugins/generator_plugins
+   generator = testfloat
+
+   [testfloat]
+   # number of parallel jobs
+   jobs=8
+   # seed to use for testfloat_gen command
+   seed = random
+   # path to the yaml conforming to the above spec.
+   config_yaml = /scratch/git-repo/incoresemi/river-framework/core-verification/river_core_plugins/generator_plugins/testfloat_plugin/testfloat_gen_config.yaml
+
+.. note:: one can maintain multiple \*_gen_config.yaml files and simple point to them in the main
+   config.ini to change configurations. 
 

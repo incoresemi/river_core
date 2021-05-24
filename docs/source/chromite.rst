@@ -253,6 +253,3 @@ To ``boot.mem`` file is generated in the ``bin`` folder using the following comm
 .. code-block:: shell-session
 
    $ make generate_boot_files
-
-
-

@@ -10,48 +10,22 @@ Spike
 
 Installation
 ------------
-1. Clone the `modified` spike directory
 
-      .. code-block:: shell-session
+.. code-block:: console
 
-        $ git clone https://gitlab.com/shaktiproject/tools/mod-spike.git
-
-2. Checkout to the `bump-to-latest` branch
-
-      .. code-block:: shell-session
-
-        $ cd mod-spike
-        $ git checkout bump-to-latest
-
-3. Now clone the latest spike repo from Github.
-
-      .. code-block:: shell-session
-
-        $ git clone https://github.com/riscv/riscv-isa-sim.git
-
-4. Apply the `shakti.patch` to the original repo.
-
-      .. code-block:: shell-session
-
-        $ cd riscv-isa-sim
-        $ git checkout 6d15c93fd75db322981fe58ea1db13035e0f7add
-        $ git apply ../shakti.patch
-
-5. Now export `RISCV` path and create a `build` to store the new compiled executable.
-
-      .. code-block:: shell-session
-
-        $ export RISCV=<path you to install spike>
-        $ mkdir build
-        $ cd build
-
-6. Configure and build the new spike with the modifications. Optionally you can install with `sudo` permissions.
-
-      .. code-block:: shell-session
-
-         $ ../configure --prefix=$RISCV
-         $ make
-         $ [sudo] make install
+  $ git clone https://gitlab.com/shaktiproject/tools/mod-spike.git
+  $ cd mod-spike
+  $ git checkout bump-to-latest
+  $ git clone https://github.com/riscv/riscv-isa-sim.git
+  $ cd riscv-isa-sim
+  $ git checkout 6d15c93fd75db322981fe58ea1db13035e0f7add
+  $ git apply ../shakti.patch
+  $ export RISCV=<path you to install spike>
+  $ mkdir build
+  $ cd build
+  $ ../configure --prefix=$RISCV
+  $ make
+  $ [sudo] make install
 
 
 

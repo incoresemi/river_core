@@ -111,6 +111,9 @@ You can check the version in the **same shell**::
 Install RIVER CORE
 ==================
 
+.. note:: If you are using `pyenv` as mentioned above, make sure to enable that environment before
+   performing the following steps.
+     
 .. tabs:: 
 
    .. tab:: via Git
@@ -131,9 +134,6 @@ Install RIVER CORE
 
    .. tab:: via Pip
 
-     .. note:: If you are using `pyenv` as mentioned above, make sure to enable that environment before
-      performing the following steps.
-     
      .. code-block:: bash
      
        $ pip3 install river_core
