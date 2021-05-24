@@ -12,22 +12,23 @@ This section is meant to serve as a quick-guide to setup RIVER CORE and perform 
 various phases of the tool. We shall use the AAPG tool as the generator, the
 Chromite core as the DUT and Spike as a reference model.
 
-Install Python
-==============
+Install Python and Pip
+======================
 
 .. tabs::
 
    .. tab:: Ubuntu
 
 
-      Ubuntu 17.10 and 18.04 by default come with python-3.6.9 which is sufficient for using riscv-config.
+      Ubuntu 17.10, 18.04 and 20.04 by default come with `Python>=3.6.9` which is sufficient for using RIVER CORE.
       
       If you are are Ubuntu 16.10 and 17.04 you can directly install python3.6 using the Universe
       repository
       
       .. code-block:: shell-session
 
-        $ sudo apt-get install python3.6
+        $ sudo apt-get update
+        $ sudo apt-get install python3.6 python3-pip
         $ pip3 install --upgrade pip
       
       If you are using Ubuntu 14.04 or 16.04 you need to get python3.6 from a Personal Package Archive 
@@ -231,6 +232,7 @@ If you already have the 32-bit gnu-toolchain available, you can skip to the next
 Make sure to add the path ``/path/to/install`` to your `$PATH` in the .bashrc/cshrc
 With this you should now have all the following available as command line arguments::
 
+  compgen -c | grep 'riscv64' # requires bash
   riscv64-unknown-elf-addr2line      riscv64-unknown-elf-elfedit
   riscv64-unknown-elf-ar             riscv64-unknown-elf-g++
   riscv64-unknown-elf-as             riscv64-unknown-elf-gcc
@@ -281,7 +283,7 @@ You can install some of the pre-built plugins from the `Gitlab Repo <https://git
     $ cd ~/myquickstart
     $ git clone https://gitlab.com/incoresemi/river-framework/core-verification/river_core_plugins.git
 
-We will next create a ``config.ini`` under the ``myquickstart`` directory. You
+We will next create a ``river_core.ini`` under the ``myquickstart`` directory. You
 can use the setup to create this file:
 
 .. code-block:: console
@@ -289,7 +291,7 @@ can use the setup to create this file:
    $ cd ~/myquickstart
    $ river_core setup
 
-The above should create a ``config.ini`` file with the following contents.
+The above should create a ``river_core.ini`` file with the following contents.
 Details and further specification of the config file syntax is available at :ref:`Config Spec<config_ini>`.
 
 You will need to change ``user`` to your username in the below file:
@@ -362,8 +364,8 @@ Setting up the Generator Plugin
 -------------------------------
 
 As part of the quickstart we will go with the default settings available in the
-config.ini above. One can however modify the parameters under the ``[aapg]``
-directive betwee lines 36-41 above
+river_core.ini above. One can however modify the parameters under the ``[aapg]``
+directive between lines 36-41 above
 
 Setting up the DUT Plugin
 -------------------------
@@ -389,7 +391,7 @@ executable:
 The above steps shall generate a directory: ``build/hw/verilog`` which includes
 all the generated verilog files. 
 
-We will next modify the ``config.ini`` to update paths of the directories in
+We will next modify the ``river_core.ini`` to update paths of the directories in
 line 48 above. Here we need to provide three paths (in comma separated fashion):
 
   - path to ``build/hw/verilog``
@@ -433,7 +435,7 @@ Generating Tests
 .. code-block:: console
 
    $ cd ~/myquickstart
-   $ river_core generate -v debug -c config.ini
+   $ river_core generate -v debug -c river_core.ini
 
 You should see the following log on the console:
 
@@ -442,7 +444,7 @@ You should see the following log on the console:
              info  | ------------RIVER CORE Verification Framework------------
              info  | Version: 0.1.0
              info  | Copyright (c) 2021 InCore Semiconductors Pvt. Ltd.
-            debug  | Read file from config.ini
+            debug  | Read file from river_core.ini
              info  | ****** RiVer Core 0.1.0 *******
              info  | Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.
              info  | All Rights Reserved.
@@ -553,7 +555,7 @@ spike and compare the results. Following command shall initiate the whole flow:
 .. code-block:: console
 
    $ cd ~/myquickstart
-   $ river_core compile -v debug -t mywork/test_list.yaml -c config.ini
+   $ river_core compile -v debug -t mywork/test_list.yaml -c river_core.ini
 
 You should see the following log on the console:
 
@@ -562,7 +564,7 @@ You should see the following log on the console:
              info  | ------------RIVER CORE Verification Framework------------
              info  | Version: 0.1.0
              info  | Copyright (c) 2021 InCore Semiconductors Pvt. Ltd.
-            debug  | Read file from config.ini
+            debug  | Read file from river_core.ini
              info  | ****** RiVer Core 0.1.0 *******
              info  | Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.
              info  | All Rights Reserved.
