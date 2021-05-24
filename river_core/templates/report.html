@@ -288,6 +288,7 @@ function filter_table(elem) {
 
     <h2>Log comparison result:</h2>
     <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="passed">{{ num_passed }} Passed</span>, <input checked="true" class="filter" data-test-result="failed" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="failed">{{ num_failed }} Failed</span><input checked="true" class="filter" data-test-result="unavailable" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="unavailable"> {{ num_unav }} Unavailable</span>
+    <h4> Out of Total: {{ num_failed + num_passed + num_unav }} Tests </h4>
     <table id="simple-table">
       <thead id="simple-table-head">
         <tr>
