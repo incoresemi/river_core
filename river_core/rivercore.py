@@ -481,12 +481,14 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                                 plugin_path=path_to_module)
             elif dut_flags == 'build':
                 logger.debug('Single mode flag detected\nRunning build')
+                dutpm.hook.init(ini_config=config[target],
+                                test_list=test_list,
+                                work_dir=output_dir,
+                                coverage_config=coverage_config,
+                                plugin_path=path_to_module)
                 dutpm.hook.build()
             elif dut_flags == 'run':
-                logger.debug('Single mode flag detected\nRunning run')
-                target_json = dutpm.hook.run(module_dir=path_to_module)
-            elif dut_flags == 'all':
-                logger.debug('All mode flag detected\nRunning all operations')
+                logger.debug('All modes enabled\nRunning run')
                 dutpm.hook.init(ini_config=config[target],
                                 test_list=test_list,
                                 work_dir=output_dir,
@@ -495,7 +497,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 dutpm.hook.build()
                 target_json = dutpm.hook.run(module_dir=path_to_module)
             else:
-                logger.warning('DuT was disabled manually')
+                logger.warning('DuT plugin disabled')
 
     if '' in ref_list:
         logger.info('No references, so exiting the framework')
@@ -546,12 +548,14 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                                 plugin_path=path_to_module)
             elif ref_flags == 'build':
                 logger.debug('Single mode flag detected\nRunning build')
+                refpm.hook.init(ini_config=config[ref],
+                                test_list=test_list,
+                                work_dir=output_dir,
+                                coverage_config=coverage_config,
+                                plugin_path=path_to_module)
                 refpm.hook.build()
             elif ref_flags == 'run':
-                logger.debug('Single mode flag detected\nRunning build')
-                ref_json = refpm.hook.run(module_dir=path_to_module)
-            elif ref_flags == 'all':
-                logger.debug('All mode flag detected\nRunning all operations')
+                logger.debug('All modes detected\nRunning build')
                 refpm.hook.init(ini_config=config[ref],
                                 test_list=test_list,
                                 work_dir=output_dir,
@@ -560,7 +564,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 refpm.hook.build()
                 ref_json = refpm.hook.run(module_dir=path_to_module)
             else:
-                logger.warning('Ref Plugin was disabled')
+                logger.warning('Ref Plugin disabled')
 
         ## Comparing Dumps
         if compare:
