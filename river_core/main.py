@@ -132,18 +132,25 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
     # Checking if the flags are ok
     if dut_stage == 'auto':
         logger.info('Auto mode detected for DuT Plugin')
-        dut_stage = 'run'
+        if ref_stage == 'auto':
+            logger.info('Auto mode detected for Ref Plugin')
+            dut_stage = 'run'
+            ref_stage = 'run'
+        else:
+            logger.debug('Auto mode has disabled DuT Plugin')
+            dut_stage = None
+            if compare:
+                logger.warning(
+                    'Compare is enabled\nThis will be generating incomplete reports'
+                )
     else:
         if ref_stage == 'auto':
             logger.debug('Auto mode has disabled Ref Plugin')
             ref_stage = None
-    if ref_stage == 'auto':
-        logger.info('Auto mode detected for Reference Plugin')
-        ref_stage = 'run'
-    else:
-        if dut_stage == 'auto':
-            logger.debug('Auto mode has disabled DuT Plugin')
-            dut_stage = 'None'
+            if compare:
+                logger.warning(
+                    'Compare is enabled\nThis will be generating incomplete reports'
+                )
     rivercore_compile(config, test_list, coverage, verbosity, dut_stage,
                       ref_stage, compare)
 
