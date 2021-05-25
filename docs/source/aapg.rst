@@ -53,8 +53,14 @@ A YAML file is placed in the aapg plugin folder with the name ``aapg_gen_config.
       rv64imafdc:
          path: templates/chromite
 
-Instance in Config.ini
+Output from the plugin
 ----------------------
+
+The gen hook of the plugin must return a dictionary of the test and their attributes as defined by
+the :ref:`Test List Format <testlist>`.
+
+Instance in ``config.ini``
+--------------------------
 
 To use AAPG in the config.ini the following template can be followed:
 

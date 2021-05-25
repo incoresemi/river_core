@@ -1,255 +1,163 @@
 .. _chromite:
 
+Chromite DUT
+============
+
 `Chromite Core Generator <https://chromite.readthedocs.io/en/latest/>`_ plugin is based on the Chromite core generator developed by Incore Semiconductors.
-
-Chromite is an open-source core generator, based on the SHAKTI C Class core developed at PS CDISHA at the Indian Institute of Technology Madras . The core generator emits synthesizable, production quality RTL of processors based on the open RISC-V ISA.
-
+The core generator emits synthesizable, production quality RTL of processors based on the open RISC-V ISA.
 This guide will explain the steps to install all dependencies to run this plugin.
 
-Design
-------
+Pre-requisites
+--------------
 
-The plugin creates a Makefile in your `workdir` based on the parameters set in `config.yaml`, this is then called by the pytest framework which creates a JSON file containing the file report and runs the makefile in the order.
-The framework returns a JSON which is then parsed to create a final HTML report.
-Currently it also returns a `rtldump` which is used to compare the working of the design.
+You will need to install the following before using this plugin:
 
-Install Chromite Core
-^^^^^^^^^^^^^^^^^^^^^
-To build a core and to simulate it on a test-soc, you will need the following tools:
+- The riscv-gnu-toolchain for compiling the tests
+- The elf2hex utility required for converting the elf's to hex files for simulation.
+- The open-source bluespec compiler
 
-1. `Bluespec Compiler <https://github.com/B-Lang-org/bsc>`_: This is required to compile the BSV
-   based soc, core, and other devices to Verilog.
-2. Python3.7: Python 3.7 is required to configure compilation macros and clone dependencies.
-3. `Verilator 4.08+ <https://www.veripool.org/projects/verilator/wiki/Installing>`_: Verilator is
-   required for simulation purposes.
-4. `RISC-V Toolchain 9.2.0+ <https://github.com/riscv/riscv-gnu-toolchain>`_: You will need to install
-   the RISC-V GNU toolchain to be able to compile programs that can run on ChromiteM.
-5. `Modified RISC-V ISA Sim <https://gitlab.com/shaktiproject/tools/mod-spike/-/tree/bump-to-latest>`_: This is required for verification and the *elf2hex* utility.
-6. `RISC-V OpenOCD <https://github.com/riscv/riscv-openocd>`_ :This is required if you would like to
-   simulate through GDB uding remote-bitbang for JTAG communication.
 
-.. note:: The user is advised to install the above tools from their respective repositories/sources.
+Setting up the DUT
+------------------
 
-You will need the following as well, the installation of which is presented below:
+To setup Chromite as a DUT model for RIVER CORE you will need to generate the verilog for your 
+choice of configuration and provide the paths to the verilog to the plugin. 
 
-1. Python 3.6.0+
-2. DTC version 1.4.7+
+To generate verilog of the default Chromite configuration:
 
-Install Dependencies
----------------------
+.. code-block:: console
 
-Python
-^^^^^^
+   $ cd ~/myquickstart
+   $ git clone https://gitlab.com/incoresemi/core-generators/chromite.git
+   $ cd chromite
+   $ pip install -r requirements.txt
+   $ python -m configure.main
+   $ make -j<jobs> generate_verilog
 
-.. tabs::
+The Chromite test-soc expects all tests to be loaded at address ``0x80000000``. The tests are loaded
+using the regular "readmemh" command in verilog. Thus each test is converted to hex files using the
+elf2hex command that comes with `spike <https://github.com/riscv/riscv-isa-sim>`_.
 
-   .. tab:: Ubuntu
+Chromite test-soc used for simulation also requires a simple boot-code. This is checked in to the
+``boot`` directory inside the plugin. Currently this boot-code includes a basic dts file and
+indirection to address ``0x80000000`` at the begining itself. The Makefile in the ``boot`` directory
+is used to create the required boot hex files.
 
+Plugin Flow
+-----------
 
-      Ubuntu 17.10 and 18.04 by default come with python-3.6.9 which is sufficient for using riscv-config.
+There are multiple plugin variants available. Based on the simulator of choice, each plugin will
+first compile the verilog and generate an executable. The compilation can account for the fact of
+whether coverage is enabled or not. This is done as part of the `init` stage. The `init` stage will
+also build all the collaterals like boot.hex files that will be required for simulation.
 
-      If you are are Ubuntu 16.10 and 17.04 you can directly install python3.6 using the Universe
-      repository
+The `build` stage will parse through the test-list provided and create a makefile. For each test a
+target in the makefile is created. The the targets are defined such that they can all be run in
+parallel with as many jobs as possible.
 
-      .. code-block:: shell-session
+The `run` stage simply passes on the make file command to the pytest environment for parallel
+execution and report generation.
 
-        $ sudo apt-get install python3.6
-        $ pip3 install --upgrade pip
+For each test RIVER CORE expects the generation of a ``dut.dump`` which is the execution log of that
+test to be present in the working-dir of that test as specified in the test-list. If coverage is
+enabled then each test run will also generate the coverage database which can be merged/ranked
+together.
 
-      If you are using Ubuntu 14.04 or 16.04 you need to get python3.6 from a Personal Package Archive
-      (PPA)
+The `post_run` stage is used to clean up unwanted artifacts and files generated by each test. The
+following set of files are no longer preserved if tests pass on the DUT. They are preserved only
+when a test-fails for debugging purposes. This feature is enabled only when ``space_saver`` flag in
+the main ``config.ini`` is set to ``True``.
 
-      .. code-block:: shell-session
+- app_log
+- code.mem
+- dut.disass
+- dut.dump
+- signature
 
-        $ sudo add-apt-repository ppa:deadsnakes/ppa
-        $ sudo apt-get update
-        $ sudo apt-get install python3.6 -y
-        $ pip3 install --upgrade pip
+Plugin Variants
+---------------
 
-      You should now have 2 binaries: ``python3`` and ``pip3`` available in your $PATH.
-      You can check the versions as below
+The following variants of the chromite core are available. They each differ in based on the
+simulator of choice
 
-      .. code-block:: shell-session
+Chromite_Cadence
+****************
 
-        $ python3 --version
-        Python 3.6.9
-        $ pip3 --version
-        pip 20.1 from <user-path>.local/lib/python3.6/site-packages/pip (python 3.6)
+For this plugin ensure you have setup `Cadence` in your path. Binaries used by this plugin:
 
-   .. tab:: CentOS7
+   - `ncvlog`
+   - `ncelab`
+   - `imc`
 
-      The CentOS 7 Linux distribution includes Python 2 by default. However, as of CentOS 7.7, Python 3
-      is available in the base package repository which can be installed using the following commands
+.. note:: The user is advised to ensure all of the above binaries are accessible via the shell that will be running `RIVER CORE`.
 
-      .. code-block:: shell-session
+When the ``--coverage`` argument is provided to the RIVER CORE compile command, the chromite core is
+compiled with coverage flags enabled. Depending on the settings of the ``functional`` and ``code``
+respective coverage metrics are enabled during the simulation of each test.
 
-        $ sudo yum update -y
-        $ sudo yum install -y python3
-        $ pip3 install --upgrade pip
+The `post_run` hook will remove the following additional files:
 
-      For versions prior to 7.7 you can install python3.6 using third-party repositories, such as the
-      IUS repository
+- imc.*
+- mdv.log
+- ncsim.log
 
-      .. code-block:: shell-session
+The merge_db hook is used to merge the coverage databases of multiple tests and also provide a
+ranking report. The tool used for coverage, merging and ranking is ``imc``.
 
-        $ sudo yum update -y
-        $ sudo yum install yum-utils
-        $ sudo yum install https://centos7.iuscommunity.org/ius-release.rpm
-        $ sudo yum install python36u
-        $ pip3 install --upgrade pip
+To use this plugin, set the ``target`` in the main ``config.ini`` to `chromite_cadence`.
 
-      You can check the versions
+Chromite_Questa
+***************
 
-      .. code-block:: shell-session
+For this plugin ensure you have setup `Questa Tools` in your path. Binaries used by this plugin:
 
-        $ python3 --version
-        Python 3.6.8
-        $ pip --version
-        pip 20.1 from <user-path>.local/lib/python3.6/site-packages/pip (python 3.6)
+   - `vlib`
+   - `vlvog`
+   - `vsim`
+   - `vcover`
 
+.. note:: The user is advised to ensure all of the above binaries are accessible via the shell that will be running `RIVER CORE`.
 
+When the ``--coverage`` argument is provided to the RIVER CORE compile command, the chromite core is
+compiled with coverage flags enabled. Depending on the settings of the ``functional`` and ``code``
+respective coverage metrics are enabled during the simulation of each test.
 
-Install DTC (device tree compiler)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-We use the DTC 1.4.7 to generate the device tree string in the boot-files.
-To install DTC follow the below commands:
-
-.. code-block:: shell-session
-
-  sudo wget https://git.kernel.org/pub/scm/utils/dtc/dtc.git/snapshot/dtc-1.4.7.tar.gz
-  sudo tar -xvzf dtc-1.4.7.tar.gz
-  cd dtc-1.4.7/
-  sudo make NO_PYTHON=1 PREFIX=/usr/
-  sudo make install NO_PYTHON=1 PREFIX=/usr/
+The `post_run` hook will remove all files in the coverage folder of that test that do not end with
+``.ucdb``
 
-.. _build:
+The merge_db hook is used to merge the coverage databases of multiple tests and also provide a
+ranking report.
 
-Building the Core
------------------
+To use this plugin, set the ``target`` in the main ``config.ini`` to `chromite_questa`.
 
-The code is hosted on Gitlab and can be checked out using the following
-command:
+Chromite_Verilator
+******************
 
-.. code-block:: shell-session
+For this plugin ensure you have installed verilator and it is available in your path.
 
-  $ git clone https://gitlab.com/incoresemi/core-generators/chromite.git
+To use this plugin, set the ``target`` in the main ``config.ini`` to `chromite_verilator`.
 
-If you are cloning the chromite repo for the first time it would be best to install the dependencies
-first:
+Instance in ``config.ini``
+--------------------------
 
-.. code-block:: shell-session
+For any of the above variants, only the ``target`` setting needs to change in the following sample
+instance code. The ``src_dir`` should contain all paths which will contain the necessary verilog
+files for compiling the core (in a comma separated fashion). The src directory should typically
+include the following:
 
-  $ cd chromite/
-  $ pyenv activate venv # ignore this is you are not using pyenv
-  $ pip install -U -r chromite/requirements.txt
+- the build/hw/verilog directory of the chromite core
+- the common_log directory of the bsvwrappers repository
+- the Verilog directory of the bluespec compiler installation.
 
-The Chromite core generator takes a specific `YAML<configure_core_label>` format as input. It makes specific checks to
-validate if the user has entered valid data and none of the parameters conflict with each other.
-For e.g., mentioning the 'D' extension without the 'F' will get captured by the generator as an
-invalid spec. More information on the exact parameters and constraints on each field are discussed
-here.
+.. code-block:: ini
 
-Once the input YAML has been validated, the generator then clones all the dependent repositories
-which enable building a test-soc, simulating it and performing verification of the core.
-This is an alternative to maintaining the repositories as submodules, which
-typically pollutes the commit history with bump commits.
+  target = chromite_verilator
+  path_to_target = ~/river_core_plugins/dut_plugins
+  
+  [chromite_verilator]
+  jobs = 8
+  # src dir: Verilog Dir, BSC Path, Wrapper path
+  src_dir = /scratch/git-repo/incoresemi/core-generators/chromite/build/hw/verilog/,/software/experimental/open-bsc//lib/Verilog,/scratch/git-repo/incoresemi/core-generators/chromite/bsvwrappers/common_lib
+  # Top Module for simulation 
+  top_module = mkTbSoc
 
-At the end, the generator outputs a single ``makefile.inc`` in the same folder that it was run,
-which contains definitions of paths where relevant bluespec files are present, bsc command with
-macro definitions, verilator simulation commands, etc.
-
-A sample yaml input YAML (`default.yaml`) is available in the ``sample_config`` directory of the
-repository.
-
-To build the core with a sample test-soc using the default config do the following:
-
-.. code-block:: shell-session
-
-  $ python -m configure.main -ispec sample_config/default.yaml
-
-The above step generates a ``makefile.inc`` file in the same folder and also
-clones other dependent repositories to build a test-soc and carry out
-verification. This should generate a log something similar to::
-
-  [INFO]    : ************ Chromite Core Generator ************
-  [INFO]    : ------ Copyright (c) InCore Semiconductors ------
-  [INFO]    : ---------- Available under BSD License----------
-  [INFO]    :
-
-
-  [INFO]    : Checking pre-requisites
-  [INFO]    : Cloning "cache_subsystem" from URL "https://gitlab.com/incoresemi/blocks/cache_subsystem"
-  [INFO]    : Checking out "1.0.0" for repo "cache_subsystem"
-  [INFO]    : Cloning "common_bsv" from URL "https://gitlab.com/incoresemi/blocks/common_bsv"
-  [INFO]    : Checking out "master" for repo "common_bsv"
-  [INFO]    : Cloning "fabrics" from URL "https://gitlab.com/incoresemi/blocks/fabrics"
-  [INFO]    : Checking out "1.1.1" for repo "fabrics"
-  [INFO]    : Cloning "bsvwrappers" from URL "https://gitlab.com/incoresemi/blocks/bsvwrappers"
-  [INFO]    : Checking out "master" for repo "bsvwrappers"
-  [INFO]    : Cloning "devices" from URL "https://gitlab.com/incoresemi/blocks/devices"
-  [INFO]    : Checking out "1.0.0" for repo "devices"
-  [INFO]    : Cloning "verification" from URL "https://gitlab.com/shaktiproject/verification_environment/verification"
-  [INFO]    : Checking out "4.0.0" for repo "verification"
-  [INFO]    : Applying Patch "/scratch/git-repo/incoresemi/core-generators/chromite/verification/patches/riscv-tests-shakti-signature.patch" to "/scratch/git-repo/incoresemi/core-generators/chromite/verification/patches/riscv-tests-shakti-signature.patch"
-  [INFO]    : Cloning "benchmarks" from URL "https://gitlab.com/incoresemi/core-generators/benchmarks"
-  [INFO]    : Checking out "master" for repo "benchmarks"
-  [INFO]    : Loading input file: /scratch/git-repo/incoresemi/core-generators/chromite/sample_config/default.yaml
-  [INFO]    : Load Schema configure/schema.yaml
-  [INFO]    : Initiating Validation
-  [INFO]    : No Syntax errors in Input Yaml.
-  [INFO]    : Performing Specific Checks
-  [INFO]    : Generating BSC compile options
-  [INFO]    : makefile.inc generated
-  [INFO]    : Creating Dependency graph
-  [WARNING] : path: .:%/Libraries:src/:src/predictors:src/m_ext:src/fpu/:src/m_ext/..........
-  defines: Addr_space=25 ASSERT rtldump RV64 ibuswidth=64 dbuswidth=64 .......
-  builddir: build/hw/intermediate
-  topfile: test_soc/TbSoc.bsv
-  outputfile: depends.mk
-  argv:
-  generated make dependency rules for "test_soc/TbSoc.bsv" in: depends.mk
-  [INFO]    : Dependency Graph Created
-  [INFO]    : Cleaning previously built code
-  [WARNING] : rm -rf build/hw/intermediate/* *.log bin/* obj_dir build/hw/verilog/*
-  rm -f *.jou rm *.log *.mem log sim_main.h cds.lib hdl.var
-  [INFO]    : Run make -j<jobs>
-
-
-
-To compile the bluespec source and generate verilog
-
-.. code-block:: shell-session
-
-  $ make -j<jobs> generate_verilog
-
-If you are using the samples/default.yaml config file, this should generate the following folders:
-
-1. build/hw/verilog: contains the generated verilog files.
-2. build/hw/intermediate: contains all the intermediate and information files generated by bsc.
-
-To create a verilated executable:
-
-.. code-block:: shell-session
-
-   $ make link_verilator
-
-This will generate a ``bin`` folder containing the verilated ``chromite_core`` executable.
-
-.. note:: The user can also refer to the most up-to-date setup instructions at https://chromite.readthedocs.io/en/latest/getting_started.html.
-
-
-BootRom Content
-^^^^^^^^^^^^^^^
-
-By default, on system-reset the core will always jump to ``0x1000`` which is mapped to the bootrom.
-The bootrom is initialized using the file ``boot.mem``. The bootrom after a few instructions
-causes a re-direction jump to address ``0x80000000`` where the application program is expected to be.
-It is thus required that all programs are linked with text-section begining at ``0x80000000``.
-The rest of the boot-rom holds a dummy device-tree-string information.
-
-To ``boot.mem`` file is generated in the ``bin`` folder using the following command:
-
-.. code-block:: shell-session
-
-   $ make generate_boot_files

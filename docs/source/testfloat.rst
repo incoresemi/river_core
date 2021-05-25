@@ -113,8 +113,14 @@ are used for terminating the simulation on Chromite.
 The user may also change the linker script available at: ``asm/link.ld`` as per the model. Note
 however the entry point for the tests will always be ``rvtest_entry_point``
 
-Instance in Config.ini
+Output from the plugin
 ----------------------
+
+The gen hook of the plugin must return a dictionary of the test and their attributes as defined by
+the :ref:`Test List Format <testlist>`.
+
+Instance in ``config.ini``
+--------------------------
 
 To use TestFloat in the config.ini the following template can be followed:
 
