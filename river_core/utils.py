@@ -75,8 +75,7 @@ def sys_command(command, timeout=240):
 
         :param command: The shell command to run.
 
-        :param timeout: The value after which the framework exits.
-        Default set to configured to 240 seconds
+        :param timeout: The value after which the framework exits. Default set to configured to 240 seconds
 
         :type command: list
 
@@ -85,7 +84,6 @@ def sys_command(command, timeout=240):
         :returns: Error Code (int) ; STDOUT ; STDERR
 
         :rtype: list
-
     '''
     logger.warning('$ timeout={1} {0} '.format(' '.join(shlex.split(command)),
                                                timeout))
