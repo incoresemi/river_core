@@ -305,21 +305,21 @@ function filter_table(elem) {
         {% for test in test_dict %}
             {% if test_dict[test]['result'] == 'Passed' %}
             <tbody class= "passed simple-table-row" >
-            {% elif test_dict[test]['result'] == 'Unavailable' %}
+            {%- elif test_dict[test]['result'] == 'Unavailable' %}
             <tbody class= "unavailable simple-table-row" >
-            {% else %}
+            {%- else %}
             <tbody class= "failed simple-table-row" >
-            {% endif %}
+            {%- endif %}
                 <tr>
                 <td class="col-name">{{ test }}</td>
                 <td class="col-path">{{ test_dict[test].work_dir }}</td>
             {% if test_dict[test]['result'] == 'Passed' %}
                 <td class="col-sort-result">Passed</td></tr>
-            {%- elif test_dict[test]['result'] == 'Unavailable' -%}
+            {%- elif test_dict[test]['result'] == 'Unavailable' %}
             <td class="col-sort-result">Unavailable</td></tr>
             {% else -%}
                 <td class="col-sort-result">Failed</td></tr>
-            {% endif %}
+            {%- endif %}
             </tbody>
         {% endfor %}
       </table>
@@ -333,6 +333,13 @@ function filter_table(elem) {
           <th class="sortable" col="name">Test</th>
           </tr>
         </thead>
+         {% if target_data == 'Unavailable' -%}
+        <tbody class= 'failed' results-table-row>
+        <tr>
+            <td class="col-result">Unavailable</td>
+            <td class="col-name">Unavailable</td>
+        </tr>
+        {%- else -%}
         {% for result in gen_data %}
         {% if result.when == 'call' -%}
         <tbody class= "{{'passed' if result.outcome == 'passed' else 'failed'}} results-table-row" >
@@ -342,11 +349,13 @@ function filter_table(elem) {
         <tr>
           <td class="extra" colspan="4">
             <div class="log">{{result.longrepr.reprcrash.message if result.outcome == 'failed' else result.sections[1][1] }}</br></div></td>
-        {% endif %}
+        {%- endif %}
+        {% endfor %}
+        {%- endif %}
+</tr>
 
 </tr>
 </tbody>
-        {% endfor %}
       </table>
 
    <h3><a href="{{ generator }}.html">DUT Compilation Results</a></h3>
@@ -357,6 +366,13 @@ function filter_table(elem) {
           <th class="sortable" col="name">Test</th>
           </tr>
         </thead>
+         {% if target_data == 'Unavailable' -%}
+        <tbody class= 'failed' results-table-row>
+        <tr>
+            <td class="col-result">Unavailable</td>
+            <td class="col-name">Unavailable</td>
+        </tr>
+        {% else -%}
         {% for result in target_data %}
         {% if result.when == 'call' -%}
         <tbody class= "{{'passed' if result.outcome == 'passed' else 'failed'}} results-table-row" >
@@ -366,11 +382,12 @@ function filter_table(elem) {
         <tr>
           <td class="extra" colspan="4">
             <div class="log">{{result.longrepr.reprcrash.message if result.outcome == 'failed' else result.sections[1][1] }}</br></div></td>
-        {% endif %}
-
-</tr>
-</tbody>
+        {%- endif %}
         {% endfor %}
+</tr>
+
+</tbody>
+        {%- endif %}
       </table>
 
    <h3><a href="{{ generator }}.html">Ref Compilation Results</a></h3>
@@ -381,6 +398,13 @@ function filter_table(elem) {
           <th class="sortable" col="name">Test</th>
           </tr>
         </thead>
+         {% if target_data == 'Unavailable' -%}
+        <tbody class= 'failed' results-table-row>
+        <tr>
+            <td class="col-result">Unavailable </td>
+            <td class="col-name">Unavailable</td>
+        </tr>
+        {% else -%}
         {% for result in ref_data %}
         {% if result.when == 'call' -%}
         <tbody class= "{{'passed' if result.outcome == 'passed' else 'failed'}} results-table-row" >
@@ -390,11 +414,12 @@ function filter_table(elem) {
         <tr>
           <td class="extra" colspan="4">
             <div class="log">{{result.longrepr.reprcrash.message if result.outcome == 'failed' else result.sections[1][1] }}</br></div></td>
-        {% endif %}
-
-</tr>
-</tbody>
+        {%- endif %}
         {% endfor %}
+</tr>
+
+</tbody>
+        {%- endif %}
       </table>
 
       </body></html>

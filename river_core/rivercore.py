@@ -149,9 +149,13 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
     '''
 
     # Filter JSON files
-    gen_json_data = sanitise_pytest_json(gen_json_data)
-    target_json_data = sanitise_pytest_json(target_json_data)
-    ref_json_data = sanitise_pytest_json(ref_json_data)
+    if gen_json_data:
+        gen_json_data = sanitise_pytest_json(gen_json_data)
+    if target_json_data:
+        target_json_data = sanitise_pytest_json(target_json_data)
+    if ref_json_data:
+        ref_json_data = sanitise_pytest_json(ref_json_data)
+
     ## Get the proper stats about passed and failed test
     # NOTE: This is the place where you determine when your test passed fail, just add extra things to compare in the if condition if the results become to high
     num_passed = num_total = num_unav = num_failed = 0
@@ -569,6 +573,9 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
         if compare:
             result = 'Unavailable'
             test_dict = utils.load_yaml(test_list)
+            gen_json_data = []
+            target_json_data = []
+            ref_json_data = []
             for test, attr in test_dict.items():
                 test_wd = attr['work_dir']
                 if not os.path.isfile(test_wd + '/dut.dump'):
@@ -596,19 +603,17 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             # Report generation starts here
             # Target
             # Move this into a function
-            if target_json or ref_json:
+            if target_json and ref_json:
 
                 json_file = open(target_json[0] + '.json', 'r')
                 target_json_list = json_file.readlines()
                 json_file.close()
-                target_json_data = []
                 for line in target_json_list:
                     target_json_data.append(json.loads(line))
 
                 json_file = open(ref_json[0] + '.json', 'r')
                 ref_json_list = json_file.readlines()
                 json_file.close()
-                ref_json_data = []
                 for line in ref_json_list:
                     ref_json_data.append(json.loads(line))
 
@@ -629,9 +634,12 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                     json_file = open(gen_json_file, 'r')
                     target_json_list = json_file.readlines()
                     json_file.close()
-                    gen_json_data = []
                     for line in target_json_list:
                         gen_json_data.append(json.loads(line))
+
+                    # See if space saver is enabled
+                    dutpm.hook.post_run(test_dict=test_dict, config=config)
+                    refpm.hook.post_run(test_dict=test_dict, config=config)
 
                 except:
                     logger.warning("Couldn't find a generator JSON file")
@@ -639,31 +647,40 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
 
             else:
                 logger.error(
-                    'JSON files not available hence, exiting framework\nUnless the run API is called, a JSON is not generated.\nNo HTML reports generated'
+                    'JSON files not available \nUnless the run API is called, a JSON is not generated.'
                 )
                 logger.debug(
-                    'Possible reasons:\n1. Pytest crashed internally\n2. Log files are were not returned by the called plugin.'
+                    'Possible reasons:\n1. Single Mode was manually trigerred.\n2. Pytest crashed internally\n3. Log files are were not returned by the called plugin.'
                 )
-                raise SystemExit
-            # See if space saver is enabled
-            dutpm.hook.post_run(test_dict=test_dict, config=config)
-            refpm.hook.post_run(test_dict=test_dict, config=config)
+            for test, attr in test_dict.items():
+                test_dict[test]['result'] = 'Unavailable'
+                logger.debug('Resetting values in test_dict')
 
-            logger.info("Now generating some good HTML reports for you")
-            report_html = generate_report(output_dir, gen_json_data,
-                                          target_json_data, ref_json_data,
-                                          config, test_dict)
-
-            # Check if web browser
-            if utils.str_2_bool(config['river_core']['open_browser']):
-                try:
-                    import webbrowser
-                    logger.info("Openning test report in web-browser")
-                    webbrowser.open(report_html)
-                except:
-                    return 1
         else:
-            logger.info('Comparison was disabled\nHence no report is generated')
+            logger.info(
+                'Comparison was disabled\nHence no diff would be available')
+            result = 'Unavailable'
+            test_dict = utils.load_yaml(test_list)
+            logger.debug('Resetting values in test_dict')
+            for test, attr in test_dict.items():
+                test_dict[test]['result'] = 'Unavailable'
+            gen_json_data = 'Unavailable'
+            target_json_data = 'Unavailable'
+            ref_json_data = 'Unavailable'
+
+        logger.info("Now generating some good HTML reports for you")
+        report_html = generate_report(output_dir, gen_json_data,
+                                      target_json_data, ref_json_data, config,
+                                      test_dict)
+
+        # Check if web browser
+        if utils.str_2_bool(config['river_core']['open_browser']):
+            try:
+                import webbrowser
+                logger.info("Openning test report in web-browser")
+                webbrowser.open(report_html)
+            except:
+                return 1
 
 
 def rivercore_merge(verbosity, db_folders, output, config_file):
