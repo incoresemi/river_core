@@ -90,21 +90,25 @@ the macro for chromite DUT and spike REF is given below:
 .. code-block::
    :linenos:
 
-   #define RVMODEL_HALT                    \
-      la 1f, t6;                           \
-      csrw mtvec, t6;                      \
-      fence.i;                             \
-      li t6,  0x20000;                     \
-      la t5, begin_rvtest_data;            \
-      sw t5, 0(t6);                        \
-      la t5, begin_rvtest_data+8;          \
-      sw t5, 8(t6);                        \
-      sw t5,  12(t6);                      \
-   1f:                                     \
-     li t1, 1;                             \
-     write_tohost:                         \
-       sw t1, tohost, t4;                  \
-       j write_tohost
+  #define RVMODEL_HALT                    \
+     .align 2;                            \
+     .option push;                        \
+     .option norvc;                       \
+     la t6, 1f;                           \
+     csrw mtvec, t6;                      \
+     fence.i;                             \
+     li t6,  0x20000;                     \
+     la t5, begin_rvtest_data;            \
+     sw t5, 0(t6);                        \
+     la t5, begin_rvtest_data+8;          \
+     sw t5, 8(t6);                        \
+     sw t5,  12(t6);                      \
+  1:                                      \
+    li t1, 1;                             \
+    write_tohost:                         \
+      sw t1, tohost, t4;                  \
+      j write_tohost;                     \
+  .option pop;
 
 Line-3 updates the mtvec to point to the self-loop required for terminating spike. Lines-4 to 10
 are used for terminating the simulation on Chromite.
