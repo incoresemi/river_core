@@ -42,6 +42,12 @@ work_dir:
   check_with: dircheck
 result:
   type: string
+compile_macros:
+  type: list
+  schema:
+    type: string
+    nullable: True
+  empty: True
 extra_compile:
   type: list
   schema:

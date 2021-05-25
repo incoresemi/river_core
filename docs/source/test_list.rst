@@ -23,6 +23,7 @@ following syntax:
     generator: <name of the generator plugin used to generate this test>
     march: <the march argument to be supplied to the compiler>
     mabi: <the mabi argument to be supplied to the compiler>
+    compile_macros: <list of strings indicating compile time macros that need to be enabled>
 
 .. note:: While we capture the ISA, it may seem redundant to capture the march
    and mabi. However, the tests can be generated to check a subset features like
