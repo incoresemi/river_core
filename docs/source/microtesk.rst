@@ -1,5 +1,3 @@
-.. _microtesk:
-
 MicroTESK Random Generator
 ===========================
 

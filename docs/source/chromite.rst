@@ -1,5 +1,3 @@
-.. _chromite:
-
 Chromite DUT
 ============
 
@@ -53,7 +51,8 @@ also build all the collaterals like boot.hex files that will be required for sim
 
 The `build` stage will parse through the test-list provided and create a makefile. For each test a
 target in the makefile is created. The the targets are defined such that they can all be run in
-parallel with as many jobs as possible.
+parallel with as many jobs as possible. This makefile will be written to the directory pointed by
+the ``workdir`` variable of the main ``config.ini`` file.
 
 The `run` stage simply passes on the make file command to the pytest environment for parallel
 execution and report generation.

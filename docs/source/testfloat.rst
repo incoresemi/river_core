@@ -1,10 +1,9 @@
-.. _testfloat:
 
 Testfloat
 =========
 Testfloat plugin is based on the on the `Berkeley TestFloat <http://www.jhauser.us/arithmetic/TestFloat.html>`_ program, which checks whether an implementation of binary floating-point conforms to the IEEE Standard for Floating-Point Arithmetic.
 
-You'll have to install the above Testfloat (Release 3e) and the `Berkeley TestFloat <http://www.jhauser.us/arithmetic/SoftFloat.html>`_ into a common directory.
+You'll have to install the above Testfloat (Release 3e) and the `Berkeley SoftFloat <http://www.jhauser.us/arithmetic/SoftFloat.html>`_ into a common directory.
 
 Installation
 ------------
@@ -88,7 +87,7 @@ Additionally you will need to define the simulation halt/end condition in an ass
 the macro for chromite DUT and spike REF is given below:
 
 
-.. code-block:: asm
+.. code-block::
    :linenos:
 
    #define RVMODEL_HALT                    \

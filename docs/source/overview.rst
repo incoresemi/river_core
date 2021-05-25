@@ -37,14 +37,15 @@ The Input Config File
 The entire configuration and flow of the framework is controlled via the input
 ``config.ini`` file. This file is used to capture some of the following
 parameters:
-  - The work directory where all artifacts of generation and simulation are
-    kept.
-  - The overvall ISA string supported by the target
-  - The list of generators to be used and their configurations to generate
-    tests.
-  - Configuration parameters of the Target. This is particularly useful when working with core generators 
-  - Configuration parameters of the reference model.
-  - Whether coverage shuold be enabled by the target and if so, what metrics ?
+
+- The work directory where all artifacts of generation and simulation are
+  kept.
+- The overvall ISA string supported by the target
+- The list of generators to be used and their configurations to generate
+  tests.
+- Configuration parameters of the Target. This is particularly useful when working with core generators 
+- Configuration parameters of the reference model.
+- Whether coverage shuold be enabled by the target and if so, what metrics ?
 
 A sample template of the config.ini file is shown below. More details of syntax
 can be found here :ref:`Config Spec<config_ini>`.
@@ -164,10 +165,11 @@ DUT/Target Plugin
 
 This plugin encapsulates the DUT's/Target's compile and test environment. The plugin allows a user
 complete control over:
-  - choice of toolchain to be used for compiling the tests: GCC, LLVM, Custom, etc
-  - choice of testbench environment : SVUVM, Cocotb, etc.
-  - choice of simulator : Questa, Cadence, Verilator, etc
-  - choice of coverage metrics to enable: functional, structural, etc
+
+- choice of toolchain to be used for compiling the tests: GCC, LLVM, Custom, etc
+- choice of testbench environment : SVUVM, Cocotb, etc.
+- choice of simulator : Questa, Cadence, Verilator, etc
+- choice of coverage metrics to enable: functional, structural, etc
 
 The DUT Plugin supports the following hooks:
 

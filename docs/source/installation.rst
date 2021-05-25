@@ -2,8 +2,6 @@
 
 .. _quickstart:
 
-.. highlight:: shell
-
 ==========
 Quickstart
 ==========
@@ -25,7 +23,7 @@ Install Python and Pip
       If you are are Ubuntu 16.10 and 17.04 you can directly install python3.6 using the Universe
       repository
       
-      .. code-block:: shell-session
+      .. code-block:: console
 
         $ sudo apt-get update
         $ sudo apt-get install python3.6 python3-pip
@@ -34,7 +32,7 @@ Install Python and Pip
       If you are using Ubuntu 14.04 or 16.04 you need to get python3.6 from a Personal Package Archive 
       (PPA)
       
-      .. code-block:: shell-session
+      .. code-block:: console
 
         $ sudo add-apt-repository ppa:deadsnakes/ppa
         $ sudo apt-get update
@@ -44,7 +42,7 @@ Install Python and Pip
       You should now have 2 binaries: ``python3`` and ``pip3`` available in your $PATH. 
       You can check the versions as below
       
-      .. code-block:: shell-session
+      .. code-block:: console
 
         $ python3 --version
         Python 3.6.9
@@ -56,7 +54,7 @@ Install Python and Pip
       The CentOS 7 Linux distribution includes Python 2 by default. However, as of CentOS 7.7, Python 3 
       is available in the base package repository which can be installed using the following commands
       
-      .. code-block:: shell-session
+      .. code-block:: console
 
         $ sudo yum update -y
         $ sudo yum install -y python3
@@ -65,7 +63,7 @@ Install Python and Pip
       For versions prior to 7.7 you can install python3.6 using third-party repositories, such as the 
       IUS repository
       
-      .. code-block:: shell-session
+      .. code-block:: console
 
         $ sudo yum update -y
         $ sudo yum install yum-utils
@@ -75,7 +73,7 @@ Install Python and Pip
       
       You can check the versions
       
-      .. code-block:: shell-session
+      .. code-block:: console
 
         $ python3 --version
         Python 3.6.8
@@ -276,7 +274,7 @@ To continue further we shall first create a working directory, say ``myquickstar
    $ mkdir ~/myquickstart
 
 
-You can install some of the pre-built plugins from the `Gitlab Repo <https://gitlab.com/incoresemi/river-framework/core-verification/river_core_plugins.git>`_
+You can install some of the pre-built plugins from the `Plugin Repo <https://gitlab.com/incoresemi/river-framework/core-verification/river_core_plugins.git>`_
 
 .. code-block:: console
 
