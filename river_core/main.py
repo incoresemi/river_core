@@ -144,9 +144,6 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
         if dut_stage == 'auto':
             logger.debug('Auto mode has disabled DuT Plugin')
             dut_stage = 'None'
-        # Disabling comparison as it doesn't make sense to run single handedly
-        logger.debug('Auto mode has disabled compare')
-        compare = False
     rivercore_compile(config, test_list, coverage, verbosity, dut_stage,
                       ref_stage, compare)
 
