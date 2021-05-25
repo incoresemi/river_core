@@ -171,8 +171,7 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
     root = os.path.abspath(os.path.dirname(__file__))
     str_report_template = root + '/templates/report.html'
     str_css_template = root + '/templates/style.css'
-    report_file_name = 'report_{0}.html'.format(
-        datetime.datetime.now().strftime("%Y%m%d-%H%M"))
+    report_file_name = 'report.html'
     report_dir = output_dir + '/reports/'
     html_objects = {}
     html_objects['name'] = "RiVer Core Verification Report"
