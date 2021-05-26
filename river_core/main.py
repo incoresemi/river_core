@@ -5,7 +5,7 @@ import click
 import os
 
 from river_core.log import *
-from river_core.rivercore import rivercore_clean, rivercore_compile, rivercore_generate, rivercore_merge
+from river_core.rivercore import rivercore_clean, rivercore_compile, rivercore_generate, rivercore_merge, rivercore_setup
 from river_core.__init__ import __version__
 import river_core.constants as constants
 
@@ -59,20 +59,43 @@ def clean(config, verbosity):
 
 
 @click.version_option(version=__version__)
+@click.option(
+    '--config',
+    is_flag=True,
+    default=None,
+    help=
+    'Create a sample config with the name river_core.ini in the current directory'
+)
+@click.option(
+    '--dut',
+    default=None,
+    help=
+    'Create a sample DuT Plugin with the specified name in the current directory'
+)
+@click.option(
+    '--gen',
+    default=None,
+    help=
+    'Create a sample Generator Plugin with the specified name in the current directory'
+)
+@click.option(
+    '--ref',
+    default=None,
+    help=
+    'Create a sample Reference Plugin with the specified name in the current directory'
+)
 @click.option('-v',
               '--verbosity',
               default='info',
               help='Set the verbosity level for the framework')
 @cli.command()
-def setup(verbosity):
+def setup(config, dut, gen, ref, verbosity):
     '''
         subcommand to generate template setup files
     '''
     logger.info(constants.header_temp.format(__version__))
-    logger.info('Creating sample config file: "river_core.ini"')
-    with open('river_core.ini', 'w') as file:
-        file.write(constants.sample_config)
-    logger.info('river_core.ini file created successfully')
+
+    rivercore_setup(config, dut, gen, ref, verbosity)
 
 
 # -------------------------

@@ -880,3 +880,58 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
         webbrowser.open(report_html)
     except:
         logger.info("Couldn't open the browser")
+
+
+def rivercore_setup(config, dut, gen, ref, verbosity):
+
+    logger.level(verbosity)
+    if config:
+
+        logger.info('Creating sample config file: "river_core.ini"')
+        with open('river_core.ini', 'w') as file:
+            file.write(sample_config)
+        logger.info('river_core.ini file created successfully')
+
+    if gen:
+        cwd = os.getcwd()
+        logger.info("Creating sample Plugin directory for Generator: " +
+                    str(gen))
+        root = os.path.abspath(os.path.dirname(__file__))
+        src = os.path.join(root, "templates/setup/generator/")
+        dest = os.path.join(cwd, gen)
+        logger.debug('Copy files')
+        shutil.copytree(src, dest)
+
+        # Rename stuff
+        logger.debug('Renaming files')
+        os.rename(cwd + '/' + gen + '/sample_gen_config.yaml',
+                  cwd + '/' + gen + '/' + gen + '_gen_config.yaml')
+        os.rename(cwd + '/' + gen + '/sample_plugin.py',
+                  cwd + '/' + gen + '/' + gen + '_plugin.py')
+
+        # Plugin.py
+        with open(cwd + '/' + gen + '/' + gen + '_plugin.py', 'r') as file:
+            filedata = file.read()
+
+        # Replace the target string
+        logger.debug('Replacing names')
+        filedata = filedata.replace('sample', gen)
+
+        # Write the file out again
+        with open(cwd + '/' + gen + '/' + gen + '_plugin.py', 'w') as file:
+            file.write(filedata)
+
+        # conftest
+        with open(cwd + '/' + gen + '/' + 'conftest.py', 'r') as file:
+            filedata = file.read()
+
+        # Replace the target string
+        logger.debug('Replacing names')
+        filedata = filedata.replace('sample', gen)
+
+        # Write the file out again
+        with open(cwd + '/' + gen + '/' + 'conftest.py', 'w') as file:
+            file.write(filedata)
+
+        logger.info(
+            'Created {0} Plugin in the current working directory'.format(gen))
