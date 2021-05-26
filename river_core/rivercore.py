@@ -438,43 +438,45 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
         logger.info('No targets configured, so moving on the reference')
     else:
         for target in target_list:
-            logger.info("DuT Info")
-            logger.info("DuT Jobs : {0}".format(config[target]['jobs']))
-            logger.info("DuT Count (Times to run) : {0}".format(
-                config[target]['count']))
+            if dut_flags:
+                logger.info("DuT Info")
+                logger.info("DuT Jobs : {0}".format(config[target]['jobs']))
+                logger.info("DuT Count (Times to run) : {0}".format(
+                    config[target]['count']))
 
-            dutpm = pluggy.PluginManager('dut')
-            dutpm.add_hookspecs(DuTSpec)
+                dutpm = pluggy.PluginManager('dut')
+                dutpm.add_hookspecs(DuTSpec)
 
-            isa = config['river_core']['isa']
-            config[target]['isa'] = isa
-            path_to_module = config['river_core']['path_to_target']
-            plugin_target = target + '_plugin'
-            logger.info('Now running on the Target Plugins')
-            logger.info('Now loading {0}-target'.format(target))
+                isa = config['river_core']['isa']
+                config[target]['isa'] = isa
+                path_to_module = config['river_core']['path_to_target']
+                plugin_target = target + '_plugin'
+                logger.info('Now running on the Target Plugins')
+                logger.info('Now loading {0}-target'.format(target))
 
-            abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
-            logger.debug("Loading module from {0}".format(abs_location_module))
+                abs_location_module = path_to_module + '/' + plugin_target + '/' + plugin_target + '.py'
 
-            try:
-                dutpm_spec = importlib.util.spec_from_file_location(
-                    plugin_target, abs_location_module)
-                dutpm_module = importlib.util.module_from_spec(dutpm_spec)
-                dutpm_spec.loader.exec_module(dutpm_module)
+                try:
+                    logger.debug(
+                        "Loading module from {0}".format(abs_location_module))
+                    dutpm_spec = importlib.util.spec_from_file_location(
+                        plugin_target, abs_location_module)
+                    dutpm_module = importlib.util.module_from_spec(dutpm_spec)
+                    dutpm_spec.loader.exec_module(dutpm_module)
 
-                # DuT Plugins
-                # TODO:DOC: Naming for class in plugin
-                plugin_class = "{0}_plugin".format(target)
-                class_to_call = getattr(dutpm_module, plugin_class)
-                dutpm.register(class_to_call())
-            except:
-                logger.error(
-                    "Sorry, loading the requested plugin has failed, please check the configuration"
-                )
-                logger.debug(
-                    'Hello, it seems you are debugging, this usually indicates that the loading failed.\nCheck whether Python file being loaded is fine i.e. no errors and warnings. etc'
-                )
-                raise SystemExit
+                    # DuT Plugins
+                    # TODO:DOC: Naming for class in plugin
+                    plugin_class = "{0}_plugin".format(target)
+                    class_to_call = getattr(dutpm_module, plugin_class)
+                    dutpm.register(class_to_call())
+                except:
+                    logger.error(
+                        "Sorry, loading the requested plugin has failed, please check the configuration"
+                    )
+                    logger.debug(
+                        'Hello, it seems you are debugging, this usually indicates that the loading failed.\nCheck whether Python file being loaded is fine i.e. no errors and warnings. etc'
+                    )
+                    raise SystemExit
             if dut_flags == 'init':
                 logger.debug('Single mode flag detected\nRunning init')
                 dutpm.hook.init(ini_config=config[target],
@@ -507,40 +509,42 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
         raise SystemExit
     else:
         for ref in ref_list:
+            if ref_flags:
+                logger.info("Reference Info")
+                logger.info("Reference Jobs : {0}".format(config[ref]['jobs']))
+                logger.info(
+                    "Reference Count (Times to run the test) : {0}".format(
+                        config[ref]['count']))
+                refpm = pluggy.PluginManager('dut')
+                refpm.add_hookspecs(DuTSpec)
 
-            logger.info("Reference Info")
-            logger.info("Reference Jobs : {0}".format(config[ref]['jobs']))
-            logger.info("Reference Count (Times to run the test) : {0}".format(
-                config[ref]['count']))
-            refpm = pluggy.PluginManager('dut')
-            refpm.add_hookspecs(DuTSpec)
+                path_to_module = config['river_core']['path_to_ref']
+                plugin_ref = ref + '_plugin'
+                logger.info('Now loading {0}-target'.format(ref))
+                # Get ISA from river
+                isa = config['river_core']['isa']
+                config[ref]['isa'] = isa
 
-            path_to_module = config['river_core']['path_to_ref']
-            plugin_ref = ref + '_plugin'
-            logger.info('Now loading {0}-target'.format(ref))
-            # Get ISA from river
-            isa = config['river_core']['isa']
-            config[ref]['isa'] = isa
+                abs_location_module = path_to_module + '/' + plugin_ref + '/' + plugin_ref + '.py'
 
-            abs_location_module = path_to_module + '/' + plugin_ref + '/' + plugin_ref + '.py'
-            logger.debug("Loading module from {0}".format(abs_location_module))
+                try:
+                    logger.debug(
+                        "Loading module from {0}".format(abs_location_module))
+                    refpm_spec = importlib.util.spec_from_file_location(
+                        plugin_ref, abs_location_module)
+                    refpm_module = importlib.util.module_from_spec(refpm_spec)
+                    refpm_spec.loader.exec_module(refpm_module)
 
-            try:
-                refpm_spec = importlib.util.spec_from_file_location(
-                    plugin_ref, abs_location_module)
-                refpm_module = importlib.util.module_from_spec(refpm_spec)
-                refpm_spec.loader.exec_module(refpm_module)
-
-                # DuT Plugins
-                # TODO:DOC: Naming for class in plugin
-                plugin_class = "{0}_plugin".format(ref)
-                class_to_call = getattr(refpm_module, plugin_class)
-                refpm.register(class_to_call())
-            except:
-                logger.error(
-                    "Sorry, requested plugin is not really was not found at location, please check config.ini"
-                )
-                raise SystemExit
+                    # DuT Plugins
+                    # TODO:DOC: Naming for class in plugin
+                    plugin_class = "{0}_plugin".format(ref)
+                    class_to_call = getattr(refpm_module, plugin_class)
+                    refpm.register(class_to_call())
+                except:
+                    logger.error(
+                        "Sorry, requested plugin not found at location, please check config.ini"
+                    )
+                    raise SystemExit
 
             if ref_flags == 'init':
                 logger.debug('Single mode flag detected\nRunning init')
