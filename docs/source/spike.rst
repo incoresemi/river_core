@@ -1,32 +1,21 @@
-Mod-Spike
-=========
+Spike
+=====
 
-`Spike [Mod] <https://gitlab.com/shaktiproject/tools/mod-spike>`_ plugin is based on the mod-spike developed by Team Shakti.
-
-`mod-spike` is a modified version of the RISC-V ISA Simulator written by Andrew Waterman and Yunsup Lee.
-`mod-spike` has different custom extensions to spike, which is helpful for getting better insight into the RISC-V simulation at the ISA level.
+`Spike <https://github.com/riscv/riscv-isa-sim>`_, the RISC-V ISA Simulator, implements a functional model of one or more RISC-V harts. 
 
 Installation
 ------------
 
-.. code-block:: console
+Set the RISCV environment variable to the RISC-V tools install path.
 
-  $ git clone https://gitlab.com/shaktiproject/tools/mod-spike.git
-  $ cd mod-spike
-  $ git checkout bump-to-latest
-  $ git clone https://github.com/riscv/riscv-isa-sim.git
-  $ cd riscv-isa-sim
-  $ git checkout 6d15c93fd75db322981fe58ea1db13035e0f7add
-  $ git apply ../shakti.patch
-  $ export RISCV=<path you to install spike>
+.. code-block:: console
+  
+  $ apt-get install device-tree-compiler
   $ mkdir build
   $ cd build
-  $ ../configure --prefix=$RISCV
+  $ ../configure --prefix=$RISCV --enable-commitlog
   $ make
   $ [sudo] make install
-
-
-
 
 Design
 ------
