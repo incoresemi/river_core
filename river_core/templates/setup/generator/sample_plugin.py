@@ -15,6 +15,7 @@ gen_hookimpl = pluggy.HookimplMarker("generator")
 
 
 class sample_plugin(object):
+    # NOTE: Do not change the above naming scheme unless you are really sure about what you are doing
     """ Generator hook implementation """
 
     # creates gendir and any setup related things

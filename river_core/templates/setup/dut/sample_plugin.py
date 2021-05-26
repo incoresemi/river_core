@@ -15,6 +15,7 @@ dut_hookimpl = pluggy.HookimplMarker('dut')
 
 
 class sample_plugin(object):
+    # NOTE: Do not change the above naming scheme unless you are really sure about what you are doing
     '''
         Plugin to set chromite as the target
     '''
@@ -139,6 +140,7 @@ class sample_plugin(object):
             sim_setup = 'ln -f -s ' + self.sim_path + '/sample_sim . && '
             sim_setup += 'ln -f -s ' + self.sim_path + '/boot.mem . && '
             post_process_cmd = 'head -n -4 rtl.dump > dut.dump && rm -f rtl.dump'
+
             # TODO: This creates the final command. This should be passed on to the next stage in any format, depending upon the format, developer is comfortable in.
             target_cmd = ch_cmd + compile_cmd + self.objdump_cmd +\
                     self.elf2hex_cmd + sim_setup + self.sim_cmd + ' ' + \

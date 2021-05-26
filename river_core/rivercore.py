@@ -883,6 +883,30 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
 
 
 def rivercore_setup(config, dut, gen, ref, verbosity):
+    '''
+        Function to generate sample plugins 
+
+        :param config: Flag to create a sample config.ini 
+        
+        :param dut: Flag to create a sample DuT plugin
+
+        :param gen: Flag to create a sample Generator Plugin
+
+        :param ref: Flag to create a sample Reference Plugin
+
+        :param verbosity: Verbosity level for the logger
+
+        :type config bool:
+        
+        :type dut bool:
+
+        :type gen bool:
+ 
+        :type ref bool:
+
+        :type verbosity str:
+
+    '''
 
     logger.level(verbosity)
     cwd = os.getcwd()
@@ -894,8 +918,9 @@ def rivercore_setup(config, dut, gen, ref, verbosity):
         logger.info('river_core.ini file created successfully')
 
     if gen:
-        logger.info("Creating sample Plugin directory for Generator: " +
-                    str(gen))
+        logger.info(
+            "Creating sample Plugin directory for Generator with name:" +
+            str(gen))
         root = os.path.abspath(os.path.dirname(__file__))
         src = os.path.join(root, "templates/setup/generator/")
         dest = os.path.join(cwd, gen)
@@ -937,7 +962,8 @@ def rivercore_setup(config, dut, gen, ref, verbosity):
             'Created {0} Plugin in the current working directory'.format(gen))
 
     if dut:
-        logger.info("Creating sample Plugin directory for DuT: " + str(dut))
+        logger.info("Creating sample Plugin directory for DuT Type with name:" +
+                    str(dut))
         root = os.path.abspath(os.path.dirname(__file__))
         src = os.path.join(root, "templates/setup/dut/")
         dest = os.path.join(cwd, dut)
@@ -975,3 +1001,45 @@ def rivercore_setup(config, dut, gen, ref, verbosity):
 
         logger.info(
             'Created {0} Plugin in the current working directory'.format(dut))
+
+    if ref:
+        logger.info(
+            "Creating sample Plugin directory for Reference Type with name:" +
+            str(ref))
+        root = os.path.abspath(os.path.dirname(__file__))
+        src = os.path.join(root, "templates/setup/reference/")
+        dest = os.path.join(cwd, ref)
+        logger.debug('Copy files')
+        shutil.copytree(src, dest)
+
+        # Rename stuff
+        logger.debug('Renaming files')
+        os.rename(cwd + '/' + ref + '/sample_plugin.py',
+                  cwd + '/' + ref + '/' + ref + '_plugin.py')
+
+        # Plugin.py
+        with open(cwd + '/' + ref + '/' + ref + '_plugin.py', 'r') as file:
+            filedata = file.read()
+
+        # Replace the target string
+        logger.debug('Replacing names')
+        filedata = filedata.replace('sample', ref.lower())
+
+        # Write the file out again
+        with open(cwd + '/' + ref + '/' + ref + '_plugin.py', 'w') as file:
+            file.write(filedata)
+
+        # conftest
+        with open(cwd + '/' + ref + '/' + 'conftest.py', 'r') as file:
+            filedata = file.read()
+
+        # Replace the target string
+        logger.debug('Replacing names')
+        filedata = filedata.replace('sample', ref.lower())
+
+        # Write the file out again
+        with open(cwd + '/' + ref + '/' + 'conftest.py', 'w') as file:
+            file.write(filedata)
+
+        logger.info(
+            'Created {0} Plugin in the current working directory'.format(ref))
