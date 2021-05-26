@@ -1,7 +1,7 @@
 C-Class DUT
 ============
 
-`C-Class Core Generator <https://cclass.readthedocs.io/en/latest/>`_ plugin is a core generator developed by IIT Madras.
+`C-Class Core Generator <https://c-class.readthedocs.io/en/latest/>`_ plugin is a core generator developed by IIT Madras.
 
 Pre-requisites
 --------------
