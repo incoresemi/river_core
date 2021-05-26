@@ -325,7 +325,7 @@ function filter_table(elem) {
       </table>
     <h2>Results</h2>
 
-   <h3><a href="{{ generator }}.html">Generation Results</a></h3>
+    <h3><a href="{{ generator }}.html">Generation Results</a></h3>
     <table id="results-table">
       <thead id="results-table-head">
         <tr>
@@ -333,7 +333,7 @@ function filter_table(elem) {
           <th class="sortable" col="name">Test</th>
           </tr>
         </thead>
-         {% if target_data == 'Unavailable' -%}
+        {% if not gen_data -%}
         <tbody class= 'failed' results-table-row>
         <tr>
             <td class="col-result">Unavailable</td>
@@ -358,7 +358,7 @@ function filter_table(elem) {
 </tbody>
       </table>
 
-   <h3><a href="{{ generator }}.html">DUT Compilation Results</a></h3>
+    <h3><a href="{{ dut }}.html">DuT Results</a></h3>
     <table id="results-table">
       <thead id="results-table-head">
         <tr>
@@ -366,7 +366,7 @@ function filter_table(elem) {
           <th class="sortable" col="name">Test</th>
           </tr>
         </thead>
-         {% if target_data == 'Unavailable' -%}
+         {% if not target_data  -%}
         <tbody class= 'failed' results-table-row>
         <tr>
             <td class="col-result">Unavailable</td>
@@ -390,7 +390,7 @@ function filter_table(elem) {
         {%- endif %}
       </table>
 
-   <h3><a href="{{ generator }}.html">Ref Compilation Results</a></h3>
+    <h3><a href="{{ reference }}.html">Reference Results</a></h3>
     <table id="results-table">
       <thead id="results-table-head">
         <tr>
@@ -398,7 +398,7 @@ function filter_table(elem) {
           <th class="sortable" col="name">Test</th>
           </tr>
         </thead>
-         {% if target_data == 'Unavailable' -%}
+        {% if not ref_data -%}
         <tbody class= 'failed' results-table-row>
         <tr>
             <td class="col-result">Unavailable </td>

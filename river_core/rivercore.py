@@ -607,58 +607,61 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             # Report generation starts here
             # Target
             # Move this into a function
-            if target_json and ref_json:
-
+            if target_json:
                 json_file = open(target_json[0] + '.json', 'r')
                 target_json_list = json_file.readlines()
                 json_file.close()
                 for line in target_json_list:
                     target_json_data.append(json.loads(line))
-
+            else:
+                logger.debug('Could not find a target_json file')
+                for test, attr in test_dict.items():
+                    test_dict[test]['result'] = 'Unavailable'
+                    logger.debug(
+                        'Resetting values in test_dict; Triggered by the lack of DuT values'
+                    )
+            if ref_json:
                 json_file = open(ref_json[0] + '.json', 'r')
                 ref_json_list = json_file.readlines()
                 json_file.close()
                 for line in ref_json_list:
                     ref_json_data.append(json.loads(line))
-
-                # Need to an Gen json file for final report
-                # TODO:CHECK: Only issue is that this can ideally be a wrong approach
-
-                try:
-                    logger.info(
-                        "Checking for a generator json to create final report")
-                    json_files = glob.glob(
-                        output_dir + '/.json/{0}*.json'.format(
-                            config['river_core']['generator']))
-                    logger.debug(
-                        "Detected generated JSON Files: {0}".format(json_files))
-
-                    # Can only get one file back
-                    gen_json_file = max(json_files, key=os.path.getctime)
-                    json_file = open(gen_json_file, 'r')
-                    target_json_list = json_file.readlines()
-                    json_file.close()
-                    for line in target_json_list:
-                        gen_json_data.append(json.loads(line))
-
-                    # See if space saver is enabled
-                    dutpm.hook.post_run(test_dict=test_dict, config=config)
-                    refpm.hook.post_run(test_dict=test_dict, config=config)
-
-                except:
-                    logger.warning("Couldn't find a generator JSON file")
-                    gen_json_data = []
-
             else:
-                logger.error(
-                    'JSON files not available \nUnless the run API is called, a JSON is not generated.'
-                )
+                logger.debug('Could not find a reference_json file')
+                for test, attr in test_dict.items():
+                    test_dict[test]['result'] = 'Unavailable'
+                    logger.debug(
+                        'Resetting values in test_dict; Triggered by the lack of Ref values'
+                    )
+
+            # Need to an Gen json file for final report
+            # TODO:CHECK: Only issue is that this can ideally be a wrong approach
+
+            try:
+                logger.info(
+                    "Checking for a generator json to create final report")
+                json_files = glob.glob(output_dir + '/.json/{0}*.json'.format(
+                    config['river_core']['generator']))
                 logger.debug(
-                    'Possible reasons:\n1. Single Mode was manually trigerred.\n2. Pytest crashed internally\n3. Log files are were not returned by the called plugin.'
-                )
-            for test, attr in test_dict.items():
-                test_dict[test]['result'] = 'Unavailable'
-                logger.debug('Resetting values in test_dict')
+                    "Detected generated JSON Files: {0}".format(json_files))
+
+                # Can only get one file back
+                gen_json_file = max(json_files, key=os.path.getctime)
+                json_file = open(gen_json_file, 'r')
+                target_json_list = json_file.readlines()
+                json_file.close()
+                for line in target_json_list:
+                    gen_json_data.append(json.loads(line))
+
+            except:
+                logger.warning("Couldn't find a generator JSON file")
+                gen_json_data = []
+                gen_json_file = []
+
+            if (target_json and ref_json and gen_json_file):
+                # See if space saver is enabled when we have all the data
+                dutpm.hook.post_run(test_dict=test_dict, config=config)
+                refpm.hook.post_run(test_dict=test_dict, config=config)
 
         else:
             logger.info(
@@ -668,9 +671,9 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             logger.debug('Resetting values in test_dict')
             for test, attr in test_dict.items():
                 test_dict[test]['result'] = 'Unavailable'
-            gen_json_data = 'Unavailable'
-            target_json_data = 'Unavailable'
-            ref_json_data = 'Unavailable'
+            gen_json_data = []
+            target_json_data = []
+            ref_json_data = []
 
         logger.info("Now generating some good HTML reports for you")
         report_html = generate_report(output_dir, gen_json_data,
