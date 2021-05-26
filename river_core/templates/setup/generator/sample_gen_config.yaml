@@ -1,0 +1,2 @@
+global_command: sample gen 
+# Could contain more configuraation operations that need to exist for the plugin
