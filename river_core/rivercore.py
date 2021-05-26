@@ -885,6 +885,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
 def rivercore_setup(config, dut, gen, ref, verbosity):
 
     logger.level(verbosity)
+    cwd = os.getcwd()
     if config:
 
         logger.info('Creating sample config file: "river_core.ini"')
@@ -893,7 +894,6 @@ def rivercore_setup(config, dut, gen, ref, verbosity):
         logger.info('river_core.ini file created successfully')
 
     if gen:
-        cwd = os.getcwd()
         logger.info("Creating sample Plugin directory for Generator: " +
                     str(gen))
         root = os.path.abspath(os.path.dirname(__file__))
@@ -915,7 +915,7 @@ def rivercore_setup(config, dut, gen, ref, verbosity):
 
         # Replace the target string
         logger.debug('Replacing names')
-        filedata = filedata.replace('sample', gen)
+        filedata = filedata.replace('sample', gen.lower())
 
         # Write the file out again
         with open(cwd + '/' + gen + '/' + gen + '_plugin.py', 'w') as file:
@@ -927,7 +927,7 @@ def rivercore_setup(config, dut, gen, ref, verbosity):
 
         # Replace the target string
         logger.debug('Replacing names')
-        filedata = filedata.replace('sample', gen)
+        filedata = filedata.replace('sample', gen.lower())
 
         # Write the file out again
         with open(cwd + '/' + gen + '/' + 'conftest.py', 'w') as file:
@@ -935,3 +935,43 @@ def rivercore_setup(config, dut, gen, ref, verbosity):
 
         logger.info(
             'Created {0} Plugin in the current working directory'.format(gen))
+
+    if dut:
+        logger.info("Creating sample Plugin directory for DuT: " + str(dut))
+        root = os.path.abspath(os.path.dirname(__file__))
+        src = os.path.join(root, "templates/setup/dut/")
+        dest = os.path.join(cwd, dut)
+        logger.debug('Copy files')
+        shutil.copytree(src, dest)
+
+        # Rename stuff
+        logger.debug('Renaming files')
+        os.rename(cwd + '/' + dut + '/sample_plugin.py',
+                  cwd + '/' + dut + '/' + dut + '_plugin.py')
+
+        # Plugin.py
+        with open(cwd + '/' + dut + '/' + dut + '_plugin.py', 'r') as file:
+            filedata = file.read()
+
+        # Replace the target string
+        logger.debug('Replacing names')
+        filedata = filedata.replace('sample', dut.lower())
+
+        # Write the file out again
+        with open(cwd + '/' + dut + '/' + dut + '_plugin.py', 'w') as file:
+            file.write(filedata)
+
+        # conftest
+        with open(cwd + '/' + dut + '/' + 'conftest.py', 'r') as file:
+            filedata = file.read()
+
+        # Replace the target string
+        logger.debug('Replacing names')
+        filedata = filedata.replace('sample', dut.lower())
+
+        # Write the file out again
+        with open(cwd + '/' + dut + '/' + 'conftest.py', 'w') as file:
+            file.write(filedata)
+
+        logger.info(
+            'Created {0} Plugin in the current working directory'.format(dut))
