@@ -14,19 +14,19 @@ To facilitate a plugin based approach, we use the `Pluggy Framework <https://plu
 And to do all the low-level work (command generation, running commands) we use the `Pytest Framework <https://docs.pytest.org/en/6.2.x/index.html>`_ in combination with the Pluggy framework.
 It also is helpful as it provides with detailed HTML reports.
 
-As explained in the :ref:`Overview <overview>`, the plugins are broadly classified into Generator, DuT (Device Under Test) and Reference Plugins.
+As explained in the :ref:`Overview <overview>`, the plugins are broadly classified into Generator, DUT (Device Under Test) and Reference Plugins.
 
 To re-iterate the above things in short:
 
 - **Generator plugins**:
 
-  These plugins are wrappers aroung existing Random Code Generator tools that generate random ASM files for a design to run. Some of the common examples include:
+  These plugins are wrappers around existing Random Code Generator tools that generate random ASM files for a design to run. Some of the common examples include:
 
   + AAPG
   + Torture
   + Microtesk
 
-- **DuT plugins**:
+- **DUT plugins**:
 
   These Plugins help in running the above generated tests on a design and compiler that you want. Some of the common compiler plugins include:
 
@@ -124,10 +124,10 @@ Generator Plugins
    :members: RandomGeneratorSpec
 
 
-DuT and Reference Plugins
+DUT and Reference Plugins
 """""""""""""""""""""""""
 
-- The DuT plugins needs to have 4 different APIs that will be accessed by RIVER CORE.
+- The DUT plugins needs to have 4 different APIs that will be accessed by RIVER CORE.
 - Reference plugin only needs to have the first 3, ``merge`` API is optional.
 
 .. automodule:: river_core.sim_hookspecs

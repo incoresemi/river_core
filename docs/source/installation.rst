@@ -443,7 +443,7 @@ You should see the following log on the console:
              info  | Version: 0.1.0
              info  | Copyright (c) 2021 InCore Semiconductors Pvt. Ltd.
             debug  | Read file from river_core.ini
-             info  | ****** RiVer Core 0.1.0 *******
+             info  | ****** RIVER Core 0.1.0 *******
              info  | Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.
              info  | All Rights Reserved.
              info  | ****** Generation Mode ****** 

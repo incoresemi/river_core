@@ -41,7 +41,7 @@ elf2hex command that comes with `spike <https://github.com/riscv/riscv-isa-sim>`
 
 Chromite test-soc used for simulation also requires a simple boot-code. This is checked in to the
 ``boot`` directory inside the plugin. Currently this boot-code includes a basic dts file and
-indirection to address ``0x80000000`` at the begining itself. The Makefile in the ``boot`` directory
+indirection to address ``0x80000000`` at the beginning itself. The Makefile in the ``boot`` directory
 is used to create the required boot hex files.
 
 Plugin Flow
@@ -50,7 +50,7 @@ Plugin Flow
 There are multiple plugin variants available. Based on the simulator of choice, each plugin will
 first compile the verilog and generate an executable. The compilation can account for the fact of
 whether coverage is enabled or not. This is done as part of the `init` stage. The `init` stage will
-also build all the collaterals like boot.hex files that will be required for simulation.
+also build all the collateral like boot.hex files that will be required for simulation.
 
 The `build` stage will parse through the test-list provided and create a makefile. For each test a
 target in the makefile is created. The the targets are defined such that they can all be run in
@@ -144,7 +144,7 @@ Instance in ``config.ini``
 
 For any of the above variants, only the ``target`` setting needs to change in the following sample
 instance code. The ``src_dir`` should contain all paths which will contain the necessary verilog
-files for compiling the core (in a comma separated fashion). The src directory should typically
+files for compiling the core (in a comma separated fashion). The ``src_dir`` should typically
 include the following:
 
 - the build/hw/verilog directory of the chromite core

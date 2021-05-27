@@ -40,12 +40,12 @@ parameters:
 
 - The work directory where all artifacts of generation and simulation are
   kept.
-- The overvall ISA string supported by the target
+- The overall ISA string supported by the target
 - The list of generators to be used and their configurations to generate
   tests.
 - Configuration parameters of the Target. This is particularly useful when working with core generators 
 - Configuration parameters of the reference model.
-- Whether coverage shuold be enabled by the target and if so, what metrics ?
+- Whether coverage should be enabled by the target and if so, what metrics ?
 
 A sample template of the config.ini file is shown below. More details of syntax
 can be found here :ref:`Config Spec<config_ini>`.
@@ -129,7 +129,7 @@ following sequence:
    The major output of this stage is a test-list YAML which
    follows the syntax/schema mentioned in :ref:`Test List Format<testlist>`.
    this test list capture all the information about the test and necessary
-   collaterals required to compile each test. By adopting a standard test-list 
+   collateral required to compile each test. By adopting a standard test-list 
    format, we inherently allow any source of tests to be integrated into RIVER 
    CORE as a generator plugin as long as a valid test list is created.
 
@@ -167,7 +167,7 @@ This plugin encapsulates the DUT's/Target's compile and test environment. The pl
 complete control over:
 
 - choice of toolchain to be used for compiling the tests: GCC, LLVM, Custom, etc
-- choice of testbench environment : SVUVM, Cocotb, etc.
+- choice of test-bench environment : SVUVM, Cocotb, etc.
 - choice of simulator : Questa, Cadence, Verilator, etc
 - choice of coverage metrics to enable: functional, structural, etc
 
@@ -184,7 +184,7 @@ The DUT Plugin supports the following hooks:
    that needs to be run on the target. 
 
    .. note:: The target must run all the tests in the test-list provided and should not perform any
-      filtering and skip any tests and should niether modify the tests 
+      filtering and skip any tests and should neither modify the tests 
 
 3. **Run**: This stage is used to run the tests on the DUT. It is recommended to run the tests in
    parallel. RIVER CORE uses the inherent pytest framework to run terminal commands in parallel
@@ -229,9 +229,9 @@ Test Report Generation
 ======================
 
 Once the test results are obtained and updated in the test-list, an HTML report containing
-informatino of each of the above steps is generated for the user. The automatic browser pop-up can
+information of each of the above steps is generated for the user. The automatic browser pop-up can
 be disabled by setting the ``open_browser`` parameter to false in the input ``config.ini`` file.
 
 Each plugin run (generator, dut or reference) also creates a json report of the run which can
-easiliy be populated into html files for better visualization.
+easily be populated into html files for better visualization.
 

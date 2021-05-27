@@ -1,5 +1,5 @@
 ###########
-DuT Plugins
+DUT Plugins
 ###########
 
 .. include:: ./chromite.rst

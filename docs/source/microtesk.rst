@@ -52,4 +52,4 @@ Output
 
 This plugin will generate a `test-list` containing all necessary information for the framework to compile and test code.
 
-This can be useful to share test cases across machines. In order to share the tests, one only needs to share the original finals and test-list which contains all necessary infomation about the tests run.
+This can be useful to share test cases across machines. In order to share the tests, one only needs to share the original finals and test-list which contains all necessary information about the tests run.

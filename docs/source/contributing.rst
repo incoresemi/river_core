@@ -35,24 +35,24 @@ Get Started!
 
 Ready to contribute? Here's how to set up `river_core` for local development.
 
-1. Fork the `river_core` repo on GitLab.
+1. Fork the `river_core` repo on Gitlab.
 2. Clone your fork locally::
 
     $ git clone  https://gitlab.com/incoresemi/river-framework/core-verification/river_core.git
 
 3. Create an issue and WIP merge request that creates a working branch fro you
 
-    $ git checkout -b name-of-your-bugfix-or-feature
+    $ git checkout -b name-of-your-bug-fix-or-feature
 
    Now you can make your changes locally.
 
-4. Commit your changes and push your branch to GitLab::
+4. Commit your changes and push your branch to Gitlab::
 
     $ git add .
     $ git commit -m "Your detailed description of your changes."
-    $ git push origin name-of-your-bugfix-or-feature
+    $ git push origin name-of-your-bug fix-or-feature
 
-5. Submit a merge request through the GitLab website.
+5. Submit a merge request through the Gitlab website.
 
 Merge Request Guidelines
 ----------------------------
@@ -61,7 +61,7 @@ Before you submit a merge request, check that it meets these guidelines:
 
 1. The merge request should include tests.
 2. If the merge request adds functionality, the docs should be updated. 
-3. The merge request should work for Python 3.6, 3.7 and 3.8, and for PyPy. 
+3. The merge request should work for Python 3.6, 3.7 and 3.8, and for Pypi. 
    and make sure that the tests pass for all supported Python versions.
 
 

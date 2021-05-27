@@ -5,7 +5,7 @@ Merge Flow
 ##########
 
 The following diagram captures RIVER CORE Framework's `merge` subcommand. 
-The idea behind the subcommand was to assimilate marge the artifacts of various tests 
+The idea behind the subcommand was to assimilate  the artifacts of various tests 
 (test-lists, coverage database, ranks, etc.) into a single directory.
 
 .. image:: _static/Merge.png
@@ -24,7 +24,7 @@ What does it internally do?
 6. After that is completed, the user is given the option to remove the original directories.
 
 
-Usage Eample
+Usage Example
 ============
 
 You can use the following command to merge directory databases:

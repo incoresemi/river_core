@@ -84,7 +84,7 @@ def generate_coverage_report(output_dir, config, coverage_report,
     report_file_name = 'coverage_report.html'
     report_dir = output_dir + '/reports/'
     html_objects = {}
-    html_objects['name'] = "RiVer Core Coverage Report"
+    html_objects['name'] = "RIVER CORE Coverage Report"
     html_objects['date'] = (datetime.datetime.now().strftime("%d-%m-%Y"))
     html_objects['time'] = (datetime.datetime.now().strftime("%H:%M"))
     html_objects['version'] = __version__
@@ -178,7 +178,7 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
     report_file_name = 'report.html'
     report_dir = output_dir + '/reports/'
     html_objects = {}
-    html_objects['name'] = "RiVer Core Verification Report"
+    html_objects['name'] = "RIVER CORE Verification Report"
     html_objects['date'] = (datetime.datetime.now().strftime("%d-%m-%Y"))
     html_objects['time'] = (datetime.datetime.now().strftime("%H:%M"))
     html_objects['version'] = __version__
@@ -244,7 +244,7 @@ def rivercore_clean(config_file, verbosity):
     config.read(config_file)
     output_dir = config['river_core']['work_dir']
     logger.level(verbosity)
-    logger.info('****** RiVer Core {0} *******'.format(__version__))
+    logger.info('****** RIVER CORE {0} *******'.format(__version__))
     logger.info('****** Cleaning Mode ****** ')
     logger.info('Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')

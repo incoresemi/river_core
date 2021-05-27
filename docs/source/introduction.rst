@@ -13,24 +13,24 @@ following :
 
 - The language chosen to build the target could be classical HDLs like Verilog,
   VHDL, or advanced languages like `BSV <https://github.com/B-Lang-org/bsc>`_, `Chisel <https://www.chisel-lang.org/>`_, etc all the way to High Level
-  Synthesis langauges. Each of these languages offer a wide variety of features
-  which inturn defines the capabilities of target developed.
+  Synthesis languages. Each of these languages offer a wide variety of features
+  which in turn defines the capabilities of target developed.
 - Each implementation can vary in its choice of the sub extensions of the ISA 
   begin supported. This choice is typically driven by the end-use or end-domain
-  being targgeted. 
+  being targeted. 
 - Implementation can vary significantly in their micro-architectural designs,
-  while still being compatible to the RISC-V ISA. A deeply pipelined core mayb be
+  while still being compatible to the RISC-V ISA. A deeply pipelined core maybe be
   optimized for higher performance, while another core supporting the same
   sub-extensions may have a shorter pipeline and be optimized for area and power.
-- Core generators are also becoming quite common nowadays. For eg, the 
+- Core generators are also becoming quite common nowadays. For eg., the 
   `Chromite <https://chromite.readthedocs.io>`_ core generator from InCore is capable of
-  configuring and controlling major aspects of the ISA and the micro-architecture and therby
+  configuring and controlling major aspects of the ISA and the micro-architecture and thereby
   generating a customized core for the end-user. 
 
 
 Irrespective of the above choice, one of the most common challenges faced by any 
 RISC-V design would be : **Verification**. 
-As is well known, it is crucial to enable verification at the very begining of the design stage. 
+As is well known, it is crucial to enable verification at the very beginning of the design stage. 
 In order to verify a RISC-V processor one would require:
 
 - An RTL/Target which needs to be tested. This target can be characterized by
@@ -90,7 +90,7 @@ newer designs to use any such models as a reference model very easily.**
 addressing some of the above mentioned limitations. RIVER CORE enables running tests
 generated from any source (random or directed) on any target (irrespective of
 the language of design and simulation environment) and compare results with any
-choice of a valid golden reference model. RIVER COVER achives this by
+choice of a valid golden reference model. RIVER COVER achieves this by
 splitting the entire verification flow into multiple standardized python-plugin calls.
 Each plugin encapsulates either a test-generator, target test-environment or the
 reference simulation environment. The framework itself 
