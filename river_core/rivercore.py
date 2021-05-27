@@ -369,6 +369,18 @@ def rivercore_generate(config_file, verbosity):
             raise SystemExit
     logger.info('Test List Validated successfully')
 
+    # Open generation report in browser
+    for suite in suite_list:
+        report_html = str(output_dir) + '/reports/{0}.html'.format(suite)
+        if utils.str_2_bool(config['river_core']['open_browser']):
+            try:
+                import webbrowser
+                logger.info(
+                    "Openning test report for {0} in web-browser".format(suite))
+                webbrowser.open(report_html)
+            except:
+                return 1
+
 
 def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                       ref_flags, compare):
