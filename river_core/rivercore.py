@@ -696,7 +696,6 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
 
         Function to merge coverage databases
 
-
         :param verbosity: Verbosity level for the framework
 
         :param db_folders: Tuple containing list of testlists to merge 
@@ -773,7 +772,6 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
                     shutil.copy(folder_yaml[test]['extra_compile'][extra],
                                 common_dir)
                 test_list[test]['extra_compile'] = glob.glob(common_dir + '/*')
-            # Check if we need to copy stuff like aapg.ini and all
             # Copying things from test_list
             test_list[test]['cc'] = folder_yaml[test]['cc']
             test_list[test]['cc_args'] = folder_yaml[test]['cc_args']
@@ -848,10 +846,12 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
         )
         raise SystemExit
 
-    # Perform Merge
-    final_html = dutpm.hook.merge_db(db_files=coverage_database,
-                                     config=config,
-                                     output_db=output)
+    # Perform Merge only if coverage enabled
+    if (utils.str_2_bool(config['coverage']['code']) or
+            utils.str_2_bool(config['coverage']['functional'])):
+        final_html = dutpm.hook.merge_db(db_files=coverage_database,
+                                         config=config,
+                                         output_db=output)
 
     # Create final test list
     test_list_file = output + '/test_list.yaml'
@@ -870,16 +870,22 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
         for db_file in db_folders:
             shutil.rmtree(db_file)
             logger.info(db_file + ' directory deleted')
+    else:
+        logger.info('Exiting framework.\nIndividual folders still exist')
 
     # Coverage Report Generations
-    report_html = generate_coverage_report(report_dir, config, final_html[0][0],
-                                           final_html[0][1], coverage_html)
-    try:
-        import webbrowser
-        logger.info("Opening test report in web-browser")
-        webbrowser.open(report_html)
-    except:
-        logger.info("Couldn't open the browser")
+    if (utils.str_2_bool(config['coverage']['code']) or
+            utils.str_2_bool(config['coverage']['functional'])):
+        report_html = generate_coverage_report(report_dir, config,
+                                               final_html[0][0],
+                                               final_html[0][1], coverage_html)
+
+        try:
+            import webbrowser
+            logger.info("Opening test report in web-browser")
+            webbrowser.open(report_html)
+        except:
+            logger.info("Couldn't open the browser")
 
 
 def rivercore_setup(config, dut, gen, ref, verbosity):
