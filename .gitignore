@@ -124,3 +124,4 @@ tags
 # Persistent undo
 [._]*.un~
 
+river_core.log
