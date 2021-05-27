@@ -24,6 +24,21 @@ List of RISC-V instructions currently supported are:
   - FCVT.[S|D].[W|WU|L|LU]
   - FCVT.[S|D].[D|S]
 
+Assembly Macros
+---------------
+
+This plugin converts test-float output to risc-v assembly using assembly macros which can be found
+in the ``asm/test.h`` file. The macros are defined based on the number of operands required for an
+isntruction:
+
+- ``TEST_R_OP``: Used for single operand operations like fqsrt, fcvt, etc
+- ``TEST_RR_OP``: Used for ops requiring 2 operands like fadd, feq, etc
+- ``TEST_RRR_OP``: Used for ops requiring 3 operands like fmadd, fmsub, etc
+
+Each macro will first update the rounding mode in ``frm`` csr. Then load the operands from the 
+memory section into respective registers, perform the op and read the ``fflags`` csr into an integer
+register.
+
 Pre-requisites
 --------------
 
