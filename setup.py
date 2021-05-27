@@ -22,7 +22,7 @@ setup_requirements = []
 test_requirements = []
 
 setup(
-    author="InCore Semiconductors Pvt. Ltd.",
+    author="InCore Semiconductors Pvt. Ltd.; Tessolve",
     author_email='neelgala@incoresemi.com',
     python_requires='>=3.6',
     classifiers=[
