@@ -8,6 +8,6 @@ Generator Plugins
 
 .. include:: ./microtesk.rst
 
-
+.. include:: ./ctg.rst
 
 
