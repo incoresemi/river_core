@@ -1,0 +1,59 @@
+stages:
+    - pre-merge-check
+    - deploy
+    - post-deploy-check
+
+pre-merge-check:
+  stage: pre-merge-check
+  script:
+    - export PATH="/home/gitlab-runner/.pyenv/bin:$PATH"
+    - eval "$(pyenv init -)"
+    - eval "$(pyenv virtualenv-init -)"
+    - pyenv shell 3.6.10
+    - ./version_check.sh
+    - pip3 install --upgrade pip
+    - pip3 install -r requirements.txt -U
+    - python3 setup.py sdist
+  only:
+    refs:
+      - merge_requests
+  tags:
+    - incore-group
+
+deploy:
+    stage: deploy
+    script:
+      - export PATH="/home/gitlab-runner/.pyenv/bin:$PATH"
+      - eval "$(pyenv init -)"
+      - eval "$(pyenv virtualenv-init -)"
+      - pyenv shell 3.6.10
+      - pip3 install --upgrade pip
+      - pip install -U twine semver python-gitlab
+      - python setup.py sdist
+      - python -m twine upload --username "__token__" --password $pypitoken dist/*
+      - python /scratch/version-extract.py
+    only:
+        refs:
+            - master
+    tags:
+        - incore-group 
+    except:
+      - schedules
+
+post-deploy-check:
+  stage: post-deploy-check
+  script:
+    - export PATH="/home/gitlab-runner/.pyenv/bin:$PATH"
+    - eval "$(pyenv init -)"
+    - eval "$(pyenv virtualenv-init -)"
+    - pyenv shell 3.6.10
+    - pip3 install --upgrade pip
+    - pip3 install -U river_core
+    - source /tools/setup.sh
+    - river_core --help
+  only:
+    refs:
+      - master
+  tags:
+    - incore-group
+
