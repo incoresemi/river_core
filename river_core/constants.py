@@ -25,7 +25,6 @@ isa:
   required: True
 linker_file:
   type: string
-  required: True
   check_with: filecheck
 linker_args:
   type: string
@@ -48,6 +47,7 @@ compile_macros:
     type: string
     nullable: True
   empty: True
+  default: []
 extra_compile:
   type: list
   schema:
@@ -55,6 +55,7 @@ extra_compile:
     nullable: True
     check_with: filecheck
   empty: True
+  default: []
 include:
   type: list
   schema:
