@@ -29,6 +29,8 @@ RiVer Core splits the verification flow into the following stages:
    of the above steps.
 
 RiVer Core uses the `Pluggy <https://pluggy.readthedocs.io/en/latest/>`_ python package to manage plugins.
+Additionally, RiVer can be stopped at any of the points above allowing the user to diverge to a
+custom flow using any of the artifacts of interest.
 
 
 The Input Config File
