@@ -21,7 +21,7 @@ You will need to install the following before using this plugin:
 Setting up the DUT
 ------------------
 
-To setup Chromite as a DUT model for RIVER CORE you will need to generate the verilog for your 
+To setup Chromite as a DUT model for RiVer Core you will need to generate the verilog for your 
 choice of configuration and provide the paths to the verilog to the plugin. 
 
 To generate verilog of the default Chromite configuration:
@@ -60,7 +60,7 @@ the ``workdir`` variable of the main ``config.ini`` file.
 The `run` stage simply passes on the make file command to the pytest environment for parallel
 execution and report generation.
 
-For each test RIVER CORE expects the generation of a ``dut.dump`` which is the execution log of that
+For each test RiVer Core expects the generation of a ``dut.dump`` which is the execution log of that
 test to be present in the working-dir of that test as specified in the test-list. If coverage is
 enabled then each test run will also generate the coverage database which can be merged/ranked
 together. The dump format matches the dump created by mod-spike using the ``-c`` option.
@@ -91,9 +91,9 @@ For this plugin ensure you have setup `Cadence` in your path. Binaries used by t
    - `ncelab`
    - `imc`
 
-.. note:: The user is advised to ensure all of the above binaries are accessible via the shell that will be running `RIVER CORE`.
+.. note:: The user is advised to ensure all of the above binaries are accessible via the shell that will be running `RiVer Core`.
 
-When the ``--coverage`` argument is provided to the RIVER CORE compile command, the chromite core is
+When the ``--coverage`` argument is provided to the RiVer Core compile command, the chromite core is
 compiled with coverage flags enabled. Depending on the settings of the ``functional`` and ``code``
 respective coverage metrics are enabled during the simulation of each test.
 
@@ -118,9 +118,9 @@ For this plugin ensure you have setup `Questa Tools` in your path. Binaries used
    - `vsim`
    - `vcover`
 
-.. note:: The user is advised to ensure all of the above binaries are accessible via the shell that will be running `RIVER CORE`.
+.. note:: The user is advised to ensure all of the above binaries are accessible via the shell that will be running `RiVer Core`.
 
-When the ``--coverage`` argument is provided to the RIVER CORE compile command, the chromite core is
+When the ``--coverage`` argument is provided to the RiVer Core compile command, the chromite core is
 compiled with coverage flags enabled. Depending on the settings of the ``functional`` and ``code``
 respective coverage metrics are enabled during the simulation of each test.
 

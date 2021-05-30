@@ -4,7 +4,7 @@
 Merge Flow
 ##########
 
-The following diagram captures RIVER CORE Framework's `merge` subcommand. 
+The following diagram captures RiVer Core Framework's `merge` subcommand. 
 The idea behind the subcommand was to assimilate  the artifacts of various tests 
 (test-lists, coverage database, ranks, etc.) into a single directory.
 
@@ -108,7 +108,7 @@ We will now try to merge 2 different workdirs into one.
 
    $ river_core merge -c river_core.ini week1-merged day1-aapg-hazards/ day2-aapg-illegal/
 
-            info  | ------------RIVER CORE Verification Framework------------
+            info  | ------------RiVer Core Verification Framework------------
             info  | Version: 0.1.0
             info  | Copyright (c) 2021 InCore Semiconductors Pvt. Ltd.
             info  | Loading config from current directory

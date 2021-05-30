@@ -17,7 +17,7 @@ You will need to install the following before using this plugin:
 Setting up the DUT
 ------------------
 
-To setup C-Class as a DUT model for RIVER CORE you will need to generate the verilog for your 
+To setup C-Class as a DUT model for RiVer Core you will need to generate the verilog for your 
 choice of configuration and provide the paths to the verilog to the plugin. 
 
 To generate verilog of the default C-Class configuration:
@@ -56,7 +56,7 @@ the ``workdir`` variable of the main ``config.ini`` file.
 The `run` stage simply passes on the make file command to the pytest environment for parallel
 execution and report generation.
 
-For each test RIVER CORE expects the generation of a ``dut.dump`` which is the execution log of that
+For each test RiVer Core expects the generation of a ``dut.dump`` which is the execution log of that
 test to be present in the working-dir of that test as specified in the test-list. If coverage is
 enabled then each test run will also generate the coverage database which can be merged/ranked
 together. The dump format matches the dump created by spike using the ``--log-commits`` option.

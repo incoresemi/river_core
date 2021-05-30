@@ -123,7 +123,7 @@ count = 1
 
 '''
 
-header_temp = '''------------RIVER CORE Verification Framework------------
+header_temp = '''------------RiVer Core Verification Framework------------
 Version: {0}
 Copyright (c) 2021 InCore Semiconductors Pvt. Ltd.
 '''

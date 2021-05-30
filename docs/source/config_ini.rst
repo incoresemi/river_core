@@ -9,7 +9,7 @@ Config.ini Spec
 This chapter will discuss the syntax and structure of the ``config.ini`` file used by river_core.
 A sample `config-file`_ is present in the ``examples`` directory of the Git Repository.
 
-.. note:: `RIVER CORE` can automatically detect the configuration file present in the current directory.
+.. note:: `RiVer Core` can automatically detect the configuration file present in the current directory.
 
 
 General Configuration Options
@@ -56,7 +56,7 @@ do this would be:
 
 
 The interpretation and side-effects of these plugin specific parameters is completely left to the
-plugin. RIVER CORE simply forwards them to the respective plugin via the hooks.
+plugin. RiVer Core simply forwards them to the respective plugin via the hooks.
 
 .. note:: A plugins parameters cannot be sent to another plugin. However each
    plugin will receive its parameters and also the general configuration

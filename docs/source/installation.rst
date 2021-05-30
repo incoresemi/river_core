@@ -6,7 +6,7 @@
 Quickstart
 ==========
 
-This section is meant to serve as a quick-guide to setup RIVER CORE and perform a sample run of
+This section is meant to serve as a quick-guide to setup RiVer Core and perform a sample run of
 various phases of the tool. We shall use the AAPG tool as the generator, the
 Chromite core as the DUT and Spike as a reference model.
 
@@ -18,7 +18,7 @@ Install Python and Pip
    .. tab:: Ubuntu
 
 
-      Ubuntu 17.10, 18.04 and 20.04 by default come with `Python>=3.6.9` which is sufficient for using RIVER CORE.
+      Ubuntu 17.10, 18.04 and 20.04 by default come with `Python>=3.6.9` which is sufficient for using RiVer Core.
       
       If you are are Ubuntu 16.10 and 17.04 you can directly install python3.6 using the Universe
       repository
@@ -106,7 +106,7 @@ You can check the version in the **same shell**::
   pip 20.1 from <user-path>.local/lib/python3.6/site-packages/pip (python 3.6)
 
 
-Install RIVER CORE
+Install RiVer Core
 ==================
 
 .. note:: If you are using `pyenv` as mentioned above, make sure to enable that environment before
@@ -116,13 +116,13 @@ Install RIVER CORE
 
    .. tab:: via Git
 
-     To install RIVER_CORE, run this command in your terminal:
+     To install RiVer Core, run this command in your terminal:
      
      .. code-block:: console
      
          $ pip3 install git+https://gitlab.com/incoresemi/river-framework/core-verification/river_core.git
      
-     This is the preferred method to install RIVER_CORE, as it will always install the most recent stable release.
+     This is the preferred method to install RiVer Core, as it will always install the most recent stable release.
      
      If you don't have `pip`_ installed, this `Python installation guide`_ can guide
      you through the process.
@@ -136,13 +136,13 @@ Install RIVER CORE
      
        $ pip3 install river_core
      
-     To update an already installed version of RIVER_CORE to the latest version:
+     To update an already installed version of RiVer Core to the latest version:
      
      .. code-block:: bash
      
        $ pip3 install -U river_core
      
-     To checkout a specific version of RIVER_CORE:
+     To checkout a specific version of RiVer Core:
      
      .. code-block:: bash
      
@@ -150,7 +150,7 @@ Install RIVER CORE
 
    .. tab:: For Dev
 
-     The sources for RIVER_CORE can be downloaded from the `Gitlab Repo <https://gitlab.com/incoresemi/river-framework/core-verification/river_core>`_.
+     The sources for RiVer Core can be downloaded from the `Gitlab Repo <https://gitlab.com/incoresemi/river-framework/core-verification/river_core>`_.
      
      You can clone the repository:
      
@@ -424,7 +424,7 @@ following to setup spike:
 As long as spike is available in the your ``$PATH`` no other changes are
 required.
 
-Running RIVER CORE
+Running RiVer Core
 ==================
 
 Generating Tests
@@ -439,11 +439,11 @@ You should see the following log on the console:
 
 .. code-block:: console
 
-             info  | ------------RIVER CORE Verification Framework------------
+             info  | ------------RiVer Core Verification Framework------------
              info  | Version: 0.1.0
              info  | Copyright (c) 2021 InCore Semiconductors Pvt. Ltd.
             debug  | Read file from river_core.ini
-             info  | ****** RIVER Core 0.1.0 *******
+             info  | ****** RiVer Core 0.1.0 *******
              info  | Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.
              info  | All Rights Reserved.
              info  | ****** Generation Mode ****** 
@@ -559,7 +559,7 @@ You should see the following log on the console:
 
 .. code-block:: console
 
-             info  | ------------RIVER CORE Verification Framework------------
+             info  | ------------RiVer Core Verification Framework------------
              info  | Version: 0.1.0
              info  | Copyright (c) 2021 InCore Semiconductors Pvt. Ltd.
             debug  | Read file from river_core.ini

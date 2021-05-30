@@ -91,7 +91,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'RIVER_CORE'
+project = 'RiVer Core'
 copyright = u'2021 InCore Semiconductors; Tessolve'
 author = 'InCore Semiconductors Pvt. Ltd.; Tessolve'
 
@@ -198,7 +198,7 @@ html_show_license = True
 
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'RIVER_COREdoc'
+htmlhelp_basename = 'RiVer_Coredoc'
 
 # -- Options for LaTeX output ------------------------------------------
 
@@ -297,7 +297,7 @@ latex_elements = {
 
             %%% Alternating Footer for two side
             \fancyfoot[LO, LE]{\small \bf{Copyright \textcopyright \the\year \textbf{ } InCore Semiconductors Pvt. Ltd.; Tessolve}}
-            %\fancyfoot[LO, LE]{\scriptsize \bf{RIVER_CORE}}
+            %\fancyfoot[LO, LE]{\scriptsize \bf{RiVer Core}}
 
             %%% page number
             \fancyfoot[RO, RE]{\thepage}
@@ -339,7 +339,7 @@ latex_elements = {
                 \includegraphics[scale=0.2]{incore_logo.png}
             \end{figure}
             \vspace*{40mm} %%% * is used to give space from top
-            \textbf{\Huge {RIVER CORE Verification Framework}}
+            \textbf{\Huge {RiVer Core Verification Framework}}
             \vspace*{40mm} %%% * is used to give space from top
 
 
@@ -410,7 +410,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'RIVER_CORE.tex', 'RISC-V CORE VERIFICATION Documentation',
+    (master_doc, 'RiVer_Core.tex', 'RISC-V CORE VERIFICATION Documentation',
      'InCore Semiconductors Pvt. Ltd.; Tessolve', 'manual'),
 ]
 
@@ -423,7 +423,7 @@ latex_show_pagerefs = True
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'RIVER_CORE', 'RISC-V CORE VERIFICATION Documentation',
+    (master_doc, 'RiVer_Core', 'RISC-V CORE VERIFICATION Documentation',
      [author], 1)
 ]
 
@@ -434,8 +434,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'RIVER_CORE', 'RISC-V CORE VERIFICATION Documentation',
-     author, 'RIVER_CORE', 'One line description of project.',
+    (master_doc, 'RiVer_Core', 'RISC-V CORE VERIFICATION Documentation',
+     author, 'RiVer_Core', 'One line description of project.',
      'Miscellaneous'),
 ]
 

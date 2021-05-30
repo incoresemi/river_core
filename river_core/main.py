@@ -29,7 +29,7 @@ def check_config():
 @click.group()
 @click.version_option(version=__version__)
 def cli():
-    """RIVER CORE Verification Framework"""
+    """RiVer Core Verification Framework"""
 
 
 @click.version_option(version=__version__)

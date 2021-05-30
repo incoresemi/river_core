@@ -32,7 +32,7 @@ class RandomGeneratorSpec(object):
     @gen_hookspec
     def gen(self, module_dir, output_dir):
         """ 
-        This stage is where the actual tests are generated. RIVER CORE uses
+        This stage is where the actual tests are generated. RiVer Core uses
         the inherent pytest framework to run parallelized commands. Using pytest,
         enables using default report templates which are quite verbose and helpful in
         debugging as well. 
@@ -41,8 +41,8 @@ class RandomGeneratorSpec(object):
         follows the syntax/schema mentioned in :ref:`Test List Format<testlist>`.
         this test list capture all the information about the test and necessary
         collaterals required to compile each test. By adopting a standard test-list 
-        format, we inherently allow any source of tests to be integrated into RIVER 
-        CORE as a generator plugin as long as a valid test list is created.
+        format, we inherently allow any source of tests to be integrated into
+        RiVer Core as a generator plugin as long as a valid test list is created.
 
         :param module_dir:  absolute path of the module directory
 
@@ -119,7 +119,7 @@ class DuTSpec(object):
     def run(self, module_dir):
         """ 
         This stage is used to run the tests on the DUT. It is recommended to run the tests in
-        parallel. RIVER CORE uses the inherent pytest framework to run terminal commands in parallel
+        parallel. RiVer Core uses the inherent pytest framework to run terminal commands in parallel
         fashion. This stage will generate all the artifacts of the simulation like : signature file, 
         execution logs, test-binary, target executable binary, coverage database, simulation logs, etc.
 

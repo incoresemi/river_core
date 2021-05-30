@@ -86,11 +86,11 @@ processing and configuration mechanisms behind a standard API/plugin will enable
 newer designs to use any such models as a reference model very easily.**
 
 
-**RIVER CORE** is an open source python based verification framework primarily aimed at
-addressing some of the above mentioned limitations. RIVER CORE enables running tests
+**RiVer Core** is an open source python based verification framework primarily aimed at
+addressing some of the above mentioned limitations. RiVer Core enables running tests
 generated from any source (random or directed) on any target (irrespective of
 the language of design and simulation environment) and compare results with any
-choice of a valid golden reference model. RIVER COVER achieves this by
+choice of a valid golden reference model. RiVer Core achieves this by
 splitting the entire verification flow into multiple standardized python-plugin calls.
 Each plugin encapsulates either a test-generator, target test-environment or the
 reference simulation environment. The framework itself 

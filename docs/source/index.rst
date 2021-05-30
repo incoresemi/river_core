@@ -1,12 +1,12 @@
 .. See LICENSE for details
 
 ########################################
-RIVER CORE Verification Framework Manual
+RiVer Core Verification Framework Manual
 ########################################
 
 .. include:: <isonum.txt>
 
-Welcome to the RIVER CORE Verification Framework Manual.
+Welcome to the RiVer Core Verification Framework Manual.
 
 
 .. note::

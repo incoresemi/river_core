@@ -7,9 +7,9 @@ Framework Overview
 .. figure:: _static/River.png
     :align: center
     
-    RIVER CORE Overview Flow
+    RiVer Core Overview Flow
 
-RIVER CORE splits the verification flow into the following stages:
+RiVer Core splits the verification flow into the following stages:
 
 1. **Test Generation**: This phase uses multiple user configured generators of 
    different kind to generate tests and create a combined test-list. This now 
@@ -19,7 +19,7 @@ RIVER CORE splits the verification flow into the following stages:
    loaded into the target's custom test-bench and simulated. The execution logs for 
    each test are saved. All of the above steps are encapsulated inside a python
    plugin and thus any core with any environment can easily be integrated into
-   RIVER CORE as a target.
+   RiVer Core as a target.
 3. **Reference Run**: The same tests are compiled and run on the reference model of
    choice and the execution logs are saved.
 4. **Compare Logs**: The execution logs for each test from the target and the
@@ -28,7 +28,7 @@ RIVER CORE splits the verification flow into the following stages:
 5. **Report Generation**: Generate an html report capturing the results of all
    of the above steps.
 
-RIVER CORE uses the `Pluggy <https://pluggy.readthedocs.io/en/latest/>`_ python package to manage plugins.
+RiVer Core uses the `Pluggy <https://pluggy.readthedocs.io/en/latest/>`_ python package to manage plugins.
 
 
 The Input Config File
@@ -121,7 +121,7 @@ following sequence:
    dependencies, download artifacts, create necessary directories, parse and capture the plugin 
    specific parameters present in the ``config.ini``  etc. 
 
-2. **Gen**: This stage is where the actual tests are generated. RIVER CORE uses
+2. **Gen**: This stage is where the actual tests are generated. RiVer Core uses
    the inherent pytest framework to run parallelized commands. Using pytest,
    enables using default report templates which are quite verbose and helpful in
    debugging as well. 
@@ -130,14 +130,14 @@ following sequence:
    follows the syntax/schema mentioned in :ref:`Test List Format<testlist>`.
    this test list capture all the information about the test and necessary
    collateral required to compile each test. By adopting a standard test-list 
-   format, we inherently allow any source of tests to be integrated into RIVER 
+   format, we inherently allow any source of tests to be integrated into RiVer 
    CORE as a generator plugin as long as a valid test list is created.
 
 3. **Post-Gen**: This stage is called after all the tests are generated and can
    be used to post-process the tests, validate the tests, profile the tests, remove
    unwanted artifacts, etc.
 
-At the end of the 3 phases RIVER CORE also generates an HTML reports which
+At the end of the 3 phases RiVer Core also generates an HTML reports which
 captures the log of each test generation and any errors that were caught,
 thereby providing a complete database of information on the test-generation
 aspect. 
@@ -187,7 +187,7 @@ The DUT Plugin supports the following hooks:
       filtering and skip any tests and should neither modify the tests 
 
 3. **Run**: This stage is used to run the tests on the DUT. It is recommended to run the tests in
-   parallel. RIVER CORE uses the inherent pytest framework to run terminal commands in parallel
+   parallel. RiVer Core uses the inherent pytest framework to run terminal commands in parallel
    fashion. This stage will generate all the artifacts of the simulation like : signature file, 
    execution logs, test-binary, target executable binary, coverage database, simulation logs, etc. 
 
@@ -221,9 +221,9 @@ In order to declare the tests have passed, the execution logs from the DUT/Targe
 models are compared. A difference in the logs indicates the test has failed, else it has passed. The
 result of the tests is updated in the test-list itself. 
 
-.. note:: RIVER CORE currently only supports compare a single execution log for a test. There is a need
+.. note:: RiVer Core currently only supports compare a single execution log for a test. There is a need
   however to compare multiple artifacts (like signature contents as well) of a test execution. Future
-  versions of RIVER CORE may include these features.
+  versions of RiVer Core may include these features.
 
 Test Report Generation
 ======================
@@ -238,7 +238,7 @@ easily be populated into html files for better visualization.
 Future Work
 ===========
 
-Currently the RIVER CORE framework depends on the log based comparison to decide on whether a test
+Currently the RiVer Core framework depends on the log based comparison to decide on whether a test
 passed or failed. While this works for most scenarios, for larger tests the logs can soon become
 huge where the file-io itself starts to consume large amounts of time thereby increasing simulation
 time significantly. This limitation further requires that the architectural state dump occurring per
@@ -247,19 +247,19 @@ certain side-effects and corrupted architectural state (like wrongly updating mu
 on an instruction commit) cannot be easily found. Furthermore, such framework cannot be ported to 
 FPGAs either for accelerated verification.
 
-To alleviate some of the above limitations (to a certain extent), RIVER CORE plan to add the
+To alleviate some of the above limitations (to a certain extent), RiVer Core plan to add the
 following two variant methodologies. Note there are just proposals and actual implementations of the
 idea may vary significantly that the description provided below:
 
 Self-checking Tests
 -------------------
 
-The below diagram highlights the flow of enabling self-checking tests in RIVER CORE.
+The below diagram highlights the flow of enabling self-checking tests in RiVer Core.
 
 .. figure:: _static/River_self_checking.png
     :align: center
     
-    RIVER CORE Self Checking tests Methodology.
+    RiVer Core Self Checking tests Methodology.
 
 There are two major differences in this flow as compared the conventional flow presented earlier:
 
@@ -321,6 +321,6 @@ testing of asynchronous events.
 .. figure:: _static/River_step_compare.png
     :align: center
     
-    RIVER CORE Step Compare Methodology
+    RiVer Core Step Compare Methodology
 
 More details on this environment will come soon !

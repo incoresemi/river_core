@@ -4,7 +4,7 @@
 Test List Format
 ################
 
-Each generator plugin integrated with RIVER CORE, apart from generating just the
+Each generator plugin integrated with RiVer Core, apart from generating just the
 test artifacts, must also generate a test list YAML. The test list has the
 following syntax:
 

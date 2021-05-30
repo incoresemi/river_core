@@ -6,7 +6,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
-SPHINXPROJ    = RIVER_CORE
+SPHINXPROJ    = RiVer_Core
 SOURCEDIR     = source
 BUILDDIR      = build
 

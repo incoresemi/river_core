@@ -35,7 +35,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
-    description="RISC-V Core Verification Framework",
+    description="RiVer Core Verification Framework",
     entry_points={
         'console_scripts': ['river_core=river_core.main:cli',],
     },
@@ -62,6 +62,6 @@ setup(
     tests_require=test_requirements,
     url=
     'https://gitlab.com/incoresemi/river-framework/core-verification/river_core',
-    version='0.1.0',
+    version='1.0.0',
     zip_safe=False,
 )
