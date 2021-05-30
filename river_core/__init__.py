@@ -1,7 +1,7 @@
 # See LICENSE for details
 
-"""Top-level package for RIVER_CORE."""
+"""Top-level package for RiVer Core."""
 
 __author__ = """InCore Semiconductors"""
 __email__ = 'info@incoresemi.com'
-__version__ = '0.1.0'
+__version__ = '1.0.0'

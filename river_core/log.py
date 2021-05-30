@@ -33,6 +33,9 @@ class Log:
         if not format:
             format = "  %(log_color)s%(styledname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
         self.format = format
+        logging.basicConfig(filename="river_core.log", 
+			format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s', 
+		    	filemode='w')
         logging.root.setLevel(self._lvl)
         self.formatter = colorlog.ColoredFormatter(self.format)
         self.stream = logging.StreamHandler()

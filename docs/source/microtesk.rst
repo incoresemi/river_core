@@ -1,5 +1,3 @@
-.. _microtesk:
-
 MicroTESK Random Generator
 ===========================
 
@@ -17,7 +15,7 @@ MicroTESK generator has the RISC-V model developed in nML language and it is use
   # compiling the model
   $ bash $PWD/bin/compile.sh $PWD/arch/riscv/model/riscv.nml $PWD/arch/riscv/model/mmu/riscv.mmu \
   --extension-dir $PWD/arch/riscv/extensions/ --rev-id RV64FULL
-  
+
   the rev-id can be configured to use the different ISA present in $PWD/arch/riscv/revisions.xml
   <revision name="RV64FULL">
   <includes name="RV64I"/>
@@ -35,7 +33,7 @@ MicroTESK generator has the RISC-V model developed in nML language and it is use
 Opensource generator
 --------------------
 
-It has a configurable model, generator code, some standard example templates. 
+It has a configurable model, generator code, some standard example templates.
 
 Config.yaml options
 -------------------
@@ -52,6 +50,6 @@ A YAML file is placed in the microtesk plugin file with the name `microtesk_gen_
 Output
 ------
 
-This plugin will generate a `test-list` containing all necessary information for the framework to compile and test code. 
+This plugin will generate a `test-list` containing all necessary information for the framework to compile and test code.
 
-This can be useful to share test cases across machines. In order to share the tests, one only needs to share the original finals and test-list which contains all necessary infomation about the tests run.
+This can be useful to share test cases across machines. In order to share the tests, one only needs to share the original finals and test-list which contains all necessary information about the tests run.

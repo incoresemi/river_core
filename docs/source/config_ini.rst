@@ -6,36 +6,78 @@ Config.ini Spec
 
 .. _config-file: https://gitlab.com/incoresemi/river-framework/core-verification/river_core/-/blob/dev/examples/sample-config.ini
 
-This chapter will discuss the syntax and structure of the config.ini file used by river_core.
-A sample `config-file`_ is present in the **examples** directory of the Git Repository.
+This chapter will discuss the syntax and structure of the ``config.ini`` file used by river_core.
+A sample `config-file`_ is present in the ``examples`` directory of the Git Repository.
 
-.. note:: The standard delimiter for options having mutliple values is **,** (comma) .
+.. note:: `RiVer Core` can automatically detect the configuration file present in the current directory.
 
-Configuration options for river_core
-#####################################
 
-- **river_core** contains generic information that's specific to river_core. Ideally for a test, this should remain same.
+General Configuration Options
+#############################
 
-  - **workdir** -> The workdir where all of the files, reports and logs are generated.
-  - **target** -> Device under Test(DuT), the target to run tests. 
-  - **reference** -> The Golden Standard used for comparing with the target results.
-  - **generator** -> The program generator used to generate sample programs
-  - **path_to_suite** -> Absolute path to the generator module
-  - **path_to_target** -> Absolute path to the target module
-  - **path_to_ref** -> Absolute path to the reference module
-  - **isa** -> ISA for the arch, all of the plugins will use the same ISA.
-  - **open_browser** -> Opens the final report automatically in your default browser [Boolean]
-  - **space_saver** -> ISA for the arch, all of the plugins will use the same ISA. [Boolean]
-  - **Coverage** -> Enable Coverage mode. More info in :ref:`Coverage<coverage>`
+.. tabularcolumns:: |l|L|
 
-Configuration options for plugins
-####################################
+.. table:: General Configuration Options
 
-Some of the necessary configuration options
+  =================== =========================================================
+  Parameter           Description
+  =================== =========================================================
+  workdir             The workdir where all of the files, reports and logs are generated.
+  target              Name of Target or the Device under Test(DUT) that is to be verified. 
+  reference           Name of the the golden reference model to be used for verification.
+  generator           The test program generator to be used to generate tests.
+  path_to_suite       Absolute path to the generator plugin.
+  path_to_target      Absolute path to the target/DUT plugin.
+  path_to_ref         Absolute path to the reference plugin.
+  isa                 ISA string supported by the target. This is supplied to all plugins for any due processing/configuration that is required.
+  open_browser        [Boolean] Opens the final report automatically in your default browser
+  space_saver         [Boolean] This feature can be used by DUT and Ref plugins to remove unwanted artifacts (like dumps, disassembly files, etc) after the tests have been run
+  coverage            Enable Coverage mode. There are two boolean options available under this: Code and Functional
+  =================== =========================================================
 
-- **plugin** specific options
+.. note:: The standard delimiter for options having multiple values is **,** (comma) .
 
-  - **jobs** -> Number of jobs to use while generating the tests
-  - **filter** -> This option is to select tests. More info `here <https://docs.pytest.org/en/latest/example/markers.html#using-k-expr-to-select-tests-based-on-their-name>`_ 
-  - **seed** -> A seed for generating the programs (Can be *random*)
-  - **count** -> The number of times the test needs to be run
+Plugin Specific Options
+#######################
+
+Apart from the above general parameters, the user can also specify some of the
+plugin specific parameters in the same ``config.ini`` file. A typical syntax to
+do this would be:
+
+.. code-block:: ini
+
+   [<plugin-name>]
+   config-1: value
+   config-2: value-2
+
+   [<plugin-name2]
+   param-1: val1
+   param-2: val2
+
+
+The interpretation and side-effects of these plugin specific parameters is completely left to the
+plugin. RiVer Core simply forwards them to the respective plugin via the hooks.
+
+.. note:: A plugins parameters cannot be sent to another plugin. However each
+   plugin will receive its parameters and also the general configuration
+   parameters
+
+Some of the recommended configuration options for generators would be:
+
+.. tabularcolumns:: |l|L|
+
+.. table:: Recommended Configuration options
+
+  ========== ====================================================================
+  Parameters Description
+  ========== ====================================================================
+  jobs       Number of jobs to use while generating the tests
+  filter     This option is to select tests.
+  seed       A seed for generating the programs (Can be *random*)
+  count      The number of times the test needs to be run
+  ========== ====================================================================
+
+Sample Config INI
+#################
+
+.. program-output:: cat ../../examples/sample-config.ini

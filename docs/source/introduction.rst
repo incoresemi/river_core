@@ -1,38 +1,99 @@
 .. See LICENSE.incore for details
+
 ############
 Introduction
 ############
 
-**River Core** - The RISC-V Core Verification Framework is a Python based framework which enables testing of a variable RISC-V target (hard or soft implementations) against a configured set of reference models.
-It aims to make the verification process for the designs as configurable as the RISC-V designs itself.
+The configurability and openness of the `RISC-V ISA <https://riscv.org>`_, has led to its rapid
+adoption globally by both industry and academia. As a consequence, today there are nearly
+hundreds of open/closed source hard/soft implementations of the RISC-V ISA.
+Exploiting the freedom of optional sub extensions and no micro-architectural mandates from the ISA,
+each of these implementations could possible vary from each other in any of the
+following :
+
+- The language chosen to build the target could be classical HDLs like Verilog,
+  VHDL, or advanced languages like `BSV <https://github.com/B-Lang-org/bsc>`_, `Chisel <https://www.chisel-lang.org/>`_, etc all the way to High Level
+  Synthesis languages. Each of these languages offer a wide variety of features
+  which in turn defines the capabilities of target developed.
+- Each implementation can vary in its choice of the sub extensions of the ISA 
+  begin supported. This choice is typically driven by the end-use or end-domain
+  being targeted. 
+- Implementation can vary significantly in their micro-architectural designs,
+  while still being compatible to the RISC-V ISA. A deeply pipelined core maybe be
+  optimized for higher performance, while another core supporting the same
+  sub-extensions may have a shorter pipeline and be optimized for area and power.
+- Core generators are also becoming quite common nowadays. For eg., the 
+  `Chromite <https://chromite.readthedocs.io>`_ core generator from InCore is capable of
+  configuring and controlling major aspects of the ISA and the micro-architecture and thereby
+  generating a customized core for the end-user. 
 
 
-.. _intent:
+Irrespective of the above choice, one of the most common challenges faced by any 
+RISC-V design would be : **Verification**. 
+As is well known, it is crucial to enable verification at the very beginning of the design stage. 
+In order to verify a RISC-V processor one would require:
 
-Intent of the framework
-=======================
+- An RTL/Target which needs to be tested. This target can be characterized by
+  any of the above mentioned choices.
+- A set of tests to run on the processor.
+- A reference model to compare the results against and declare pass/fail
+  decisions.
 
-The framework is intended to facilitate users and developers to verify the designs created in the huge configuration space RISC-V offers.
-It provides an easy interface for managing verification of various designs.
-It's plugin based approach allows users and developers can use existing generators, simulators and reference models along with the framework.
+Compared to the immense growth of open-source RISC-V designs seen by the community, 
+the effort in building open source verification test suites is not as impressive. 
+One effort by the RISC-V International (RVI) in this direction has been to build an 
+`Architectural Test Suite (ATS) <https://github.com/riscv/riscv-arch-test>`_ 
+(a.k.a compliance suite earlier) which serves as a
+mechanism to confirm that the target operates in accordance to the RISC-V ISA
+specification. However, the ATS is not a verification suite, as it only checks
+for basic behaviors and does not test the functional aspects of the processor.
+Passing the ATS, would only mean that their interpretation of the spec is
+correct. It does not mean that the processor is bug-free. 
 
-.. _audience:
+To fill this gap to a certain extent, there have been a few open source random program generators
+like `AAPG <https://gitlab.com/shaktiproject/tools/aapg>`_, `RISC-V Torture <https://github.com/ucb-bar/riscv-torture>`_, and `Microtesk <http://www.microtesk.org/>`_. AAPG is a python
+based pseudo-random assembly program generator which large number of
+configurable knobs which are controlled by YAML file. 
+Torture on the other have java-based backend to generate random
+assembly programs. MicroTESK provides a Ruby-based language to express test scenarios, 
+or so-called templates. Now the challenge in using all of these generators is that
+each requires its own environment to configure and produces its own artifacts: linker scripts, 
+header files, libraries, etc. Therefore,  each generator would require its own minimal environment to run the
+tests on the RISC-V target. **A framework to encapsulate each of these generators
+into a standardized plugin/API which provides a common output interface of
+files, compile commands, environments, etc. which can be easily consumed by a
+target to run these tests would be a great asset for any designer to enable
+early verification**
 
-Target Audience
-===============
+RVI has recently adopted the `RISC-V SAIL <https://github.com/rems-project/sail-riscv>`_ formal model as the golden model
+of the specifications. However, SAIL will require a little more feature update
+to enable it to act as a reference model for verification. The primary blocking
+feature has been the DSL in which SAIL is written which making it less approachable 
+to hack/modify. In view of this, the community has also adopted `Spike <https://github.com/riscv/riscv-isa-sim>`_ as a 
+pseudo golden model owing to its simple implementation and an active
+contribution community. One of the common practices of using these models as a
+reference model in verification has been to generate and compare the execution 
+logs which are generated by the target and the reference model. A difference
+in the logs indicates the presence of a bug. The format of the logs produced by
+spike, sail and the target could be different and thus some post-processing is
+required to enable such a verification environment. Another point of difference
+across reference models would be on how they can be configured to and to what
+extent to mimic the DUT. One should also note that some features of the spec maybe
+available in one simulator and missing in the other. Thus it may be required to
+switch out and switch in simulators based on what is being tested.
+**A framework which can hide these post
+processing and configuration mechanisms behind a standard API/plugin will enable
+newer designs to use any such models as a reference model very easily.**
 
-This document is targeted for the following categories of audience
 
-Users
------
-
-RiVer Core, as a framework is targeted towards verification and design engineers who wish to test their design.
-<CHECK: check this line>
-RiVer Core is designed to be used a framework for the process of Constrained Random Verification [CRV], the most popular dynamic verification technique in practice today.
-
-Contributors
-------------
-
-Enginners who would like to add more generators, simulators and reference models to enhance the framework, will be referred to as contributors/developers in the remaining sections of this
-document. This framework enables engineers to author scalable and parameterized tests which can
-evolve along.
+**RiVer Core** is an open source python based verification framework primarily aimed at
+addressing some of the above mentioned limitations. RiVer Core enables running tests
+generated from any source (random or directed) on any target (irrespective of
+the language of design and simulation environment) and compare results with any
+choice of a valid golden reference model. RiVer Core achieves this by
+splitting the entire verification flow into multiple standardized python-plugin calls.
+Each plugin encapsulates either a test-generator, target test-environment or the
+reference simulation environment. The framework itself 
+provides a central control point for calling these plugins and thereby generating, 
+compiling and simulating tests on different targets. It provides a management 
+surface of sorts. The next section provides an overview of the framework.
