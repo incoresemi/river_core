@@ -124,14 +124,14 @@ def setup(config, dut, gen, ref, verbosity):
     type=click.Choice(['init', 'build', 'run', 'auto'], case_sensitive=False),
     default='auto',
     help=
-    'Stages to run on configured DuT Plugin\n1. `init`: Call the intial setup API for the DuT plugin\n2. `build`: Call the intial setup API and build API to generate the necessary binaries for the DuT Plugin\n3. `run`: Call the intial setup API, build API and run API to initialize, generate and the run the binaries\n4.`auto` will enable run automatically and determine the other valid values [default]\n'
+    'Stages to run on configured DuT Plugin\n1. `init`: Call the initial setup API for the DuT plugin\n2. `build`: Call the initial setup API and build API to generate the necessary binaries for the DuT Plugin\n3. `run`: Call the initial setup API, build API and run API to initialize, generate and the run the binaries\n4.`auto` will enable run automatically and determine the other valid values [default]\n'
 )
 @click.option(
     '--ref_stage',
     type=click.Choice(['init', 'build', 'run', 'auto'], case_sensitive=False),
     default='auto',
     help=
-    'Stages to run on configured reference Plugin\n1. `init`: Call the intial setup API for the Reference plugin\n2. `build`: Call the intial setup API and build API to generate the necessary binaries for the Reference Plugin\n3. `run`: Call the intial setup API, build API and run API to initialize, generate and the run the binaries\n4. `auto` will enable run automatically and set other valid values [default]\n'
+    'Stages to run on configured reference Plugin\n1. `init`: Call the initial setup API for the Reference plugin\n2. `build`: Call the initial setup API and build API to generate the necessary binaries for the Reference Plugin\n3. `run`: Call the initial setup API, build API and run API to initialize, generate and the run the binaries\n4. `auto` will enable run automatically and set other valid values [default]\n'
 )
 @click.option(
     '--compare/--no-compare',

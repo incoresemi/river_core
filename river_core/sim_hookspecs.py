@@ -20,7 +20,7 @@ class RandomGeneratorSpec(object):
         specific parameters present in the ``config.ini``  etc. 
         Before random generation of ASM begins
 
-        :param spec_config: Plugin specific paramters and general parameters captured from the original input `config.ini` 
+        :param spec_config: Plugin specific parameters and general parameters captured from the original input `config.ini` 
 
         :param output_dir:  absolute path of the ``work_dir`` where the tests and artifacts need to be generated/placed
 
@@ -141,7 +141,7 @@ class DuTSpec(object):
         it for tests that failed (the pass/fail result is captured in the test-list itself). 
 
         This stage can also further also be used to merge coverage databases of all the test runs, rank
-        the tests and generate appropriate reports. This is completely optional and upto the user to
+        the tests and generate appropriate reports. This is completely optional and up to the user to
         define what happens as a "clean-up" process in this stage.
 
         :param test_dict: The test-list YAML 

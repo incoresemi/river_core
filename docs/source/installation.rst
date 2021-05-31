@@ -678,7 +678,7 @@ You should see the following log on the console:
             debug  | Removing extra files for Test: aapg_rv64imafdc_hazards_s_003304_22052021190655586548_00001
              info  | Now generating some good HTML reports for you
              info  | Final report saved at mywork/reports//report_20210522-1925.html
-             info  | Openning test report in web-browser
+             info  | Opening test report in web-browser
   
 At the end you shall also see a html report open up in your default browser
 containing information of all the runs. The reports folder will have additional

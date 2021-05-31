@@ -40,7 +40,7 @@ Ready to contribute? Here's how to set up `river_core` for local development.
 
     $ git clone https://github.com/<your-username>/river_core.git
 
-3. Create an issue and WIP pull request that creates a working branch fro you
+3. Create an issue and WIP pull request that creates a working branch for you
 
     $ git checkout -b name-of-your-bugfix-or-feature
 

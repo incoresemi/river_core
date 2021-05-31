@@ -376,7 +376,7 @@ def rivercore_generate(config_file, verbosity):
             try:
                 import webbrowser
                 logger.info(
-                    "Openning test report for {0} in web-browser".format(suite))
+                    "Opening test report for {0} in web-browser".format(suite))
                 webbrowser.open(report_html)
             except:
                 return 1
@@ -696,7 +696,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
         if utils.str_2_bool(config['river_core']['open_browser']):
             try:
                 import webbrowser
-                logger.info("Openning test report in web-browser")
+                logger.info("Opening test report in web-browser")
                 webbrowser.open(report_html)
             except:
                 return 1
@@ -780,7 +780,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
             # Check if something common is there
             if folder_yaml[test].get('extra_compile'):
                 for extra in range(0, len(folder_yaml[test]['extra_compile'])):
-                    # Keep this seperate right now
+                    # Keep this separate right now
                     shutil.copy(folder_yaml[test]['extra_compile'][extra],
                                 common_dir)
                 test_list[test]['extra_compile'] = glob.glob(common_dir + '/*')

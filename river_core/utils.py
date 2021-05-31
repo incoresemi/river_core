@@ -119,7 +119,7 @@ def sys_command(command, timeout=240):
 
 def sys_command_file(command, filename, timeout=500):
     '''
-        Wrapper function to run shell commands with a timeout which involve operating witha file.
+        Wrapper function to run shell commands with a timeout which involve operating with a file.
         Uses :py:mod:`subprocess`, :py:mod:`shlex`, :py:mod:`os`
         to ensure proper termination on timeout
 

@@ -58,5 +58,5 @@ def test_input(request, autouse=True):
 
 
 def test_eval(test_input):
-    # TODO: Check if the test was sucessful or not. Assuming that the program exits with 0 return code
+    # TODO: Check if the test was successful or not. Assuming that the program exits with 0 return code
     assert test_input == 0
