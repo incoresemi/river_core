@@ -35,7 +35,7 @@ more details on how to create the above files.
 
 An example of the above files for chromite can be found in the ``riscof_plugin`` directory of the
 `Chromite_verilator plugin
-<https://gitlab.com/incoresemi/river-framework/core-verification/river_core_plugins/-/tree/dev/dut_plugins/cclass_verilator_plugin>`_
+<https://github.com/incoresemi/river_core_plugins/tree/master/dut_plugins/cclass_verilator_plugin>`_
 
 Output from the plugin
 ----------------------

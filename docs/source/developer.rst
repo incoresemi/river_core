@@ -2,7 +2,7 @@
 Build Your Own Plugin
 #####################
 
-.. _test-file: https://gitlab.com/incoresemi/river-framework/core-verification/river_core/-/blob/dev/examples/sample-config.ini
+.. _test-file: https://github.com/incoresemi/river_core/blob/master/examples/sample-config.ini
 
 This chapter will discuss about the nuances of the river_core framework and how to add more plugins or create customizations in the framework.
 

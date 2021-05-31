@@ -120,7 +120,7 @@ Install RiVer Core
      
      .. code-block:: console
      
-         $ pip3 install git+https://gitlab.com/incoresemi/river-framework/core-verification/river_core.git
+         $ pip3 install git+https://github.com/incoresemi/river_core.git
      
      This is the preferred method to install RiVer Core, as it will always install the most recent stable release.
      
@@ -150,13 +150,13 @@ Install RiVer Core
 
    .. tab:: For Dev
 
-     The sources for RiVer Core can be downloaded from the `Gitlab Repo <https://gitlab.com/incoresemi/river-framework/core-verification/river_core>`_.
+     The sources for RiVer Core can be downloaded from the `Github Repo <https://github.com/incoresemi/river_core>`_.
      
      You can clone the repository:
      
      .. code-block:: console
      
-         $ git clone https://gitlab.com/incoresemi/river-framework/core-verification/river_core.git
+         $ git clone https://github.com/incoresemi/river_core.git
      
      
      Once you have a copy of the source, you can install it with:
@@ -274,12 +274,12 @@ To continue further we shall first create a working directory, say ``myquickstar
    $ mkdir ~/myquickstart
 
 
-You can install some of the pre-built plugins from the `Plugin Repo <https://gitlab.com/incoresemi/river-framework/core-verification/river_core_plugins.git>`_
+You can install some of the pre-built plugins from the `Plugin Repo <https://github.com/incoresemi/river_core_plugins.git>`_
 
 .. code-block:: console
 
     $ cd ~/myquickstart
-    $ git clone https://gitlab.com/incoresemi/river-framework/core-verification/river_core_plugins.git
+    $ git clone https://github.com/incoresemi/river_core_plugins.git
 
 We will next create a ``river_core.ini`` under the ``myquickstart`` directory. You
 can use the setup to create this file:

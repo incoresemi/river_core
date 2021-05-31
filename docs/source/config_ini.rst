@@ -4,7 +4,7 @@
 Config.ini Spec
 ===============
 
-.. _config-file: https://gitlab.com/incoresemi/river-framework/core-verification/river_core/-/blob/dev/examples/sample-config.ini
+.. _config-file: https://github.com/incoresemi/river_core/tree/master/examples/sample-config.ini
 
 This chapter will discuss the syntax and structure of the ``config.ini`` file used by river_core.
 A sample `config-file`_ is present in the ``examples`` directory of the Git Repository.

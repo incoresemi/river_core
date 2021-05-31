@@ -61,7 +61,7 @@ setup(
     test_suite='',
     tests_require=test_requirements,
     url=
-    'https://gitlab.com/incoresemi/river-framework/core-verification/river_core',
+    'https://github.com/incoresemi/river_core',
     version='1.0.0',
     zip_safe=False,
 )

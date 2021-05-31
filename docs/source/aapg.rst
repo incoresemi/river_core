@@ -31,7 +31,7 @@ Installation
 
    .. code-block:: console
        
-       $ git clone https://gitlab.com/incoresemi/river-framework/core-verification/river_core_plugins 
+       $ git clone https://github.com/incoresemi/river_core_plugins 
        $ cd generator_plugins/aapg_plugin/
 
 Configuring the Plugin
@@ -39,7 +39,7 @@ Configuring the Plugin
 
 A YAML file is placed in the aapg plugin folder with the name ``aapg_gen_config.yaml``.
 
-- **global_config_path** ->  Path to the plugin directory, TBD
+- **global_config_path** ->  Path to the plugin directory
 - **global_command** -> Command to generate files. i.e. ``aapg gen``
 
 - **templates** -> Ideally the test yamls for AAPG can be stored in a folder which can be then filtered via the filter option in the ``config.ini`` file.

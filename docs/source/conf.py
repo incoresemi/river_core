@@ -124,7 +124,7 @@ todo_include_todos = False
 
 # -- Options for HTML output -------------------------------------------------
 
-gitlab_url = 'https://gitlab.com/incoresemi/river-framework/core-verification/river_core'
+github_url = 'https://github.com/incoresemi/river_core' 
 html_show_sourcelink = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
