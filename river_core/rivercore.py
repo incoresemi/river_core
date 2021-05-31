@@ -822,8 +822,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
                         glob.glob(file_path + '/final_coverage/*.ucdb')[0]))
                 coverage_html.append(
                     os.path.abspath(
-                        glob.glob(file_path +
-                                  '/final_coverage/cov_html/*.html')[0]))
+                        glob.glob(file_path + '/cov_html/*.html')[0]))
             # Verilator
             elif 'verilator' in target:
                 coverage_database.append(
