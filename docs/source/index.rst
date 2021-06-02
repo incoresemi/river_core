@@ -45,6 +45,7 @@ Welcome to the RiVer Core Verification Framework Manual.
    merge
    developer
    code-doc
+   changelog
    contributing
    authors
    licensing
