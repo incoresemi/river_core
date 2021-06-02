@@ -13,8 +13,8 @@ Welcome to the RiVer Core Verification Framework Manual.
 
   **Proprietary Notice**
 
-  Copyright (c) |today|, InCore Semiconductors Pvt. Ltd.; 
-  Copyright (c) |today|, Tessolve Semiconductors Pvt. Ltd.;
+  - Copyright (c) |today|, InCore Semiconductors Pvt. Ltd.; 
+  - Copyright (c) |today|, Tessolve Semiconductors Pvt. Ltd.;
 
   Information in this document is provided "as is" with faults, if any.
 
