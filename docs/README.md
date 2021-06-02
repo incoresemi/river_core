@@ -1,6 +1,6 @@
-# shakti-documentation
+# Documentation
 
-# Requirements
+## Requirements
 Has been tested using ``python3``
 ```sh
 $ pip install -r requirements.txt
@@ -48,5 +48,5 @@ $ xdg-open build/latex/river_core.pdf
 $ make clean
 ```
 
-# References
+## References
 [Sphinx](http://www.sphinx-doc.org/en/master/)
