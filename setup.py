@@ -13,7 +13,7 @@ with open('README.rst') as readme_file:
 
 
 def read_requires():
-    with open(os.path.join(here, "requirements.txt"), "r") as reqfile:
+    with open(os.path.join(here, "river_core/requirements.txt"), "r") as reqfile:
         return reqfile.read().splitlines()
 
 
