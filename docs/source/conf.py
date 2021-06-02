@@ -74,7 +74,6 @@ extensions = [
     'sphinxcontrib.mermaid',
     'sphinxcontrib.bibtex',
     'sphinx_tabs.tabs',
-    'sphinxcontrib.programoutput',
     'm2r2'
     ]
 
