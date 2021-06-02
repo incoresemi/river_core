@@ -26,7 +26,7 @@ jobs:
       - name: Get version
         id: get_version
         run: |
-          echo "::set-output name=version::$(grep -P -o '(?<=\[).*(?=\])' -m1 CHANGELOG.rst)"
+          echo "::set-output name=version::$(grep -P -o '(?<=## \[).*(?=\])' -m1 CHANGELOG.md)"
       
       - name: Set up Python
         uses: actions/setup-python@v2
