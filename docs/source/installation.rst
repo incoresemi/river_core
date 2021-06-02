@@ -439,67 +439,65 @@ You should see the following log on the console:
 
 .. code-block:: console
 
-             info  | ------------RiVer Core Verification Framework------------
-             info  | Version: 0.1.0
-             info  | Copyright (c) 2021 InCore Semiconductors Pvt. Ltd.
-            debug  | Read file from river_core.ini
-             info  | ****** RiVer Core 0.1.0 *******
-             info  | Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.
-             info  | All Rights Reserved.
-             info  | ****** Generation Mode ****** 
-             info  | The river_core is currently configured to run with following parameters
-             info  | The Output Directory (work_dir) : mywork
-             info  | ISA : rv64imafdc
-             info  | Plugin Jobs : 8
-             info  | Plugin Seed : random
-             info  | Plugin Count (Times to run the test) : 2
-             info  | Now loading aapg Suite
-            debug  | Loading module from /home/user/myquickstart/river_core_plugins/generator_plugins/aapg_plugin/aapg_plugin.py
-            debug  | AAPG Pre Gen Stage
-            debug  | exists
-            debug  | Extracting info from list
-            debug  | /home/user/myquickstart/mywork/aapg/../.json/
-            debug  | /home/user/myquickstart/mywork/aapg/../.json/ Directory exists
-            debug  | AAPG Plugin gen phase
-            debug  | /home/user/myquickstart/river_core_plugins/generator_plugins
-            debug  | /home/user/myquickstart/river_core_plugins/generator_plugins/aapg_plugin/gen_framework.py
-   ============================================================================================ test session starts ============================================================================================
-   platform linux -- Python 3.7.0, pytest-6.1.2, py-1.9.0, pluggy-0.13.1 -- /home/user/.pyenv/versions/3.7.0/envs/venv/bin/python3.7
-   cachedir: .pytest_cache
-   metadata: {'Python': '3.7.0', 'Platform': 'Linux-5.4.0-31-generic-x86_64-with-debian-bullseye-sid', 'Packages': {'pytest': '6.1.2', 'py': '1.9.0', 'pluggy': '0.13.1'}, 'Plugins': {'metadata': '1.11.0', 'forked': '1.3.0', 'reportlog': '0.1.2', 'html': '3.1.0', 'xdist': '2.1.0'}}
-   rootdir: /home/user/myquickstart
-   plugins: metadata-1.11.0, forked-1.3.0, reportlog-0.1.2, html-3.1.0, xdist-2.1.0
-   [gw0] linux Python 3.7.0 cwd: /home/user/myquickstart        
-   [gw1] linux Python 3.7.0 cwd: /home/user/myquickstart        
-   [gw2] linux Python 3.7.0 cwd: /home/user/myquickstart        
-   [gw3] linux Python 3.7.0 cwd: /home/user/myquickstart        
-   [gw4] linux Python 3.7.0 cwd: /home/user/myquickstart        
-   [gw5] linux Python 3.7.0 cwd: /home/user/myquickstart        
-   [gw6] linux Python 3.7.0 cwd: /home/user/myquickstart        
-   [gw7] linux Python 3.7.0 cwd: /home/user/myquickstart        
-   [gw0] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
-   [gw3] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
-   [gw1] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
-   [gw2] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
-   [gw4] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
-   [gw5] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
-   [gw6] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
-   [gw7] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0] 
-   gw0 [2] / gw1 [2] / gw2 [2] / gw3 [2] / gw4 [2] / gw5 [2] / gw6 [2] / gw7 [2]
-   scheduling tests via LoadScheduling
-   
-   river_core_plugins/generator_plugins/aapg_plugin/gen_framework.py::test_eval[Generating /home/user/myquickstart/river_core_plugins/generator_plugins/aapg_plugin/templates/chromite/rv64imafdc_hazards_s0] 
-   river_core_plugins/generator_plugins/aapg_plugin/gen_framework.py::test_eval[Generating /home/user/myquickstart/river_core_plugins/generator_plugins/aapg_plugin/templates/chromite/rv64imafdc_hazards_s1] 
-   [gw0] [ 50%] PASSED river_core_plugins/generator_plugins/aapg_plugin/gen_framework.py::test_eval[Generating /home/user/myquickstart/river_core_plugins/generator_plugins/aapg_plugin/templates/chromite/rv64imafdc_hazards_s0] 
-   [gw3] [100%] PASSED river_core_plugins/generator_plugins/aapg_plugin/gen_framework.py::test_eval[Generating /home/user/myquickstart/river_core_plugins/generator_plugins/aapg_plugin/templates/chromite/rv64imafdc_hazards_s1] 
-   
-   ------------------------------------------------------ generated report log file: /home/user/myquickstart/mywork/aapg/../.json/aapg_20210522-1903.json ------------------------------------------------------
-   --------------------------------------------------------------- generated html file: file:///home/user/myquickstart/mywork/reports/aapg.html ----------------------------------------------------------------
-   ============================================================================================ 2 passed in 12.00s =============================================================================================
-             info  | Dumping generated Test-List at: mywork/test_list.yaml
-             info  | Validating Generated Test-List
-             info  | Test List Validated successfully
+          info  | ------------RiVer Core Verification Framework------------
+          info  | Version: 1.0.0
+          info  | Copyright (c) 2021 InCore Semiconductors Pvt. Ltd.
+         debug  | Read file from examples/sample-config.ini
+          info  | ****** Generation Mode ****** 
+          info  | The river_core is currently configured to run with following parameters
+          info  | The Output Directory (work_dir) : test
+          info  | ISA : rv64imafdc
+          info  | Plugin Jobs : 8
+          info  | Plugin Seed : random
+          info  | Plugin Count (Times to run the test) : 2
+          info  | Now loading aapg Suite
+         debug  | Loading module from /scratch/git-repo/github/incoresemi/river_core_plugins/generator_plugins/aapg_plugin/aapg_plugin.py
+         debug  | AAPG Pre Gen Stage
+         debug  | Extracting info from list
+         debug  | /scratch/git-repo/github/incoresemi/river_core/test/aapg/../.json/
+         debug  | /scratch/git-repo/github/incoresemi/river_core/test/aapg/../.json/ Directory exists
+         debug  | AAPG Plugin gen phase
+         debug  | /scratch/git-repo/github/incoresemi/river_core_plugins/generator_plugins
+         debug  | /scratch/git-repo/github/incoresemi/river_core_plugins/generator_plugins/aapg_plugin/gen_framework.py
+  ======================================== test session starts ========================================
+  platform linux -- Python 3.7.0, pytest-6.1.2, py-1.9.0, pluggy-0.13.1 -- /home/neel/.pyenv/versions/3.7.0/envs/venv/bin/python3.7
+  cachedir: .pytest_cache
+  metadata: {'Python': '3.7.0', 'Platform': 'Linux-5.4.0-31-generic-x86_64-with-debian-bullseye-sid', 'Packages': {'pytest': '6.1.2', 'py': '1.9.0', 'pluggy': '0.13.1'}, 'Plugins': {'metadata': '1.11.0', 'forked': '1.3.0', 'reportlog': '0.1.2', 'html': '3.1.0', 'xdist': '2.1.0'}}
+  rootdir: /scratch/git-repo/github/incoresemi
+  plugins: metadata-1.11.0, forked-1.3.0, reportlog-0.1.2, html-3.1.0, xdist-2.1.0
+  [gw0] linux Python 3.7.0 cwd: /scratch/git-repo/github/incoresemi/river_core
+  [gw1] linux Python 3.7.0 cwd: /scratch/git-repo/github/incoresemi/river_core
+  [gw2] linux Python 3.7.0 cwd: /scratch/git-repo/github/incoresemi/river_core
+  [gw3] linux Python 3.7.0 cwd: /scratch/git-repo/github/incoresemi/river_core
+  [gw4] linux Python 3.7.0 cwd: /scratch/git-repo/github/incoresemi/river_core
+  [gw5] linux Python 3.7.0 cwd: /scratch/git-repo/github/incoresemi/river_core
+  [gw6] linux Python 3.7.0 cwd: /scratch/git-repo/github/incoresemi/river_core
+  [gw7] linux Python 3.7.0 cwd: /scratch/git-repo/github/incoresemi/river_core
+  [gw0] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
+  [gw1] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
+  [gw2] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
+  [gw3] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
+  [gw4] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
+  [gw5] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
+  [gw6] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
+  [gw7] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0] 
+  gw0 [2] / gw1 [2] / gw2 [2] / gw3 [2] / gw4 [2] / gw5 [2] / gw6 [2] / gw7 [2]
+  scheduling tests via LoadScheduling
   
+  ../river_core_plugins/generator_plugins/aapg_plugin/gen_framework.py::test_eval[Generating /scratch/git-repo/github/incoresemi/river_core_plugins/generator_plugins/aapg_plugin/templates/chromite/rv64imafdc_hazards_s1] 
+  ../river_core_plugins/generator_plugins/aapg_plugin/gen_framework.py::test_eval[Generating /scratch/git-repo/github/incoresemi/river_core_plugins/generator_plugins/aapg_plugin/templates/chromite/rv64imafdc_hazards_s0] 
+  [gw1] [ 50%] PASSED ../river_core_plugins/generator_plugins/aapg_plugin/gen_framework.py::test_eval[Generating /scratch/git-repo/github/incoresemi/river_core_plugins/generator_plugins/aapg_plugin/templates/chromite/rv64imafdc_hazards_s1] 
+  [gw0] [100%] PASSED ../river_core_plugins/generator_plugins/aapg_plugin/gen_framework.py::test_eval[Generating /scratch/git-repo/github/incoresemi/river_core_plugins/generator_plugins/aapg_plugin/templates/chromite/rv64imafdc_hazards_s0] 
+  
+  - generated report log file: /scratch/git-repo/github/incoresemi/river_core/test/aapg/../.json/aapg_20210602-1227.json -
+  - generated html file: file:///scratch/git-repo/github/incoresemi/river_core/test/reports/aapg.html -
+  ========================================= 2 passed in 3.46s =========================================
+          info  | Dumping generated Test-List at: test/test_list.yaml
+          info  | Validating Generated Test-List
+          info  | Test List Validated successfully
+          info  | Opening test report for aapg in web-browser
+
+
 The above log indicates that you have successfully generated 2 tests using aapg.
 The above command would have created a mywork directory with the following
 contents:
@@ -559,126 +557,120 @@ You should see the following log on the console:
 
 .. code-block:: console
 
-             info  | ------------RiVer Core Verification Framework------------
-             info  | Version: 0.1.0
-             info  | Copyright (c) 2021 InCore Semiconductors Pvt. Ltd.
-            debug  | Read file from river_core.ini
-             info  | ****** RiVer Core 0.1.0 *******
-             info  | Copyright (c) 2021, InCore Semiconductors Pvt. Ltd.
-             info  | All Rights Reserved.
-             info  | ****** Compilation Mode ******
-             info  | The river_core is currently configured to run with following parameters
-             info  | The Output Directory (work_dir) : mywork
-             info  | ISA : rv64imafdc
-             info  | Generator Plugin : aapg
-             info  | Target Plugin : ['chromite_verilator']
-             info  | Reference Plugin : ['spike']
-             info  | DuT Info
-             info  | DuT Jobs : 8
-             info  | DuT Count (Times to run) : 1
-             info  | Now running on the Target Plugins
-             info  | Now loading chromite_verilator-target
-            debug  | Loading module from /home/user/myquickstart/river_core_plugins/dut_plugins/chromite_verilator_plugin/chromite_verilator_plugin.py
-             info  | Pre Compile Stage
-            debug  | /home/user/myquickstart/mywork//.json/ Directory exists
-             info  | Build verilator
-             info  | Coverage is disabled, compiling the chromite with usual options
-          command  | $ timeout=500 verilator -O3 -LDFLAGS -static --x-assign fast --x-initial fast --noassert sim_main.cpp --bbox-sys -Wno-STMTDLY -Wno-UNOPTFLAT -Wno-WIDTH -Wno-lint -Wno-COMBDLY -Wno-INITIALDLY --autoflush --threads 1 -DBSV_RESET_FIFO_HEAD -DBSV_RESET_FIFO_ARRAY --output-split 20000 --output-split-ctrace 10000 --cc mkTbSoc.v -y /home/user/myquickstart/chromite/build/hw/verilog/ -y /software/open-bsc/lib/Verilog -y /home/user/myquickstart/chromite/bsvwrappers/common_lib --exe 
-             info  | Linking verilator simulation sources
-          command  | $ timeout=240 ln -f -s ../sim_main.cpp obj_dir/sim_main.cpp 
-          command  | $ timeout=240 ln -f -s ../sim_main.h obj_dir/sim_main.h 
-             info  | Making verilator binary
-          command  | $ timeout=500 make OPT_SLOW=-O3 OPT_FAST=-O3 VM_PARALLEL_BUILDS=1 -j8 -C obj_dir -f VmkTbSoc.mk 
-            debug  | make: Entering directory '/home/user/myquickstart/mywork/chromite_verilator/obj_dir'
-            debug  | g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow      -DVL_THREADED -std=gnu++14 -O3 -c -o sim_main.o sim_main.cpp
-            debug  | g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow      -DVL_THREADED -std=gnu++14 -O3 -c -o verilated.o /usr/share/verilator/include/verilated.cpp
-            debug  | g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow      -DVL_THREADED -std=gnu++14 -O3 -c -o VmkTbSoc.o VmkTbSoc.cpp
-            debug  | g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow      -DVL_THREADED -std=gnu++14 -O3 -c -o VmkTbSoc__1.o VmkTbSoc__1.cpp
-            debug  | g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow      -DVL_THREADED -std=gnu++14 -O3 -c -o VmkTbSoc__2.o VmkTbSoc__2.cpp
-            debug  | g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow      -DVL_THREADED -std=gnu++14 -O3 -c -o VmkTbSoc__3.o VmkTbSoc__3.cpp
-            debug  | g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow      -DVL_THREADED -std=gnu++14 -O3 -c -o VmkTbSoc__Slow.o VmkTbSoc__Slow.cpp
-            debug  | g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow      -DVL_THREADED -std=gnu++14 -O3 -c -o VmkTbSoc__1__Slow.o VmkTbSoc__1__Slow.cpp
-            debug  | g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow      -DVL_THREADED -std=gnu++14 -O3 -c -o VmkTbSoc__Syms.o VmkTbSoc__Syms.cpp
-            debug  | ar -cr VmkTbSoc__ALL.a VmkTbSoc.o VmkTbSoc__1.o VmkTbSoc__2.o VmkTbSoc__3.o VmkTbSoc__Slow.o VmkTbSoc__1__Slow.o VmkTbSoc__Syms.o
-            debug  | ranlib VmkTbSoc__ALL.a
-            debug  | g++    sim_main.o verilated.o VmkTbSoc__ALL.a   -static  -pthread -lpthread -latomic -o VmkTbSoc -lm -lstdc++ 
-            debug  | make: Leaving directory '/home/user/myquickstart/mywork/chromite_verilator/obj_dir'
-             info  | Renaming verilator Binary
-             info  | Creating boot-files
-          command  | $ timeout=240 make -C /home/user/myquickstart/river_core_plugins/dut_plugins/chromite_verilator_plugin/boot/ XLEN=64 
-            debug  | make: Entering directory '/home/user/myquickstart/river_core_plugins/dut_plugins/chromite_verilator_plugin/boot'
-            debug  | make: Leaving directory '/home/user/myquickstart/river_core_plugins/dut_plugins/chromite_verilator_plugin/boot'
-             info  | Build Hook
-            debug  | Creating Make Target for aapg_rv64imafdc_hazards_s_000273_22052021190655560606_00000
-            debug  | Creating Make Target for aapg_rv64imafdc_hazards_s_003304_22052021190655586548_00001
-             info  | Run Hook
-            debug  | Module dir: /home/user/myquickstart/river_core_plugins/dut_plugins
-            debug  | Pytest file: /home/user/myquickstart/river_core_plugins/dut_plugins/chromite_verilator_plugin/gen_framework.py
-   ======================================== test session starts ========================================
-   platform linux -- Python 3.7.0, pytest-6.1.2, py-1.9.0, pluggy-0.13.1
-   rootdir: /home/user/myquickstart
-   plugins: metadata-1.11.0, forked-1.3.0, reportlog-0.1.2, html-3.1.0, xdist-2.1.0
-   [gw2] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
-   [gw0] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
-   [gw1] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
-   [gw3] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
-   [gw4] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]  
-   [gw5] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]   
-   [gw6] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]      
-   [gw7] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]       
-   gw0 [2] / gw1 [2] / gw2 [2] / gw3 [2] / gw4 [2] / gw5 [2] / gw6 [2] / gw7 [2]
-   scheduling tests via LoadScheduling
-   
-   river_core_plugins/dut_plugins/chromite_verilator_plugin/gen_framework.py::test_eval[make -f /home/user/myquickstart/mywork/Makefile.chromite_verilator aapg_rv64imafdc_hazards_s_003304_22052021190655586548_00001] 
-   river_core_plugins/dut_plugins/chromite_verilator_plugin/gen_framework.py::test_eval[make -f /home/user/myquickstart/mywork/Makefile.chromite_verilator aapg_rv64imafdc_hazards_s_000273_22052021190655560606_00000] 
-   [gw2] [ 50%] PASSED river_core_plugins/dut_plugins/chromite_verilator_plugin/gen_framework.py::test_eval[make -f /home/user/myquickstart/mywork/Makefile.chromite_verilator aapg_rv64imafdc_hazards_s_000273_22052021190655560606_00000] 
-   [gw0] [100%] PASSED river_core_plugins/dut_plugins/chromite_verilator_plugin/gen_framework.py::test_eval[make -f /home/user/myquickstart/mywork/Makefile.chromite_verilator aapg_rv64imafdc_hazards_s_003304_22052021190655586548_00001] 
-   
-   - generated report log file: /home/user/myquickstart/mywork/.json/chromite_verilator_20210522-1924.json -
-   ---- generated html file: file:///home/user/myquickstart/mywork/reports/chromite_verilator.html -----
-   ======================================== 2 passed in 52.36s =========================================
-             info  | Reference Info
-             info  | Reference Jobs : 1
-             info  | Reference Count (Times to run the test) : 1
-             info  | Now loading spike-target
-            debug  | Loading module from /home/user/myquickstart/river_core_plugins/reference_plugins/spike_plugin/spike_plugin.py
-            debug  | Pre Compile Stage
-            debug  | /home/user/myquickstart/mywork//.json/ Directory exists
-            debug  | Build Hook
-            debug  | Creating Make Target for aapg_rv64imafdc_hazards_s_000273_22052021190655560606_00000
-            debug  | Creating Make Target for aapg_rv64imafdc_hazards_s_003304_22052021190655586548_00001
-            debug  | Run Hook
-            debug  | Module dir: /home/user/myquickstart/river_core_plugins/reference_plugins
-            debug  | Pytest file: /home/user/myquickstart/river_core_plugins/reference_plugins/spike_plugin/gen_framework.py
-   ======================================== test session starts ========================================
-   platform linux -- Python 3.7.0, pytest-6.1.2, py-1.9.0, pluggy-0.13.1
-   rootdir: /home/user/myquickstart
-   plugins: metadata-1.11.0, forked-1.3.0, reportlog-0.1.2, html-3.1.0, xdist-2.1.0
-   [gw0] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
-   gw0 [2]
-   scheduling tests via LoadScheduling
-   
-   river_core_plugins/reference_plugins/spike_plugin/gen_framework.py::test_eval[make -f /home/user/myquickstart/mywork/Makefile.spike aapg_rv64imafdc_hazards_s_000273_22052021190655560606_00000] 
-   [gw0] [ 50%] PASSED river_core_plugins/reference_plugins/spike_plugin/gen_framework.py::test_eval[make -f /home/user/myquickstart/mywork/Makefile.spike aapg_rv64imafdc_hazards_s_000273_22052021190655560606_00000] 
-   river_core_plugins/reference_plugins/spike_plugin/gen_framework.py::test_eval[make -f /home/user/myquickstart/mywork/Makefile.spike aapg_rv64imafdc_hazards_s_003304_22052021190655586548_00001] 
-   [gw0] [100%] PASSED river_core_plugins/reference_plugins/spike_plugin/gen_framework.py::test_eval[make -f /home/user/myquickstart/mywork/Makefile.spike aapg_rv64imafdc_hazards_s_003304_22052021190655586548_00001] 
-   
-   ----- generated report log file: /home/user/myquickstart/mywork/.json/spike_20210522-1925.json ------
-   ----------- generated html file: file:///home/user/myquickstart/mywork/reports/spike.html -----------
-   ========================================= 2 passed in 3.88s =========================================
-             info  | Dumps for test aapg_rv64imafdc_hazards_s_000273_22052021190655560606_00000 Match. TEST PASSED
-             info  | Dumps for test aapg_rv64imafdc_hazards_s_003304_22052021190655586548_00001 Match. TEST PASSED
-             info  | Checking for a generator json to create final report
-            debug  | Detected generated JSON Files: ['mywork/.json/aapg_20210522-1900.json', 'mywork/.json/aapg_20210522-1906.json', 'mywork/.json/aapg_20210522-1903.json']
-            debug  | Removing artifacts for Chromite
-            debug  | Removing extra files for Test: aapg_rv64imafdc_hazards_s_000273_22052021190655560606_00000
-            debug  | Removing extra files for Test: aapg_rv64imafdc_hazards_s_003304_22052021190655586548_00001
-            debug  | Removing artifacts for Spike
-            debug  | Removing extra files for Test: aapg_rv64imafdc_hazards_s_000273_22052021190655560606_00000
-            debug  | Removing extra files for Test: aapg_rv64imafdc_hazards_s_003304_22052021190655586548_00001
-             info  | Now generating some good HTML reports for you
-             info  | Final report saved at mywork/reports//report_20210522-1925.html
-             info  | Opening test report in web-browser
+            info  | ------------RiVer Core Verification Framework------------
+            info  | Version: 1.0.0
+            info  | Copyright (c) 2021 InCore Semiconductors Pvt. Ltd.
+            info  | Auto mode detected for DuT Plugin
+            info  | Auto mode detected for Ref Plugin
+           debug  | Read file from examples/sample-config.ini
+            info  | ****** Compilation Mode ******
+            info  | The river_core is currently configured to run with following parameters
+            info  | The Output Directory (work_dir) : test
+            info  | ISA : rv64imafdc
+            info  | Generator Plugin : aapg
+            info  | Target Plugin : ['chromite_verilator']
+            info  | Reference Plugin : ['modspike']
+            info  | DuT Info
+            info  | DuT Jobs : 8
+            info  | DuT Count (Times to run) : 1
+            info  | Now running on the Target Plugins
+            info  | Now loading chromite_verilator-target
+           debug  | Loading module from /scratch/git-repo/github/incoresemi/river_core_plugins/dut_plugins/chromite_verilator_plugin/chromite_verilator_plugin.py
+           debug  | All modes enabled
+           debug  | Running run
+            info  | Pre Compile Stage
+           debug  | /scratch/git-repo/github/incoresemi/river_core/test//.json/ Directory exists
+            info  | Build verilator
+            info  | Coverage is disabled, compiling the chromite with usual options
+         command  | $ timeout=500 verilator -O3 -LDFLAGS -static --x-assign fast --x-initial fast --noassert sim_main.cpp --bbox-sys -Wno-STMTDLY -Wno-UNOPTFLAT -Wno-WIDTH -Wno-lint -Wno-COMBDLY -Wno-INITIALDLY --autoflush --threads 1 -DBSV_RESET_FIFO_HEAD -DBSV_RESET_FIFO_ARRAY --output-split 20000 --output-split-ctrace 10000 --cc mkTbSoc.v -y /scratch/git-repo/incoresemi/core-generators/chromite/build/hw/verilog/ -y /software/open-bsc/lib/Verilog -y /scratch/git-repo/incoresemi/core-generators/chromite/bsvwrappers/common_lib --exe 
+            info  | Linking verilator simulation sources
+         command  | $ timeout=240 ln -f -s ../sim_main.cpp obj_dir/sim_main.cpp 
+         command  | $ timeout=240 ln -f -s ../sim_main.h obj_dir/sim_main.h 
+            info  | Making verilator binary
+         command  | $ timeout=500 make OPT_SLOW=-O3 OPT_FAST=-O3 VM_PARALLEL_BUILDS=1 -j8 -C obj_dir -f VmkTbSoc.mk 
+           debug  | make: Entering directory '/scratch/git-repo/github/incoresemi/river_core/test/chromite_verilator/obj_dir'
+           debug  | g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow      -DVL_THREADED -std=gnu++14 -O3 -c -o sim_main.o sim_main.cpp
+           debug  | g++    sim_main.o verilated.o VmkTbSoc__ALL.a   -static  -pthread -lpthread -latomic -o VmkTbSoc -lm -lstdc++ 
+           debug  | make: Leaving directory '/scratch/git-repo/github/incoresemi/river_core/test/chromite_verilator/obj_dir'
+            info  | Renaming verilator Binary
+            info  | Creating boot-files
+         command  | $ timeout=240 make -C /scratch/git-repo/github/incoresemi/river_core_plugins/dut_plugins/chromite_verilator_plugin/boot/ XLEN=64 
+           debug  | make: Entering directory '/scratch/git-repo/github/incoresemi/river_core_plugins/dut_plugins/chromite_verilator_plugin/boot'
+           debug  | make: Leaving directory '/scratch/git-repo/github/incoresemi/river_core_plugins/dut_plugins/chromite_verilator_plugin/boot'
+            info  | Build Hook
+           debug  | Creating Make Target for aapg_rv64imafdc_hazards_s_000573_02062021122737765659_00001
+           debug  | Creating Make Target for aapg_rv64imafdc_hazards_s_001222_02062021122737711013_00000
+            info  | Run Hook
+           debug  | Module dir: /scratch/git-repo/github/incoresemi/river_core_plugins/dut_plugins
+           debug  | Pytest file: /scratch/git-repo/github/incoresemi/river_core_plugins/dut_plugins/chromite_verilator_plugin/gen_framework.py
+  ======================================== test session starts ========================================
+  platform linux -- Python 3.7.0, pytest-6.1.2, py-1.9.0, pluggy-0.13.1
+  rootdir: /scratch/git-repo/github/incoresemi
+  plugins: metadata-1.11.0, forked-1.3.0, reportlog-0.1.2, html-3.1.0, xdist-2.1.0
+  [gw3] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
+  [gw0] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
+  [gw1] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
+  [gw4] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
+  [gw5] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
+  [gw2] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0] 
+  [gw6] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]   
+  [gw7] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]        
+  gw0 [2] / gw1 [2] / gw2 [2] / gw3 [2] / gw4 [2] / gw5 [2] / gw6 [2] / gw7 [2]
+  scheduling tests via LoadScheduling
+  
+  ../river_core_plugins/dut_plugins/chromite_verilator_plugin/gen_framework.py::test_eval[make -f /scratch/git-repo/github/incoresemi/river_core/test/Makefile.chromite_verilator aapg_rv64imafdc_hazards_s_001222_02062021122737711013_00000] 
+  ../river_core_plugins/dut_plugins/chromite_verilator_plugin/gen_framework.py::test_eval[make -f /scratch/git-repo/github/incoresemi/river_core/test/Makefile.chromite_verilator aapg_rv64imafdc_hazards_s_000573_02062021122737765659_00001] 
+  [gw3] [ 50%] PASSED ../river_core_plugins/dut_plugins/chromite_verilator_plugin/gen_framework.py::test_eval[make -f /scratch/git-repo/github/incoresemi/river_core/test/Makefile.chromite_verilator aapg_rv64imafdc_hazards_s_000573_02062021122737765659_00001] 
+  [gw0] [100%] PASSED ../river_core_plugins/dut_plugins/chromite_verilator_plugin/gen_framework.py::test_eval[make -f /scratch/git-repo/github/incoresemi/river_core/test/Makefile.chromite_verilator aapg_rv64imafdc_hazards_s_001222_02062021122737711013_00000] 
+  
+  - generated report log file: /scratch/git-repo/github/incoresemi/river_core/test/.json/chromite_verilator_20210602-1239.json -
+  - generated html file: file:///scratch/git-repo/github/incoresemi/river_core/test/reports/chromite_verilator.html -
+  ======================================== 2 passed in 11.34s =========================================
+            info  | Reference Info
+            info  | Reference Jobs : 1
+            info  | Reference Count (Times to run the test) : 1
+            info  | Now loading modspike-target
+           debug  | Loading module from /scratch/git-repo/github/incoresemi/river_core_plugins/reference_plugins/modspike_plugin/modspike_plugin.py
+           debug  | All modes detected
+           debug  | Running build
+           debug  | Pre Compile Stage
+           debug  | /scratch/git-repo/github/incoresemi/river_core/test//.json/ Directory exists
+           debug  | Build Hook
+           debug  | Creating Make Target for aapg_rv64imafdc_hazards_s_000573_02062021122737765659_00001
+           debug  | Creating Make Target for aapg_rv64imafdc_hazards_s_001222_02062021122737711013_00000
+           debug  | Run Hook
+           debug  | Module dir: /scratch/git-repo/github/incoresemi/river_core_plugins/reference_plugins
+           debug  | Pytest file: /scratch/git-repo/github/incoresemi/river_core_plugins/reference_plugins/modspike_plugin/gen_framework.py
+  ======================================== test session starts ========================================
+  platform linux -- Python 3.7.0, pytest-6.1.2, py-1.9.0, pluggy-0.13.1
+  rootdir: /scratch/git-repo/github/incoresemi
+  plugins: metadata-1.11.0, forked-1.3.0, reportlog-0.1.2, html-3.1.0, xdist-2.1.0
+  [gw0] Python 3.7.0 (default, May 26 2020, 14:51:08)  -- [GCC 9.3.0]
+  gw0 [2]
+  scheduling tests via LoadScheduling
+  
+  ../river_core_plugins/reference_plugins/modspike_plugin/gen_framework.py::test_eval[make -f /scratch/git-repo/github/incoresemi/river_core/test/Makefile.spike aapg_rv64imafdc_hazards_s_000573_02062021122737765659_00001] 
+  [gw0] [ 50%] PASSED ../river_core_plugins/reference_plugins/modspike_plugin/gen_framework.py::test_eval[make -f /scratch/git-repo/github/incoresemi/river_core/test/Makefile.spike aapg_rv64imafdc_hazards_s_000573_02062021122737765659_00001] 
+  ../river_core_plugins/reference_plugins/modspike_plugin/gen_framework.py::test_eval[make -f /scratch/git-repo/github/incoresemi/river_core/test/Makefile.spike aapg_rv64imafdc_hazards_s_001222_02062021122737711013_00000] 
+  [gw0] [100%] PASSED ../river_core_plugins/reference_plugins/modspike_plugin/gen_framework.py::test_eval[make -f /scratch/git-repo/github/incoresemi/river_core/test/Makefile.spike aapg_rv64imafdc_hazards_s_001222_02062021122737711013_00000] 
+  
+  - generated report log file: /scratch/git-repo/github/incoresemi/river_core/test/.json/spike_20210602-1239.json -
+  - generated html file: file:///scratch/git-repo/github/incoresemi/river_core/test/reports/spike.html -
+  ========================================= 2 passed in 0.86s =========================================
+            info  | Dumps for test aapg_rv64imafdc_hazards_s_000573_02062021122737765659_00001 Match. TEST PASSED
+            info  | Dumps for test aapg_rv64imafdc_hazards_s_001222_02062021122737711013_00000 Match. TEST PASSED
+            info  | Checking for a generator json to create final report
+           debug  | Detected generated JSON Files: ['test/.json/aapg_20210602-1227.json']
+           debug  | Removing artifacts for Chromite
+           debug  | Removing extra files for Test: aapg_rv64imafdc_hazards_s_000573_02062021122737765659_00001
+           debug  | Removing extra files for Test: aapg_rv64imafdc_hazards_s_001222_02062021122737711013_00000
+           debug  | Removing artifacts for Spike
+           debug  | Removing extra files for Test: aapg_rv64imafdc_hazards_s_000573_02062021122737765659_00001
+           debug  | Removing extra files for Test: aapg_rv64imafdc_hazards_s_001222_02062021122737711013_00000
+            info  | Now generating some good HTML reports for you
+            info  | Final report saved at test/reports//report.html
+            info  | Opening test report in web-browser
+
   
 At the end you shall also see a html report open up in your default browser
 containing information of all the runs. The reports folder will have additional

@@ -92,8 +92,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'RiVer Core'
-copyright = u'2021 InCore Semiconductors; Tessolve'
-author = 'InCore Semiconductors Pvt. Ltd.; Tessolve'
+copyright = u'2021 InCore Semiconductors; Tessolve Semiconductors'
+author = 'InCore Semiconductors Pvt. Ltd.; Tessolve Semiconductors Pvt. Ltd.'
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -296,7 +296,8 @@ latex_elements = {
             %\fancyfoot[R]{\ifthenelse{\isodd{\value{page}}}{{\tiny Meher Krishna Patel} }{\href{http://pythondsp.readthedocs.io/en/latest/pythondsp/toc.html}{\tiny PythonDSP}}}
 
             %%% Alternating Footer for two side
-            \fancyfoot[LO, LE]{\small \bf{Copyright \textcopyright \the\year \textbf{ } InCore Semiconductors Pvt. Ltd.; Tessolve}}
+            \fancyfoot[LO, LE]{\small \bf{Copyright \textcopyright \the\year
+            \textbf{ } InCore Semiconductors Pvt. Ltd.; Tessolve Semiconductors Pvt. Ltd.}}
             %\fancyfoot[LO, LE]{\scriptsize \bf{RiVer Core}}
 
             %%% page number
@@ -355,7 +356,7 @@ latex_elements = {
 
             %% \vfill adds at the bottom
             \vfill
-            Copyright \textcopyright \the\year \textbf{ } InCore Semiconductors Pvt. Ltd.; Tessolve
+            Copyright \textcopyright \the\year \textbf{ } InCore Semiconductors Pvt. Ltd.; Tessolve Semiconductors Pvt. Ltd.
         \end{titlepage}
         \sloppy
 
@@ -411,7 +412,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'RiVer_Core.tex', 'RISC-V CORE VERIFICATION Documentation',
-     'InCore Semiconductors Pvt. Ltd.; Tessolve', 'manual'),
+     'InCore Semiconductors Pvt. Ltd.; Tessolve Semiconductors Pvt. Ltd.', 'manual'),
 ]
 
 latex_logo = '_static/incore_logo.png'

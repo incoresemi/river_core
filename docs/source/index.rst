@@ -13,19 +13,20 @@ Welcome to the RiVer Core Verification Framework Manual.
 
   **Proprietary Notice**
 
-  Copyright (c) |today|, InCore Semiconductors Pvt. Ltd.
+  Copyright (c) |today|, InCore Semiconductors Pvt. Ltd.; 
+  Copyright (c) |today|, Tessolve Semiconductors Pvt. Ltd.;
 
   Information in this document is provided "as is" with faults, if any.
 
-  InCore expressly disclaims all warranties, representations, and conditions of any kind, whether
+  Owners expressly disclaims all warranties, representations, and conditions of any kind, whether
   express or implied, including, but not limited to, the implied warranties or conditions of
   merchantability, fitness for a particular purpose and non-infringement.
 
-  InCore does not assume any liability rising out of the application or use of any product or circuit,
+  Owners does not assume any liability rising out of the application or use of any product or circuit,
   and specifically disclaims any and all liability, including without limitation indirect, incidental,
   special, exemplary, or consequential damages.
 
-  InCore reserves the right to make changes without further notice to any products herein.
+  Owners reserves the right to make changes without further notice to any products herein.
 
 
 .. toctree::
@@ -46,6 +47,7 @@ Welcome to the RiVer Core Verification Framework Manual.
    code-doc
    contributing
    authors
+   licensing
 
 Indices and tables
 ==================
