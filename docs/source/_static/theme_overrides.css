@@ -1,0 +1,38 @@
+/* override table width restrictions */
+@media screen and (min-width: 767px) {
+
+   .wy-table-responsive table td {
+      /* !important prevents the common CSS stylesheets from overriding
+         this as on RTD they are loaded after this stylesheet */
+      white-space: normal !important;
+   }
+
+   .wy-table-responsive {
+      overflow: visible !important;
+   }
+}
+table.rows th {
+    background-color: #ede;
+    border-style: solid solid solid solid;
+    border-width: 0px 0px 0px 0px;
+    border-color: #AAAAAA;
+    text-align: center;
+}
+table.rows td {
+    border-style: solid solid solid solid;
+    border-width: 0px 0px 0px 0px;
+    border-color: #AAAAAA;
+}
+
+table.rows tr {
+    border-style: solid solid solid solid;
+    border-width: 0px 0px 0px 0px;
+    border-color: #AAAAAA;
+}
+
+table.rows tr:nth-child(even) {
+    background-color: #F3F3FF;
+}
+table.rows tr:nth-child(odd) {
+    background-color: #FFFFEE;
+}

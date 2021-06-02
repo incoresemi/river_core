@@ -1,7 +1,7 @@
 **RiVer Core** : RISC-V Core Verification Framework 
 ###################################################################################
+RiVer Core is an open source Python based verification framework.
 
+LICENSE: BSD-3 Clause.
 
-Latest documentation of river_core :
-
-  * `river_core.pdf  <https://gitlab.com/incoresemi/river-framework/core-verification/river_core/-/jobs/artifacts/master/raw/river_core.pdf?job=doc>`_
+Latest documentation of river_core is available at `Read the Docs <https://river_core.readthedocs.io/>`_

@@ -1,4 +1,0 @@
-ISA: RV64IMAFDCZicsr_Zifencei
-supported_xlen: [64]
-User_Spec_Version: '2.3'
-

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Test Report</title>
+    <link href="style.css" rel="stylesheet" type="text/css"/></head>
+    <h1>{{ name }}</h1>
+    <h2>Coverage Report generated on {{ date }} at {{ time }} by <a href="https://github.com/incoresemi/river_core">river_core</a> v{{ version }} after DB Merge</h2>
+    <h2>Environment</h2>
+    <table id="environment">
+    <tr>
+        <td>river_core Version</td>
+        <td>{{ version }}</td></tr>
+      <tr>
+        <td>DUT</td>
+        <td>{{ dut }}</td></tr>
+      <tr>
+        <td>ISA</td>
+        <td>{{ isa }}</td></tr>
+      <tr>
+        <td>Generator</td>
+        <td>{{ generator }}</td></tr>
+     </table>
+
+    <h2>Coverage Results:</h2>
+    <table id="simple-table">
+      <thead id="simple-table-head">
+        <tr>
+          <th col="time">Time</th>
+          <th col="name">Coverage Results</th>
+          <th col="rank">Ranked Report</th>
+          <th col="files">Files</th>
+          </tr>
+            <tr>
+            <td class="col-time">{{ date }} at {{ time }}</td>
+            <td class="col-name"><a href={{ coverage_report }}>DuT Coverage Report</a></td>
+            <td class="col-rank"><a href={{ coverage_rank_report }}>DuT Ranked Report</a></td>
+
+            <td>The list of individual HTMLs from work directories that were merged:
+                <ul>
+        {% for test in db_files %}
+        <li><a href={{ test }}>{{ test.split('/')[-2] }} </a></li>
+        {% endfor %}
+                </ul>
+            </tr>
+            </tbody>
+      </table>
+
+      </body></html>

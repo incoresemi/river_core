@@ -1,15 +1,11 @@
 include CONTRIBUTING.rst
-include LICENSE
+include river_core/requirements.txt
+include LICENSE.*
 include README.rst
-include requirements.txt
+include CHANGELOG.rst
 
-recursive-include tests *
+recursive-include examples *
+recursive-include river_core/templates *
+
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
-recursive-include river_core/microtesk_plugin *
-recursive-include river_core/aapg_plugin *
-recursive-include river_core/riscv_dv_plugin *
-recursive-include river_core/compile_plugin *
-
-
-recursive-include docs *.rst conf.py Makefile make.bat *.jpg *.png *.gif

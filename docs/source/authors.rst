@@ -2,5 +2,8 @@
 
 Contributors
 =================
-* J Lavanya <lavanya.jagan@gmail.com>
+* Ashwin Nambiar <mail@as-hw.in>
+* Neel Gala <neelgala@incoresemi.com>
+* Vinay <mail-id>
+* Jyothi <mail-id>
 
