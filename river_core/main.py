@@ -8,6 +8,7 @@ from river_core.log import *
 from river_core.rivercore import rivercore_clean, rivercore_compile, rivercore_generate, rivercore_merge, rivercore_setup
 from river_core.__init__ import __version__
 import river_core.constants as constants
+from river_core.rivercore_gui import rivercore_gui as rc_gui
 
 
 def check_config():
@@ -233,7 +234,7 @@ def gui():
     """
     logger.info(constants.header_temp.format(__version__))
     logger.info('RiVer-Core GUI')
-    pass
+    rc_gui()
 
 if __name__ == '__main__':
     cli()
