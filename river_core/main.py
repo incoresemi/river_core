@@ -226,5 +226,14 @@ def merge(verbosity, db_files, output, config):
     rivercore_merge(verbosity, db_files, output, config)
 
 
+@cli.command()
+def gui():
+    """
+        subcommand to invoke river_core as a gui
+    """
+    logger.info(constants.header_temp.format(__version__))
+    logger.info('RiVer-Core GUI')
+    pass
+
 if __name__ == '__main__':
     cli()
