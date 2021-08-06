@@ -103,6 +103,7 @@ ENV/
 
 # IDE settings
 .vscode/
+.idea/
 
 # Swap
 [._]*.s[a-v][a-z]
