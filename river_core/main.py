@@ -236,5 +236,6 @@ def gui():
     logger.info('RiVer-Core GUI')
     rc_gui()
 
+
 if __name__ == '__main__':
     cli()
