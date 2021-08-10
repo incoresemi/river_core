@@ -330,8 +330,8 @@ def create_river_layout(config_obj):
         [Sg.Menu(menu_layout)],
         [
             Sg.Text("Verbosity: "),
-            Sg.Combo(['Info', 'Debug', 'Error'],
-                     default_value='debug',
+            Sg.Combo(['info', 'debug', 'error'],
+                     default_value='info',
                      key='verb'),
         ],
         [
@@ -707,12 +707,12 @@ def run_command(cmd, timeout=None, window=None):
                          stderr=subprocess.STDOUT)
     output = ''
     txt = window.FindElement('-ML-').Widget
-    txt.tag_config("info", background='#2c2e2e', foreground="white")
-    txt.tag_config("debug", background='#2c2e2e', foreground="green")
+    txt.tag_config("info", background='#2c2e2e', foreground="green")
+    txt.tag_config("debug", background='#2c2e2e', foreground="white")
     txt.tag_config("warning", background='#2c2e2e', foreground="yellow")
-    txt.tag_config("error", background='#2c2e2e', foreground="orange")
-    txt.tag_config("critical", background='#2c2e2e', foreground="red")
-    txt.tag_config("message", background='#2c2e2e', foreground="cyan")
+    txt.tag_config("error", background='#2c2e2e', foreground="red")
+    txt.tag_config("critical", background='#2c2e2e', foreground="orange")
+    txt.tag_config("message", background='#2c2e2e', foreground="white")
 
     for line in p.stdout:
         line = line.decode(errors='replace' if sys.version_info <
