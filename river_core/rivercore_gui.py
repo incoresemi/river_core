@@ -369,7 +369,7 @@ def create_river_layout(config_obj):
                      layout=[
                          [Sg.Text('  ')],
                          [
-                             Sg.T("Generatpr         : {0}".format(
+                             Sg.T("Generator         : {0}".format(
                                  config_obj.generator)),
                          ],
                          [
