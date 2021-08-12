@@ -11,4 +11,4 @@ RiVer Core Framework comes with a Graphical User Interface. The GUI can be run b
 -------------
 Known Issues:
 -------------
-
+- reordering the config file parameters ends in a stack overflow. 
