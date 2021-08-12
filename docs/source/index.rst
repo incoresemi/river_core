@@ -43,6 +43,7 @@ Welcome to the RiVer Core Verification Framework Manual.
    dut_plugins
    ref_plugins
    merge
+   gui
    developer
    code-doc
    changelog
