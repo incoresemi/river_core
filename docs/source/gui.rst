@@ -94,10 +94,27 @@ Once you have completed making all the entries, you can click on ``Save Configur
    
 You have now successfully set up RiVer-Core GUI. Invoke the GUI again by using the ``river_core gui`` command.
 
-
-
 .. note:: you can always update the ``config.ini`` file manually if you feel the GUI to be time intensive. But, **make sure you stick to the same ordering of sections in the ini file as it was created by the GUI**. Failing to do so, creates a stack overflow. This is a known issue. You can check the known issues section of this document to check if has been resolved. 
 
+Generating and Compiling tests
+------------------------------
+
+Now that you have configured the parameters, you can run use the GUI to generate the tests. You main window should be similiar to this.
+
+.. figure:: _static/_gui/gui_mainpage_configured.png
+   :align: center
+
+Now you can click on the ``generate`` button to **generate** the tests. The terminal window in the bottom half of the main window will reflect your terminal. You can control the verbosity of the log generated in the terminal by selecting one of the 3 options [info, debug, error] in the ``Verbosity`` section in the top left corner of the window.
+
+
+.. figure:: _static/_gui/gui_generate.png
+   :align: center
+
+Terminal section after generation.
+
+To **compile** the tests, you should click on the ``compile`` button near generate. This will compile the tests on the DUT and return the report of your test results. 
+
+.. note:: The ``merge`` and ``clean`` buttons currently do not work.
 
 -------------
 Known Issues:
