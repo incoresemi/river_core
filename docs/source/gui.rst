@@ -16,6 +16,12 @@ RiVer Core Framework comes with a Graphical User Interface. The GUI can be run b
 Using the GUI
 -------------
 
+Before you can use the GUI, you need to have installed the ``river_core_plugins`` which supports the uarch_tests generator. The forked river_core_plugin is currently hosted `here <https://github.com/alenkruth/river_core_plugins>`_. Replace your existing river_core_plugins directory with this repository and then checkout the ``uarch_test`` branch. You should be good to go.
+
+Additionally, make sure you have installed uarch_test as a python package. You will either have acccess to the ``micro-arch-tests`` as well as ``uarch_modules`` repository or else be provided with an obfuscated version of the same, hosted in Onedrive. In either case, ``cd`` into the ``micro-arch-tests`` directory and run ``pip install --editable .`` to install uarch_test as a python package. Please remember where you have stored the ``uarch_modules`` directory as we will be passing the ``modules`` directory within this repository as a parameter while setting up the GUI.
+
+Finally, we have found several issues in the current implementation and we have created a list of known issues at the end of this document. But, as it stands now, the GUI works albeit the said limitations. Please let us know if you find any more. Thanks :-)
+
 Initial Setup
 -------------
    
