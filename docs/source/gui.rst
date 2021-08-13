@@ -18,9 +18,11 @@ Using the GUI
 
 Before you can use the GUI, you need to have installed the ``river_core_plugins`` which supports the uarch_tests generator. The forked river_core_plugin is currently hosted `here <https://github.com/alenkruth/river_core_plugins>`_. Replace your existing river_core_plugins directory with this repository and then checkout the ``uarch_test`` branch. You should be good to go.
 
-Additionally, make sure you have installed uarch_test as a python package. You will either have acccess to the ``micro-arch-tests`` as well as ``uarch_modules`` repository or else be provided with an obfuscated version of the same, hosted in Onedrive. In either case, ``cd`` into the ``micro-arch-tests`` directory and run ``pip install --editable .`` to install uarch_test as a python package. Please remember where you have stored the ``uarch_modules`` directory as we will be passing the ``modules`` directory within this repository as a parameter while setting up the GUI. You can find documentation related to the river_core_plugins as well as the micro-arch-tests in their own repos.
+Additionally, make sure you have installed uarch_test as a python package. You will have the ``micro-arch-tests`` as well as ``uarch_modules`` within the file  hosted on Onedrive. Here, ``micro-arch-tests`` is the top level directory of the ``uarch_tests`` generator. ``uarch_modules`` consists of the tests to be run on the DUT. Now, ``cd`` into the ``micro-arch-tests`` directory and run ``pip install --editable .`` to install uarch_test as a python package. Please remember where you have stored the ``uarch_modules`` directory as we will be passing the path to ``uarch_modules/modules`` directory as a parameter while setting up the GUI. 
 
-Finally, we have found several issues in the current implementation and we have created a list of known issues at the end of this document. But, as it stands now, the GUI works albeit the said limitations. Please let us know if you find any more. Thanks :-)
+The GUI will take care of the changes to be made to the ``river_core.ini`` or the config.ini file of your RiVer core installation. Nevertheless, you can find documentation related to the changes required using the updated river_core_plugins in the repo (`here <https://github.com/Alenkruth/river_core_plugins/tree/uarch_test/generator_plugins/uarch_test_plugin>`_ and `here <https://github.com/Alenkruth/river_core_plugins/tree/uarch_test/dut_plugins/chromite_verilator_plugin>`_). The documentation for the micro-arch-tests can be found in the docs directory.
+
+Finally, we have found several issues in the current implementation and we have created a list of known issues at the end of this document. But, as it stands now, the GUI works as expected albeit the said limitations. Please let us know if you find any more :-).
 
 Initial Setup
 -------------
@@ -80,7 +82,7 @@ In the setup page,
  - **config.yaml** should contain the path to the directory containing the yaml file specifying the parameters of the chromite core. (dut_config.yaml) (For chormite you can find the config file named ``default.yaml`` within sample_config directory in the chromite repo)
  - **work_dir** (optional) should contain the path to the work directory the user wants to use.
  - **linker_dir** (optional) should contain the path to the directory conatining the ``link.ld`` file and ``model_test.h`` files. If left empty, the generator will create those files.
- - **modules_dir** should contain the path to the directory containing all the tests. (path to the modules directory within the uarch_modules repository)
+ - **modules_dir** should contain the path to the directory containing all the tests. (path to the modules directory within the uarch_modules repository mentioned earlier)
  - **select modules** will contain all the modules for which the tests can be generated. (currently use either **All** or **branch predictor** as no other modules are supported. The modules specified other than them are just for demonstration purposes)
  - **generate covergroups** can be enabled if the user wants to generate covergroups in addition to the tests.
 - **Reference Plugin** section is used to select the reference plugin. The user can choose the plugin between **spike** and **modspike**. But, **to run tests on chromite it is necessary to use modspike**
