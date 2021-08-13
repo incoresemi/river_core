@@ -130,6 +130,7 @@ IMPORTANT
 ---------
 - **Closing the setup screen (with or wothout saving) rewrites the config file. This is a problem when the user just wants to update a single parameter!** 
 - **Find a method to list all the modules being supported currently by UArch_test**
+- **Support all the generator plugins**
 - The resolution of the GUI window is fixed and not scalable. This will lead to issues in Hi-Resolution displays.
 
 LOWER PRIORITY
