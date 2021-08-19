@@ -64,7 +64,7 @@ In the setup page, you should specify the paths and parameters required to gener
 
 These are the default options in the GUI. It is also assumed that the river_core_plugins has been cloned and the required dependencies have been resolved before the user tries to use the GUI to generate as well as compile tests. (in the following description about using the 
 
-.. note:: The interface which is invoked when you try to choose the directory (while setting path) requires you to go into the directory whose path you want to add, and then click ``OK``. Assume the directory structure like this `` top_dir/in_dir/inner_dir ``. If you want to add the path to ``inner_dir`` you are supposed to open ``inner_dir`` directory and then click on ``OK``. Selecting the ``inner_dir`` with the ``in_dir`` open will add the path to ``in_dir`` and not ``inner_dir``.
+.. note:: The interface which is invoked when you try to choose the directory (while setting path) requires you to go into the directory whose path you want to add, and then click ``OK``. Assume the directory structure like this ``top_dir/in_dir/inner_dir ``. If you want to add the path to ``inner_dir`` you are supposed to open ``inner_dir`` directory and then click on ``OK``. Selecting the ``inner_dir`` with the ``in_dir`` open will add the path to ``in_dir`` and not ``inner_dir``.
 We know this is slightly cumbersome, but this limitation stems from the framework we had chosen for rendering the GUI.
 
 In the setup page, 
@@ -73,10 +73,10 @@ In the setup page,
 
 **Path Settings** section is where you specify the path to the plugins as well as the work directory
 
-- **Work Directory** should contain the path to your river_core work directory. 
-- **Target Path** should contain the path to your DUT target plugin (chromite verilator, in this case)
-- **Reference Path** should contain the path to your reference plugin (modspike, in this case)
-- **Suite Path** should contain the path to the test generator plugin (uarch_test, in this case)
+- **Work Directory** should contain the path to your ``work`` directory of river_core. You can choose the directory of your choice if you do not have one already. Do not leave this field empty, if you do, the root directory will be chosen as the work directory and RiVer core will not be able to create the directory without sudo access.
+- **Target Path** should contain the path to your DUT target plugin (``river_core_plugins/dut_plugins`` in this case)
+- **Reference Path** should contain the path to your reference plugin (``river_core_plugins/reference_plugins`` in this case)
+- **Suite Path** should contain the path to the test generator plugin (``river_core_plugins/generator_plugins`` in this case)
 
 **Plugin Setup** section
 
@@ -87,6 +87,7 @@ In the setup page,
  - **Wrapper path** should contain the path to the ``/bsvwrappers/common_lib/`` dorectory within the DUT (chromite).
  - **Top Module** should contain the name of the top module (TB) of the DUT. It will be ``mkTbSoc`` by default, which is the top module for Chromite.
  - **Check Logs** can be enabled if the user wants to check the logs generated from the DUT (uarch_test generator specific).
+ 
 - **Generator Plugin** section is for specifying the generator specific info. **Uarch_test** is the only plugin currently supported.
  - **config.yaml** should contain the path to the directory containing the yaml file specifying the parameters of the chromite core. (dut_config.yaml) (For chormite you can find the config file named ``default.yaml`` within sample_config directory in the chromite repo)
  - **work_dir** (optional) should contain the path to the work directory the user wants to use.
@@ -94,8 +95,11 @@ In the setup page,
  - **modules_dir** should contain the path to the directory containing all the tests. (path to the modules directory within the uarch_modules repository mentioned earlier)
  - **select modules** will contain all the modules for which the tests can be generated. (currently use either **All** or **branch predictor** as no other modules are supported. The modules specified other than them are just for demonstration purposes)
  - **generate covergroups** can be enabled if the user wants to generate covergroups in addition to the tests.
+ 
 - **Reference Plugin** section is used to select the reference plugin. The user can choose the plugin between **spike** and **modspike**. But, **to run tests on chromite it is necessary to use modspike**
+
 **Additonal Options** allows you to ``open the browser`` once generation or compilation is complete, as well as enable ``space saver``.
+
 **Coverage options** allow you to enable ``code coverage`` and ``functional coverage`` (Functional coverage should be enabled if you wish to check coverage using chromite_questa or chromite_cadence DUT plugins)
 
 Once you have completed making all the entries, you can click on ``Save Configuration``. Once you click on that, you'll be asked to restart RiVer Core. Click ``OK``on the messages that follow. Screenshots of the windows that come up are added.
