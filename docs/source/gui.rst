@@ -18,6 +18,8 @@ Using the GUI
 
 Before you can use the GUI, you need to have installed the ``river_core_plugins`` which supports the uarch_tests generator. The forked river_core_plugin is currently hosted `here <https://github.com/alenkruth/river_core_plugins>`_. Replace your existing river_core_plugins directory with this repository and then checkout the ``uarch_test`` branch. You should be good to go.
 
+.. note:: If you are using any Python version other than 3.9.6, there is a high chance that you might face a ``RunTimeError`` with the message ``Marshal Loads failed``. This is due to the obfuscation being carried out in 3.9.6 version of python, which is different from yours. **Right now, we haven't finalized a version of python which we will be supporting**. So, if you face this error, please consider updating to python 3.9.6 in your virtual environment and try again.
+
 Additionally, make sure you have installed uarch_test as a python package. You will have the ``micro-arch-tests`` as well as ``uarch_modules`` within the file  hosted on Onedrive. Here, ``micro-arch-tests`` is the top level directory of the ``uarch_tests`` generator. ``uarch_modules`` consists of the tests to be run on the DUT. Now, ``cd`` into the ``micro-arch-tests`` directory and run ``pip install --editable .`` to install uarch_test as a python package. Please remember where you have stored the ``uarch_modules`` directory as we will be passing the path to ``uarch_modules/modules`` directory as a parameter while setting up the GUI. 
 
 The GUI will take care of the changes to be made to the ``river_core.ini`` or the config.ini file of your RiVer core installation. Nevertheless, you can find documentation related to the changes required using the updated river_core_plugins in the repo (`here <https://github.com/Alenkruth/river_core_plugins/tree/uarch_test/generator_plugins/uarch_test_plugin>`_ and `here <https://github.com/Alenkruth/river_core_plugins/tree/uarch_test/dut_plugins/chromite_verilator_plugin>`_). The documentation for the micro-arch-tests can be found in the docs directory.
@@ -62,15 +64,22 @@ In the setup page, you should specify the paths and parameters required to gener
 
 These are the default options in the GUI. It is also assumed that the river_core_plugins has been cloned and the required dependencies have been resolved before the user tries to use the GUI to generate as well as compile tests. (in the following description about using the 
 
+.. note:: The interface which is invoked when you try to choose the directory (while setting path) requires you to go into the directory whose path you want to add, and then click ``OK``. Assume the directory structure like this `` top_dir/in_dir/inner_dir ``. If you want to add the path to ``inner_dir`` you are supposed to open ``inner_dir`` directory and then click on ``OK``. Selecting the ``inner_dir`` with the ``in_dir`` open will add the path to ``in_dir`` and not ``inner_dir``.
+We know this is slightly cumbersome, but this limitation stems from the framework we had chosen for rendering the GUI.
+
 In the setup page, 
 
 **ISA** section allows you to select the ISA for the tests. (fixed to 64bit)
+
 **Path Settings** section is where you specify the path to the plugins as well as the work directory
-- **Work Directory** should contain the path to your river_core work directory.
+
+- **Work Directory** should contain the path to your river_core work directory. 
 - **Target Path** should contain the path to your DUT target plugin (chromite verilator, in this case)
 - **Reference Path** should contain the path to your reference plugin (modspike, in this case)
 - **Suite Path** should contain the path to the test generator plugin (uarch_test, in this case)
+
 **Plugin Setup** section
+
 - **DUT Plugin** section is for specifying DUT specific info
  - **DUT Plugin** list is used to select the DUT plugin which the user prefers.
  - **Verilog dir** should contain the path to the directory containing the **verilog** files of the DUT (chromite).
