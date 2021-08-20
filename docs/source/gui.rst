@@ -64,7 +64,7 @@ In the setup page, you should specify the paths and parameters required to gener
 
 These are the default options in the GUI. It is also assumed that the river_core_plugins has been cloned and the required dependencies have been resolved before the user tries to use the GUI to generate as well as compile tests. (in the following description about using the 
 
-.. note:: The interface which is invoked when you try to choose the directory requires you to go **into** the directory whose path you want to add, and then click ``OK``. Assume the directory structure like this ``top_dir/in_dir/inner_dir``. If you want to add the path to ``inner_dir``, you are supposed to navigate to the ``top_dir/in_dir/inner_dir`` directory and then click on ``OK``. Selecting the ``inner_dir`` from within the ``in_dir`` and then clicking ``OK`` will add the path to ``in_dir``, while you expect the path to ``inner_dir`` to be added. We know this is slightly cumbersome, but this limitation stems from the framework which we have chosen for rendering the GUI.
+.. note:: The interface which is invoked when you try to choose the directory requires you to go **into** the directory whose path you want to add, and then click ``OK``. Assume the directory structure like this ``A/B/C``. If you want to add the path to ``C``, you are supposed to navigate to the ``C`` directory and then click on ``OK``. Selecting the ``C`` from within the ``B`` and then clicking ``OK`` will add the path to ``B``, while you expect the path to ``C`` to be added. We know this is slightly cumbersome, but this limitation stems from the framework which we have chosen for rendering the GUI.
 
 In the setup page, 
 
