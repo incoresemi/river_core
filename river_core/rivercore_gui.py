@@ -737,12 +737,15 @@ def run_command(cmd, timeout=None, window=None):
     return ret_val, output
 
 
-def rivercore_gui():
+def rivercore_gui(config_arg):
     """
         Main function to create the home page gui and invoke other functions
         based on user actions.
     """
-    config_file = os.path.join(os.getcwd(), 'config.ini')
+    if config_arg is None:
+        config_file = os.path.join(os.getcwd(), 'config.ini')
+    else:
+        config_file = config_arg
     if os.path.isfile(config_file):
         existing = read_existing_config(config_file)
         console_layout = [

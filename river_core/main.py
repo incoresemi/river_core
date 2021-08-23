@@ -241,10 +241,11 @@ def gui(config_file):
     """
         subcommand to invoke river_core as a gui
     """
-    logger.info(config_file)
     logger.info(constants.header_temp.format(__version__))
+    if config_file is not None:
+        logger.info(f'Running GUI from config file : {config_file}')
     logger.info('RiVer-Core GUI')
-    rc_gui()
+    rc_gui(config_file)
 
 
 if __name__ == '__main__':
