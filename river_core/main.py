@@ -227,11 +227,21 @@ def merge(verbosity, db_files, output, config):
     rivercore_merge(verbosity, db_files, output, config)
 
 
+@click.version_option(version=__version__)
+@click.option(
+    '-cfg',
+    '--config_file',
+    type=click.Path(dir_okay=False, exists=True),
+    help=
+    'Read config defaults from the INI file\nAuto detects river_core.ini in '
+    'current directory or in the ~ directory and displays in gui '
+)
 @cli.command()
-def gui():
+def gui(config_file):
     """
         subcommand to invoke river_core as a gui
     """
+    logger.info(config_file)
     logger.info(constants.header_temp.format(__version__))
     logger.info('RiVer-Core GUI')
     rc_gui()
