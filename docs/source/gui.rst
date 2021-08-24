@@ -16,7 +16,7 @@ RiVer Core Framework comes with a Graphical User Interface. The GUI can be run b
 Using the GUI
 -------------
 
-Before you can use the GUI, you need to have installed the ``river_core_plugins`` which supports the uarch_tests generator(UTG). The forked river_core_plugin is currently hosted `here <https://github.com/alenkruth/river_core_plugins>`_. Replace your existing river_core_plugins directory with this repository and then checkout the ``utg`` branch. You should be good to go.
+Before you can use the GUI, you need to have installed the ``river_core_plugins`` which supports the **Uarch Tests generator(UTG)**. The forked river_core_plugin is currently hosted `here <https://github.com/alenkruth/river_core_plugins>`_. Replace your existing river_core_plugins directory with this repository and then checkout the ``utg`` branch. You should be good to go.
 
 .. note:: Python 3.7.0 is the version of Python which we will be supporting. Please make sure you use the same.
 
