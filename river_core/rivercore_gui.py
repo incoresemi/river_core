@@ -204,20 +204,52 @@ def read_existing_config(config_file):
                 config.path_to_suite = cfg[i]['path_to_suite']
                 config.open_browser = cfg[i]['open_browser']
                 config.space_saver = cfg[i]['space_saver']
-            if i == 'coverage':
+            
+            elif i == 'coverage':
                 config.coverage_code = cfg[i]['code']
                 config.coverage_functional = cfg[i]['functional']
-            if i in [
-                'chromite_verilator', 'cclass_verilator', 'chromite_questa',
-                'chromite_cadence'
-            ]:
+            
+            elif i == config.target and i == 'chromite_verilator':
                 config.dut_jobs = cfg[i]['jobs']
                 config.dut_filter = cfg[i]['filter']
                 config.dut_count = cfg[i]['count']
                 config.dut_src_dir = cfg[i]['src_dir']
+                config.dut_src_dir = config.dut_src_dir.replace(' ,', ',')
+                config.dut_src_dir = config.dut_src_dir.replace(', ', ',')
                 config.dut_top_module = cfg[i]['top_module']
                 config.dut_check_logs = cfg[i]['check_logs']
-            if i in ['uarch_test']:
+            
+            elif i == config.target and i == 'cclass_verilator':
+                config.dut_jobs = cfg[i]['jobs']
+                config.dut_filter = cfg[i]['filter']
+                config.dut_count = cfg[i]['count']
+                config.dut_src_dir = cfg[i]['src_dir']
+                config.dut_src_dir = config.dut_src_dir.replace(' ,', ',')
+                config.dut_src_dir = config.dut_src_dir.replace(', ', ',')
+                config.dut_top_module = cfg[i]['top_module']
+                config.dut_check_logs = cfg[i]['check_logs']
+            
+            elif i == config.target and i == 'chromite_questa':
+                config.dut_jobs = cfg[i]['jobs']
+                config.dut_filter = cfg[i]['filter']
+                config.dut_count = cfg[i]['count']
+                config.dut_src_dir = cfg[i]['src_dir']
+                config.dut_src_dir = config.dut_src_dir.replace(' ,', ',')
+                config.dut_src_dir = config.dut_src_dir.replace(', ', ',')
+                config.dut_top_module = cfg[i]['top_module']
+                config.dut_check_logs = cfg[i]['check_logs']
+            
+            elif i == config.target and i == 'chromite_cadence':
+                config.dut_jobs = cfg[i]['jobs']
+                config.dut_filter = cfg[i]['filter']
+                config.dut_count = cfg[i]['count']
+                config.dut_src_dir = cfg[i]['src_dir']
+                config.dut_src_dir = config.dut_src_dir.replace(' ,', ',')
+                config.dut_src_dir = config.dut_src_dir.replace(', ', ',')
+                config.dut_top_module = cfg[i]['top_module']
+                config.dut_check_logs = cfg[i]['check_logs']
+            
+            elif i == config.generator and i == 'uarch_test':
                 config.gen_jobs = cfg[i]['jobs']
                 config.gen_count = cfg[i]['count']
                 config.gen_seed = cfg[i]['seed']
@@ -226,7 +258,26 @@ def read_existing_config(config_file):
                 config.gen_linker_dir = cfg[i]['linker_dir']
                 config.gen_modules_dir = cfg[i]['modules_dir']
                 config.gen_modules = cfg[i]['modules']
-            if i in ['spike', 'modspike']:
+           
+            elif i == config.generator and i == 'aapg':
+                config.gen_jobs = cfg[i]['jobs']
+                config.gen_filter = cfg[i]['filter']
+                config.gen_seed = cfg[i]['seed']
+                config.gen_count = cfg[i]['count']
+                config.gen_config_yaml = cfg[i]['config_yaml']
+            
+            elif i == config.generator and i == 'riscof':
+                config.gen_jobs = cfg[i]['jobs']
+                config.gen_count = cfg[i]['count']
+                config.gen_seed = cfg[i]['seed']
+                config.gen_riscof_config = cfg[i]['riscof_config']
+            
+            elif i == config.reference and i == 'spike':
+                config.ref_jobs = cfg[i]['jobs']
+                config.ref_count = cfg[i]['count']
+                config.ref_filter = cfg[i]['filter']
+            
+            elif i == config.reference and i == 'modspike':
                 config.ref_jobs = cfg[i]['jobs']
                 config.ref_count = cfg[i]['count']
                 config.ref_filter = cfg[i]['filter']
@@ -348,15 +399,15 @@ def create_river_layout(config_obj):
                          ],
                          [
                              Sg.T('Verilog Dir : {0}'.format(
-                                 config_obj.dut_src_dir.split(', ')[0]))
+                                 config_obj.dut_src_dir.split(',')[0]))
                          ],
                          [
                              Sg.T('BSC Dir     : {0}'.format(
-                                 config_obj.dut_src_dir.split(', ')[1]))
+                                 config_obj.dut_src_dir.split(',')[1]))
                          ],
                          [
                              Sg.T('Wrapper Dir : {0}'.format(
-                                 config_obj.dut_src_dir.split(', ')[2]))
+                                 config_obj.dut_src_dir.split(',')[2]))
                          ],
                          [
                              Sg.T('Check Logs  : {0}'.format(
