@@ -16,15 +16,15 @@ RiVer Core Framework comes with a Graphical User Interface. The GUI can be run b
 Using the GUI
 -------------
 
-Before you can use the GUI, you need to have installed the ``river_core_plugins`` which supports the uarch_tests generator. The forked river_core_plugin is currently hosted `here <https://github.com/alenkruth/river_core_plugins>`_. Replace your existing river_core_plugins directory with this repository and then checkout the ``uarch_test`` branch. You should be good to go.
+Before you can use the GUI, you need to have installed the ``river_core_plugins`` which supports the uarch_tests generator(UTG). The forked river_core_plugin is currently hosted `here <https://github.com/alenkruth/river_core_plugins>`_. Replace your existing river_core_plugins directory with this repository and then checkout the ``utg`` branch. You should be good to go.
 
 .. note:: Python 3.7.0 is the version of Python which we will be supporting. Please make sure you use the same.
 
 .. note:: Please do not use the obfuscated uarch_test package.
 
-Additionally, make sure you have installed uarch_test as a python package. You will have the ``micro-arch-tests`` as well as ``uarch_modules`` within the file  hosted on Onedrive. Here, ``micro-arch-tests`` is the top level directory of the ``uarch_tests`` generator. ``uarch_modules`` consists of the tests to be run on the DUT. Now, ``cd`` into the ``micro-arch-tests`` directory and run ``pip install --editable .`` to install uarch_test as a python package. Please remember where you have stored the ``uarch_modules`` directory as we will be passing the path to ``uarch_modules/modules`` directory as a parameter while setting up the GUI. 
+Additionally, make sure you have installed UTG as a python package. You will have the ``micro-arch-tests`` as well as ``uarch_modules`` within the file  hosted on Onedrive. Here, ``micro-arch-tests`` is the top level directory of the ``UTG``. ``uarch_modules`` consists of the tests to be run on the DUT. Now, ``cd`` into the ``micro-arch-tests`` directory and run ``pip install --editable .`` to install UTG as a python package. Please remember where you have stored the ``uarch_modules`` directory as we will be passing the path to ``uarch_modules/modules`` directory as a parameter while setting up the GUI. 
 
-The GUI will take care of the changes to be made to the ``river_core.ini`` or the config.ini file of your RiVer core installation. Nevertheless, you can find documentation related to the changes required using the updated river_core_plugins in the repo (`here <https://github.com/Alenkruth/river_core_plugins/tree/uarch_test/generator_plugins/uarch_test_plugin>`_ and `here <https://github.com/Alenkruth/river_core_plugins/tree/uarch_test/dut_plugins/chromite_verilator_plugin>`_). The documentation for the micro-arch-tests can be found in the docs directory.
+The GUI will take care of the changes to be made to the ``river_core.ini`` or the config.ini file of your RiVer core installation. Nevertheless, you can find documentation related to the changes required using the updated river_core_plugins in the repo (`here <https://github.com/Alenkruth/river_core_plugins/tree/utg/generator_plugins/uarch_test_plugin>`_ and `here <https://github.com/Alenkruth/river_core_plugins/tree/utg/dut_plugins/chromite_verilator_plugin>`_). The documentation for the micro-arch-tests can be found in the docs directory.
 
 Finally, we have found several issues in the current implementation and we have created a list of known issues at the end of this document. But, as it stands now, the GUI works as expected albeit the said limitations. Please let us know if you find any more :-).
 
@@ -60,7 +60,7 @@ The Setup page
 
 In the setup page, you should specify the paths and parameters required to generate as well as compile tests on RiVer core. Here, we will be only talking about configuring 
   
-1. **uarch_test** as the generator.
+1. **utg** as the generator.
 2. **chromite_verilator** as the DUT.
 3. **modspike** as the reference.
 
@@ -87,9 +87,9 @@ In the setup page,
  - **BSC path** should contain the path to the ``/inst/lib/Verilog`` directory in the ``bluespec`` installation directory.
  - **Wrapper path** should contain the path to the ``/bsvwrappers/common_lib/`` dorectory within the DUT (chromite).
  - **Top Module** should contain the name of the top module (TB) of the DUT. It will be ``mkTbSoc`` by default, which is the top module for Chromite.
- - **Check Logs** can be enabled if the user wants to check the logs generated from the DUT (uarch_test generator specific).
+ - **Check Logs** can be enabled if the user wants to check the logs generated from the DUT (utg specific).
  
-- **Generator Plugin** section is for specifying the generator specific info. **Uarch_test** is the only plugin currently supported.
+- **Generator Plugin** section is for specifying the generator specific info. **UTG** is the only plugin currently supported.
  - **config.yaml** should contain the path to the directory containing the yaml file specifying the parameters of the chromite core. (dut_config.yaml) (For chormite you can find the config file named ``default.yaml`` within sample_config directory in the chromite repo)
  - **work_dir** (optional) should contain the path to the work directory the user wants to use.
  - **linker_dir** (optional) should contain the path to the directory conatining the ``link.ld`` file and ``model_test.h`` files. If left empty, the generator will create those files.
@@ -145,7 +145,7 @@ Known Issues:
 IMPORTANT
 ---------
 - **Closing the setup screen (with or without saving) rewrites the config file. This is a problem when the user just wants to update a single parameter!** 
-- **Find a method to list all the modules being supported currently by UArch_test**
+- **Find a method to list all the modules being supported currently by utg**
 - **Support all the generator plugins**
 
 LOWER PRIORITY
