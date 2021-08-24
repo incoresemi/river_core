@@ -16,7 +16,7 @@ Sg.theme('DarkGrey14')
 n_font = "Arial 10"
 b_font = "Arial 10 bold"
 
-# TODO: Find way to obtain list of modules supported by uarch_test
+# TODO: Find way to obtain list of modules supported by utg
 list_modules = [
     'all', 'alu', 'branch_predictor', 'csr', 'decoder', 'decompressor', 'fpu',
     'm_ext', 'registerfile'
@@ -62,7 +62,7 @@ class config_data(object):
                  wd='',
                  tgt='',
                  ref='',
-                 gen='uarch_test',
+                 gen='utg',
                  isa='rv64imafdc',
                  tgt_path='',
                  ref_path='',
@@ -152,7 +152,7 @@ def reset_config(config_file):
     f.write('# Name of the reference model plugin\n')
     f.write('reference = modspike\n')
     f.write('# Name of the generator(s) to be used. Comma separated\n')
-    f.write('generator = uarch_test\n')
+    f.write('generator = utg\n')
     f.write('# ISA for the tests\n')
     f.write('isa = rv64imafdc\n\n')
     f.write('# Set paths for each plugin\n')
@@ -172,7 +172,7 @@ def reset_config(config_file):
             '../chromite/bsvwrappers/common_lib\n')
     f.write('top_module = mkTbSoc\ncheck_logs = True\n\n')
     # Gen plugin
-    f.write('[uarch_test]\njobs = 4\ncount = 1\nseed = random\n')
+    f.write('[utg]\njobs = 4\ncount = 1\nseed = random\n')
     f.write(
         'dut_config_yaml = ../dut_config.yaml\nwork_dir =\nlinker_dir =\nmodules_dir =\n'
     )
@@ -249,7 +249,7 @@ def read_existing_config(config_file):
                 config.dut_top_module = cfg[i]['top_module']
                 config.dut_check_logs = cfg[i]['check_logs']
             
-            elif i == config.generator and i == 'uarch_test':
+            elif i == config.generator and i == 'utg':
                 config.gen_jobs = cfg[i]['jobs']
                 config.gen_count = cfg[i]['count']
                 config.gen_seed = cfg[i]['seed']
@@ -596,8 +596,8 @@ def create_setup_layout():
                                 [
                                     Sg.Text('Generator Plugin :', font=b_font),
                                     Sg.Combo(
-                                        ['uarch_test'],
-                                        default_value='uarch_test',
+                                        ['utg'],
+                                        default_value='utg',
                                         key='gen_plugin',
                                         disabled=True),
                                 ],
