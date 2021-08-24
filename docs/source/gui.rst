@@ -18,7 +18,9 @@ Using the GUI
 
 Before you can use the GUI, you need to have installed the ``river_core_plugins`` which supports the uarch_tests generator. The forked river_core_plugin is currently hosted `here <https://github.com/alenkruth/river_core_plugins>`_. Replace your existing river_core_plugins directory with this repository and then checkout the ``uarch_test`` branch. You should be good to go.
 
-.. note:: If you are using any Python version other than 3.9.6, there is a high chance that you might face a ``RunTimeError`` with the message ``Marshal Loads failed``. This is due to the obfuscation being carried out in 3.9.6 version of python, which is different from yours. **Right now, we haven't finalized a version of python which we will be supporting**. So, if you face this error, please consider updating to python 3.9.6 in your virtual environment and try again.
+.. note:: Python 3.7.0 is the version of Python which we will be supporting. Please make sure you use the same.
+
+.. note:: Please do not use the obfuscated uarch_test package.
 
 Additionally, make sure you have installed uarch_test as a python package. You will have the ``micro-arch-tests`` as well as ``uarch_modules`` within the file  hosted on Onedrive. Here, ``micro-arch-tests`` is the top level directory of the ``uarch_tests`` generator. ``uarch_modules`` consists of the tests to be run on the DUT. Now, ``cd`` into the ``micro-arch-tests`` directory and run ``pip install --editable .`` to install uarch_test as a python package. Please remember where you have stored the ``uarch_modules`` directory as we will be passing the path to ``uarch_modules/modules`` directory as a parameter while setting up the GUI. 
 
@@ -114,7 +116,7 @@ Once you have completed making all the entries, you can click on ``Save Configur
    
 You have now successfully set up RiVer-Core GUI. Invoke the GUI again by using the ``river_core gui`` command.
 
-.. note:: you can always update the ``config.ini`` file manually if you feel the GUI to be time intensive. But, **make sure you stick to the same ordering of sections in the ini file as it was created by the GUI**. Failing to do so, creates a stack overflow. This is a known issue. You can check the known issues section of this document to check if has been resolved. 
+.. note:: you can always update the ``config.ini`` manually or use your existing ``river_core.ini`` file if you feel the GUI to be time intensive.  
 
 Generating and Compiling tests
 ------------------------------
@@ -148,8 +150,8 @@ IMPORTANT
 
 LOWER PRIORITY
 --------------
-- Path to the config file can be passed instead of creating a config file everytime.
+- Path to the config file can be passed instead of creating a config file everytime. **DONE**
 - requires restart (after all operations involving writing to config file)
-- reordering the config file parameters ends in a stack overflow.
+- reordering the config file parameters ends in a stack overflow. **DONE**
 - The terminal window pastes in bulk.
 - The resolution of the GUI window is fixed and not scalable. This will lead to issues in Hi-Resolution displays.
