@@ -124,16 +124,24 @@ class config_data(object):
         obj = f'work_dir: {self.work_dir}\ntarget: {self.target}\n'
         obj += f'reference: {self.reference}\ngenerator: {self.generator}\n\n'
         obj += f'isa: {self.isa}\n\npath_to_target: {self.path_to_target}\n'
-        obj += f'path_to_ref: {self.path_to_ref}\npath_to_suite: {self.path_to_suite}\n'
-        obj += f'open_browser: {self.open_browser}\nspace_saver: {self.space_saver}\n'
-        obj += f'\n[{self.target}]\njobs: {self.dut_jobs}\nfilter: {self.dut_filter}\n'
+        obj += f'path_to_ref: {self.path_to_ref}\npath_to_suite: ' \
+               f'{self.path_to_suite}\n '
+        obj += f'open_browser: {self.open_browser}\nspace_saver: ' \
+               f'{self.space_saver}\n'
+        obj += f'\n[{self.target}]\njobs: {self.dut_jobs}\nfilter: ' \
+               f'{self.dut_filter}\n'
         obj += f'count: {self.dut_count}\nsrc_dir: {self.dut_src_dir}\n'
-        obj += f'top_module: {self.dut_top_module}\ncheck_logs: {self.dut_check_logs}\n'
-        obj += f'\n[{self.generator}]\njobs: {self.gen_jobs}\ncount: {self.gen_count}\n'
+        obj += f'top_module: {self.dut_top_module}\ncheck_logs: ' \
+               f'{self.dut_check_logs}\n'
+        obj += f'\n[{self.generator}]\njobs: {self.gen_jobs}\ncount: ' \
+               f'{self.gen_count}\n'
         obj += f'seed: {self.gen_seed}\ndut_config: {self.gen_dut_config}\n'
-        obj += f'work_dir: {self.gen_work_dir}\nlinker_dir: {self.gen_linker_dir}\n'
-        obj += f'modules_dir: {self.gen_modules_dir}\nmodules: {self.gen_modules}\n'
-        obj += f'\n[{self.reference}]\njobs: {self.ref_jobs}\ncount: {self.ref_count}\n'
+        obj += f'work_dir: {self.gen_work_dir}\nlinker_dir: ' \
+               f'{self.gen_linker_dir}\n'
+        obj += f'modules_dir: {self.gen_modules_dir}\nmodules: ' \
+               f'{self.gen_modules}\n'
+        obj += f'\n[{self.reference}]\njobs: {self.ref_jobs}\ncount: ' \
+               f'{self.ref_count}\n'
         obj += f'filter: {self.ref_filter}\n'
         return obj
 
@@ -173,9 +181,8 @@ def reset_config(config_file):
     f.write('top_module = mkTbSoc\ncheck_logs = True\n\n')
     # Gen plugin
     f.write('[utg]\njobs = 4\ncount = 1\nseed = random\n')
-    f.write(
-        'dut_config_yaml = ../dut_config.yaml\nwork_dir =\nlinker_dir =\nmodules_dir =\n'
-    )
+    f.write('dut_config_yaml = ../dut_config.yaml\nwork_dir =\nlinker_dir =\n'
+            'modules_dir =\nalias_file=\n')
     f.write('modules = all\ngenerate_covergroups = True\n\n')
     # Ref plugin
     f.write('[modspike]\njobs = 1\ncount = 1\nfilter = \n')
@@ -204,11 +211,11 @@ def read_existing_config(config_file):
                 config.path_to_suite = cfg[i]['path_to_suite']
                 config.open_browser = cfg[i]['open_browser']
                 config.space_saver = cfg[i]['space_saver']
-            
+
             elif i == 'coverage':
                 config.coverage_code = cfg[i]['code']
                 config.coverage_functional = cfg[i]['functional']
-            
+
             elif i == config.target and i == 'chromite_verilator':
                 config.dut_jobs = cfg[i]['jobs']
                 config.dut_filter = cfg[i]['filter']
@@ -218,7 +225,7 @@ def read_existing_config(config_file):
                 config.dut_src_dir = config.dut_src_dir.replace(', ', ',')
                 config.dut_top_module = cfg[i]['top_module']
                 config.dut_check_logs = cfg[i]['check_logs']
-            
+
             elif i == config.target and i == 'cclass_verilator':
                 config.dut_jobs = cfg[i]['jobs']
                 config.dut_filter = cfg[i]['filter']
@@ -228,7 +235,7 @@ def read_existing_config(config_file):
                 config.dut_src_dir = config.dut_src_dir.replace(', ', ',')
                 config.dut_top_module = cfg[i]['top_module']
                 config.dut_check_logs = cfg[i]['check_logs']
-            
+
             elif i == config.target and i == 'chromite_questa':
                 config.dut_jobs = cfg[i]['jobs']
                 config.dut_filter = cfg[i]['filter']
@@ -238,7 +245,7 @@ def read_existing_config(config_file):
                 config.dut_src_dir = config.dut_src_dir.replace(', ', ',')
                 config.dut_top_module = cfg[i]['top_module']
                 config.dut_check_logs = cfg[i]['check_logs']
-            
+
             elif i == config.target and i == 'chromite_cadence':
                 config.dut_jobs = cfg[i]['jobs']
                 config.dut_filter = cfg[i]['filter']
@@ -248,7 +255,7 @@ def read_existing_config(config_file):
                 config.dut_src_dir = config.dut_src_dir.replace(', ', ',')
                 config.dut_top_module = cfg[i]['top_module']
                 config.dut_check_logs = cfg[i]['check_logs']
-            
+
             elif i == config.generator and i == 'utg':
                 config.gen_jobs = cfg[i]['jobs']
                 config.gen_count = cfg[i]['count']
@@ -258,25 +265,26 @@ def read_existing_config(config_file):
                 config.gen_linker_dir = cfg[i]['linker_dir']
                 config.gen_modules_dir = cfg[i]['modules_dir']
                 config.gen_modules = cfg[i]['modules']
-           
+                config.gen_aliasing_yaml = cfg[i]['alias_file']
+
             elif i == config.generator and i == 'aapg':
                 config.gen_jobs = cfg[i]['jobs']
                 config.gen_filter = cfg[i]['filter']
                 config.gen_seed = cfg[i]['seed']
                 config.gen_count = cfg[i]['count']
                 config.gen_config_yaml = cfg[i]['config_yaml']
-            
+
             elif i == config.generator and i == 'riscof':
                 config.gen_jobs = cfg[i]['jobs']
                 config.gen_count = cfg[i]['count']
                 config.gen_seed = cfg[i]['seed']
                 config.gen_riscof_config = cfg[i]['riscof_config']
-            
+
             elif i == config.reference and i == 'spike':
                 config.ref_jobs = cfg[i]['jobs']
                 config.ref_count = cfg[i]['count']
                 config.ref_filter = cfg[i]['filter']
-            
+
             elif i == config.reference and i == 'modspike':
                 config.ref_jobs = cfg[i]['jobs']
                 config.ref_count = cfg[i]['count']
@@ -309,46 +317,47 @@ def save_new_config(config_file, val):
     f = open(config_file, 'w')
     f.write('[river_core]\n')
     f.write('# Main directory for all files generated by river_core\n')
-    f.write('work_dir = {0}\n\n'.format(val['work_dir']))
+    f.write(f'work_dir = {val["work_dir"]}\n\n')
     f.write('# Name of the target DuT plugin\n')
-    f.write('target = {0}\n\n'.format(val['dut_plugin']))
+    f.write(f'target = {val["dut_plugin"]}\n\n')
     f.write('# Name of the reference model plugin\n')
-    f.write('reference = {0}\n\n'.format(val['ref_plugin']))
+    f.write(f'reference = {val["ref_plugin"]}\n\n')
     f.write('# Name of the generator(s) to be used. Comma separated\n')
-    f.write('generator = {0}\n\n'.format(val['gen_plugin']))
+    f.write(f'generator = {val["gen_plugin"]}\n\n')
     f.write('# ISA for the tests\n')
-    f.write('isa = {0}\n\n'.format(isa))
+    f.write(f'isa = {isa}\n\n')
     f.write('# Set paths for each plugin\n')
-    f.write('path_to_target = {0}\n'.format(val['path_to_target']))
-    f.write('path_to_ref = {0}\n'.format(val['path_to_ref']))
-    f.write('path_to_suite = {0}\n\n'.format(val['path_to_suite']))
+    f.write(f'path_to_target = {val["path_to_target"]}\n')
+    f.write(f'path_to_ref = {val["path_to_ref"]}\n')
+    f.write(f'path_to_suite = {val["path_to_suite"]}\n\n')
     f.write(
         '# To open the report automatically in the browser\nopen_browser =' +
         str(val['open_browser']) + '\n\n')
-    f.write('# Enable Space Saver\nspace_saver = {0}\n\n'.format(
-        str(val['space_saver'])))
+    f.write(f'# Enable Space Saver\nspace_saver = {val["space_saver"]}\n\n')
 
-    f.write('[coverage]\ncode = {0}\nfunctional = {1}\n\n'.format(
-        val['code'], val['functional']))
+    f.write(
+        f'[coverage]\ncode = {val["code"]}\nfunctional = '
+        f'{val["functional"]}\n\n'
+    )
     # DUT plugin
-    f.write('[{0}]\njobs = 4\nfilter =\ncount = 1\n'.format(val['dut_plugin']))
+    f.write(f'[{val["dut_plugin"]}]\njobs = 4\nfilter =\ncount = 1\n')
+    f.write(f"# src dir: Verilog Dir, BSC Path, Wrapper path\nsrc_dir = "
+            f"{val['dut_verilog_dir']}, {val['dut_bsc_path']}, "
+            f"{val['dut_wrapper_path']}\n")
     f.write(
-        '# src dir: Verilog Dir, BSC Path, Wrapper path\nsrc_dir = {0}, {1}, {2}\n'
-            .format(val['dut_verilog_dir'], val['dut_bsc_path'],
-                    val['dut_wrapper_path']))
-    f.write('top_module = {0}\ncheck_logs = {1}\n\n'.format(
-        val['dut_top_module'], val['dut_check_logs']))
+        f'top_module = {val["dut_top_module"]}\ncheck_logs = '
+        f'{val["dut_check_logs"]}\n\n'
+    )
     # Gen plugin
-    f.write('[{0}]\njobs = 4\ncount = 1\nseed = random\n'.format(
-        val['gen_plugin']))
-    f.write(
-        'dut_config_yaml = {0}\nwork_dir = {1}\nlinker_dir = {2}\nmodules_dir = {3}\n'
-            .format(val['gen_config_yaml'], val['gen_work_dir'],
-                    val['gen_linker_dir'], val['gen_modules_dir']))
-    f.write('modules = {0}\ngenerate_covergroups = {1}\n\n'.format(
-        ", ".join(val['gen_modules']), str(val['gen_generate_covergroups'])))
+    f.write(f'[{val["gen_plugin"]}]\njobs = 4\ncount = 1\nseed = random\n')
+    f.write(f"dut_config_yaml = {val['gen_config_yaml']}\nwork_dir = "
+            f"{val['gen_work_dir']}\nlinker_dir = "
+            f"{val['gen_linker_dir']}\nmodules_dir = "
+            f"{val['gen_modules_dir']}\n")
+    f.write(f'modules = {", ".join(val["gen_modules"])}\ngenerate_covergroups '
+            f'= {val["gen_generate_covergroups"]}\n\n')
     # Ref plugin
-    f.write('[{0}]\njobs = 1\ncount = 1\nfilter = \n'.format(val['ref_plugin']))
+    f.write(f'[{val["ref_plugin"]}]\njobs = 1\ncount = 1\nfilter = \n')
     f.close()
 
 
@@ -390,75 +399,65 @@ def create_river_layout(config_obj):
                      layout=[
                          [Sg.Text('  ')],
                          [
-                             Sg.T("DUT         : {0}".format(
-                                 config_obj.target)),
+                             Sg.T(f"DUT         : {config_obj.target}"),
+                         ],
+                         [Sg.T(f'Top Module  : {config_obj.dut_top_module}')],
+                         [
+                             Sg.T(f'Verilog Dir : '
+                                  f'{config_obj.dut_src_dir.split(",")[0]}')
                          ],
                          [
-                             Sg.T('Top Module  : {0}'.format(
-                                 config_obj.dut_top_module))
+                             Sg.T(f'BSC Dir     : '
+                                  f'{config_obj.dut_src_dir.split(",")[1]}')
                          ],
                          [
-                             Sg.T('Verilog Dir : {0}'.format(
-                                 config_obj.dut_src_dir.split(',')[0]))
+                             Sg.T(f'Wrapper Dir : '
+                                  f'{config_obj.dut_src_dir.split(",")[2]}')
                          ],
-                         [
-                             Sg.T('BSC Dir     : {0}'.format(
-                                 config_obj.dut_src_dir.split(',')[1]))
-                         ],
-                         [
-                             Sg.T('Wrapper Dir : {0}'.format(
-                                 config_obj.dut_src_dir.split(',')[2]))
-                         ],
-                         [
-                             Sg.T('Check Logs  : {0}'.format(
-                                 config_obj.dut_check_logs))
-                         ],
+                         [Sg.T(f'Check Logs  : {config_obj.dut_check_logs}')],
                          [Sg.Text('  ')],
                      ]),
             Sg.T(''),
-            Sg.Frame('Generator Plugin',
-                     layout=[
-                         [Sg.Text('  ')],
-                         [
-                             Sg.T("Generator         : {0}".format(
-                                 config_obj.generator)),
-                         ],
-                         [
-                             Sg.T('DUT_Config YAML   : {0}'.format(
-                                 config_obj.gen_dut_config))
-                         ],
-                         [
-                             Sg.T('Work Directory    : {0}'.format(
-                                 config_obj.gen_work_dir))
-                         ],
-                         [
-                             Sg.T('Linker Directory  : {0}'.format(
-                                 config_obj.gen_linker_dir))
-                         ],
-                         [
-                             Sg.T('Modules Directory : {0}'.format(
-                                 config_obj.gen_modules_dir))
-                         ],
-                         [
-                             Sg.T('Modules           : {0}'.format(
-                                 config_obj.gen_modules))
-                         ],
-                         [
-                             Sg.T('Gen Covergroups   : {0}'.format(
-                                 config_obj.gen_generate_covergroups))
-                         ],
-                     ],
-                     size=(100, 50)),
+            Sg.Frame(
+                'Generator Plugin',
+                layout=[
+                    [Sg.Text('  ')],
+                    [
+                        Sg.T(f"Generator         : "
+                             f"{config_obj.generator}"),
+                    ],
+                    [
+                        Sg.T(f'DUT_Config YAML   : '
+                             f'{config_obj.gen_dut_config}')
+                    ],
+                    [
+                        Sg.T(f'Work Directory    : '
+                             f'{config_obj.gen_work_dir}')
+                    ],
+                    [
+                        Sg.T(f'Linker Directory  : '
+                             f'{config_obj.gen_linker_dir}')
+                    ],
+                    [
+                        Sg.T(f'Modules Directory : '
+                             f'{config_obj.gen_modules_dir}')
+                    ],
+                    [Sg.T(f'Modules           : '
+                          f'{config_obj.gen_modules}')],
+                    [
+                        Sg.T(f'Gen Covergroups   : '
+                             f'{config_obj.gen_generate_covergroups}')
+                    ],
+                ],
+                size=(100, 50)),
             # Sg.Frame(
             #     'Reference Plugin',
-            #     layout=[[Sg.Text("Reference: {}".format(
-            #                      config_obj.reference))]])
+            #     layout=[[Sg.Text(f"Reference: {config_obj.reference}")]])
         ],
         # [
         #     Sg.Frame(
         #        'Reference Plugin',
-        #        layout=[[Sg.Text("Reference: {}".format(
-        #                         config_obj.reference))]]),
+        #        layout=[[Sg.Text(f"Reference: {config_obj.reference}")]]),
         # ],
         [
             Sg.Button('Setup'),
@@ -546,8 +545,8 @@ def create_setup_layout():
                                         'chromite_Cadence', 'cclass_verilator',
                                         'chromite_questa', 'chromite_verilator'
                                     ],
-                                        default_value='chromite_verilator',
-                                        key='dut_plugin')
+                                             default_value='chromite_verilator',
+                                             key='dut_plugin')
                                 ],
                                 [Sg.T()],
                                 [
@@ -612,27 +611,33 @@ def create_setup_layout():
                                                                "*.yaml"),))
                                 ],
                                 [
+                                    Sg.Text('aliasing.yaml :', font=b_font),
+                                    Sg.Input(key='gen_aliasing_yaml',
+                                             size=(35, 1),
+                                             default_text='aliasing.yaml'),
+                                    Sg.FileBrowse(button_text='...',
+                                                  file_types=(("YAML Files",
+                                                               "*.yaml"),))
+                                ],
+                                [
                                     Sg.Text('work dir    :', font=n_font),
-                                    Sg.Input(
-                                        key='gen_work_dir',
-                                        size=(35, 1),
-                                        default_text=''),
+                                    Sg.Input(key='gen_work_dir',
+                                             size=(35, 1),
+                                             default_text=''),
                                     Sg.FolderBrowse(button_text='...')
                                 ],
                                 [
                                     Sg.Text('linker dir  :', font=n_font),
-                                    Sg.Input(
-                                        key='gen_linker_dir',
-                                        size=(35, 1),
-                                        default_text=''),
+                                    Sg.Input(key='gen_linker_dir',
+                                             size=(35, 1),
+                                             default_text=''),
                                     Sg.FolderBrowse(button_text='...')
                                 ],
                                 [
                                     Sg.Text('Modules dir :', font=n_font),
-                                    Sg.Input(
-                                        key='gen_modules_dir',
-                                        size=(35, 1),
-                                        default_text=''),
+                                    Sg.Input(key='gen_modules_dir',
+                                             size=(35, 1),
+                                             default_text=''),
                                     Sg.FolderBrowse(button_text='...')
                                 ],
                                 [
@@ -714,7 +719,8 @@ def setup_page(config_file):
     """
     window = Sg.Window('Configure River-Core',
                        layout=create_setup_layout(),
-                       debugger_enabled=True, finalize=False)
+                       debugger_enabled=True,
+                       finalize=False)
     while True:
         event, values = window.read()
         if event == Sg.WIN_CLOSED or event == 'exit_config':
@@ -799,35 +805,30 @@ def rivercore_gui(config_arg):
         config_file = config_arg
     if os.path.isfile(config_file):
         existing = read_existing_config(config_file)
-        console_layout = [
-            [
-                Sg.MLine(size=(120, 18),
-                         background_color='#2c2e2e',
-                         text_color='#b7ede8',
-                         reroute_stdout=True,
-                         reroute_stderr=True,
-                         reroute_cprint=True,
-                         auto_refresh=True,
-                         write_only=True,
-                         font='Courier 11',
-                         autoscroll=True,
-                         key='-ML-')
-            ],
-            [
-                Sg.Button('Clear', key='clear_term')
-            ]
-        ]
+        console_layout = [[
+            Sg.MLine(size=(120, 18),
+                     background_color='#2c2e2e',
+                     text_color='#b7ede8',
+                     reroute_stdout=True,
+                     reroute_stderr=True,
+                     reroute_cprint=True,
+                     auto_refresh=True,
+                     write_only=True,
+                     font='Courier 11',
+                     autoscroll=True,
+                     key='-ML-')
+        ], [Sg.Button('Clear', key='clear_term')]]
         river_frame = [[
             Sg.Frame('River-Core Configuration',
                      layout=create_river_layout(existing))
         ]]
         console_frame = [[Sg.Frame('Terminal', layout=console_layout)]]
 
-        window = Sg.Window('River-Core GUI',
-                           layout=[river_frame, [Sg.HSeparator()],
-                                   console_frame],
-                           finalize=True,
-                           debugger_enabled=True)
+        window = Sg.Window(
+            'River-Core GUI',
+            layout=[river_frame, [Sg.HSeparator()], console_frame],
+            finalize=True,
+            debugger_enabled=True)
 
         while True:
             event, values = window.read()
@@ -841,13 +842,15 @@ def rivercore_gui(config_arg):
                 break
             elif event in ['Generate']:
                 # river_core generate -c <path_to_ini_file> -v <value>
-                run_command('river_core generate -c {0} -v {1}'.format(
-                    config_file, values['verb']),
+                run_command(
+                    f'river_core generate -c {config_file} '
+                    f'-v {values["verb"]}',
                     window=window)
             elif event in ['Compile']:
-                run_command('river_core compile -t {0} -v {1}'.format(
-                    os.path.join(existing.work_dir, 'test_list.yaml'),
-                    values['verb']),
+                run_command(
+                    f'river_core compile -t '
+                    f'{os.path.join(existing.work_dir, "test_list.yaml")}'
+                    f' -v {values["verb"]}',
                     window=window)
             if event in ['About...']:
                 run_command(
@@ -858,7 +861,3 @@ def rivercore_gui(config_arg):
     else:
         reset_config(config_file)
         Sg.PopupOK('Files Initialized. Restart RiVer Core GUI')
-
-
-if __name__ == '__main__':
-    rivercore_gui()
