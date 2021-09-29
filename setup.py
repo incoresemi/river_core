@@ -49,12 +49,12 @@ setup(
     package_dir={'river_core': 'river_core/'},
     package_data={
         'river_core': [
-            'requirements.txt', 'river_core/templates/setup/dut/*.py',
-            'river_core/templates/setup/generator/*.py',
-            'river_core/templates/setup/reference/*.py',
-            'river_core/templates/style.css',
-            'river_core/templates/report.html',
-            'river_core/templates/coverage_report.html'
+            'requirements.txt', 'templates/setup/dut/*.py',
+            'templates/setup/generator/*.py',
+            'templates/setup/reference/*.py',
+            'templates/style.css',
+            'templates/report.html',
+            'templates/coverage_report.html'
         ]
     },
     setup_requires=setup_requirements,
