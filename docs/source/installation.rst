@@ -403,7 +403,7 @@ can use the setup to create this file:
 .. code-block:: console
 
    $ cd ~/myquickstart
-   $ river_core setup
+   $ river_core setup --config
 
 The above should create a ``river_core.ini`` file with the following contents.
 Details and further specification of the config file syntax is available at :ref:`Config Spec<config_ini>`.
