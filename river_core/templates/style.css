@@ -49,6 +49,9 @@ span.passed, .passed .col-result {
 span.failed, .failed .col-result {
 	color: red;
 }
+span.unavailable, .unavailable .col-result {
+	color: orange;
+}
 
 span.passed, .passed .col-sort-result {
 	color: green;
