@@ -333,7 +333,7 @@ def rivercore_generate(config_file, verbosity):
         except FileNotFoundError as txt:
             logger.error(suite + " not found at : " + path_to_module + ".\n" +
                          str(txt))
-            raise SystemExit
+            raise SystemExit(1)
 
         generatorpm.hook.pre_gen(spec_config=config[suite],
                                  output_dir='{0}/{1}'.format(output_dir, suite))
@@ -344,7 +344,7 @@ def rivercore_generate(config_file, verbosity):
             logger.error(
                 'Test List returned by the gen hook of Generator is of type: ' +
                 str(type(test_list)) + '. Expected Dict')
-            raise SystemExit
+            raise SystemExit(1)
 
         generatorpm.hook.post_gen(
             output_dir='{0}/{1}'.format(output_dir, suite))
@@ -366,7 +366,7 @@ def rivercore_generate(config_file, verbosity):
             error_list = validator.errors
             for x in error_list:
                 logger.error('{0} [ {1} ] : {2}'.format(test, x, error_list[x]))
-            raise SystemExit
+            raise SystemExit(1)
     logger.info('Test List Validated successfully')
 
     # Open generation report in browser
@@ -488,7 +488,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                     logger.debug(
                         'Hello, it seems you are debugging, this usually indicates that the loading failed.\nCheck whether Python file being loaded is fine i.e. no errors and warnings. etc'
                     )
-                    raise SystemExit
+                    raise SystemExit(1)
             if dut_flags == 'init':
                 logger.debug('Single mode flag detected\nRunning init')
                 dutpm.hook.init(ini_config=config[target],
@@ -518,7 +518,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
 
     if '' in ref_list:
         logger.info('No references, so exiting the framework')
-        raise SystemExit
+        raise SystemExit(1)
     else:
         for ref in ref_list:
             if ref_flags:
@@ -556,7 +556,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                     logger.error(
                         "Sorry, requested plugin not found at location, please check config.ini"
                     )
-                    raise SystemExit
+                    raise SystemExit(1)
 
             if ref_flags == 'init':
                 logger.debug('Single mode flag detected\nRunning init')
@@ -586,6 +586,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 logger.warning('Ref Plugin disabled')
 
         ## Comparing Dumps
+        success = True
         if compare:
             test_dict = utils.load_yaml(test_list)
             gen_json_data = []
@@ -597,11 +598,13 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                     logger.error(f'{test:<30} : DUT dump is missing')
                     test_dict[test]['result'] = 'Unavailable'
                     test_dict[test]['log'] = "DUT dump is missing"
+                    success = False
                     continue
                 if not os.path.isfile(test_wd + '/ref.dump'):
                     logger.error(f'{test:<30} : REF dump is missing')
                     test_dict[test]['result'] = 'Unavailable'
                     test_dict[test]['log'] = "REF dump is missing"
+                    success = False
                     continue
                 result, log = utils.compare_signature(test_wd + '/dut.dump',
                                      test_wd + '/ref.dump')
@@ -610,6 +613,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 if result == 'Passed':
                     logger.info(f"{test:<30} : TEST {result.upper()}")
                 else:
+                    success = False
                     logger.error(f"{test:<30} : TEST {result.upper()}")
 
             utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
@@ -707,6 +711,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 webbrowser.open(report_html)
             except:
                 return 1
+        if not success:
+            raise SystemExit(1)
 
 
 def rivercore_merge(verbosity, db_folders, output, config_file):
