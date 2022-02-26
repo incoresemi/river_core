@@ -11,11 +11,58 @@ import signal
 from ruamel.yaml import YAML
 from threading import Timer
 import pathlib
+import difflib
 
 yaml = YAML(typ="safe")
 yaml.default_flow_style = False
 yaml.allow_unicode = True
 
+def compare_signature(file1, file2):
+    '''
+        Function to check whether two signature files are equivalent. This funcion uses the
+        :py:mod:`difflib` to perform the comparision and obtain the difference.
+        :param file1: The path to the first signature.
+        :param file2: The path to the second signature.
+        :type file1: str
+        :type file2: str
+        :return: A string indicating whether the test "Passed" (if files are the same)
+            or "Failed" (if the files are different) and the diff of the files.
+    '''
+    if not os.path.exists(file1) :
+        logger.error('Signature file : ' + file1 + ' does not exist')
+        raise SystemExit(1)
+    file1_lines = open(file1, "r").readlines()
+    file2_lines = open(file2, "r").readlines()
+    res = ("".join(
+        difflib.unified_diff(file1_lines,file2_lines, file1, file2))).strip()
+    if res == "":
+        if len(file1_lines)==0:
+            return 'Failed', '---- \nBoth FIles empty\n'
+        else:
+            status = 'Passed'
+    else:
+        status = 'Failed'
+
+        error_report = '\nFile1 Path:{0}\nFile2 Path:{1}\nMatch  Line#    File1    File2\n'.format(
+                            file1,file2)
+        fmt = "{0:5s} {1:6d} {2:100s} {3:100s}\n"
+        prev = ''
+        include = False
+        for lnum,lines in enumerate(zip(file1_lines,file2_lines)):
+            if lines[0] != lines[1]:
+                include = True
+                if not include:
+                    error_report += prev
+                rline = fmt.format("*",lnum,lines[0].strip(),lines[1].strip())
+                error_report += rline
+                prev = rline
+            elif include:
+                rline = fmt.format("",lnum,lines[0].strip(),lines[1].strip())
+                error_report += rline
+                include = False
+                prev = rline
+#        res = error_report
+    return status, res
 
 def str_2_bool(string):
     """
