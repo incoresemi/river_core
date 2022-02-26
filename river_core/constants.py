@@ -63,6 +63,9 @@ include:
     nullable: True
     check_with: dircheck
   empty: True
+ignore_lines:
+    type: integer
+    default: 4
 ''' #: This contains the schema for validation
 
 sample_config = '''
