@@ -162,7 +162,7 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
     for test in test_dict:
         num_total = num_total + 1
         try:
-            if test_dict[test]['result'] == 'Unavailable':
+            if 'Unavailable' in test_dict[test]['result']:
                 num_unav = num_unav + 1
                 continue
             elif test_dict[test]['result'] == 'Passed':
@@ -587,7 +587,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
 
         ## Comparing Dumps
         if compare:
-            result = 'Unavailable'
             test_dict = utils.load_yaml(test_list)
             gen_json_data = []
             target_json_data = []
@@ -597,23 +596,31 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 if not os.path.isfile(test_wd + '/dut.dump'):
                     logger.error(
                         'Dut dump for Test: {0} is missing'.format(test))
+                    test_dict[test]['result'] = 'DUT Unavailable'
                     continue
                 if not os.path.isfile(test_wd + '/ref.dump'):
                     logger.error(
                         'Ref dump for Test: {0} is missing'.format(test))
+                    test_dict[test]['result'] = 'REF Unavailable'
                     continue
                 filecmp.clear_cache()
                 result = filecmp.cmp(test_wd + '/dut.dump',
                                      test_wd + '/ref.dump')
                 test_dict[test]['result'] = 'Passed' if result else 'Failed'
-                utils.save_yaml(test_dict, test_list)
                 if not result:
-                    logger.error(
-                        "Dumps for test {0}. Do not match. TEST FAILED".format(
-                            test))
+                    logger.error("{0:<30} : TEST FAILED".format(test))
                 else:
-                    logger.info(
-                        "Dumps for test {0} Match. TEST PASSED".format(test))
+                    logger.info("{0:<30} : TEST PASSED".format(test))
+
+            utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
+            failed_dict = {}
+            for test, attr in test_dict.items():
+                if attr['result'] == 'Failed' or 'Unavailable' in attr['result']:
+                    failed_dict[test] = attr
+            failed_dict_file = output_dir+'/failed_list.yaml'
+            logger.info(f'Saving failed list of tests in {failed_dict_file}')
+            utils.save_yaml(failed_dict, failed_dict_file)
+
 
             # Start checking things after running the commands
             # Report generation starts here
@@ -628,7 +635,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             else:
                 logger.debug('Could not find a target_json file')
                 for test, attr in test_dict.items():
-                    test_dict[test]['result'] = 'Unavailable'
+                    test_dict[test]['result'] = 'DUT Unavailable'
                     logger.debug(
                         'Resetting values in test_dict; Triggered by the lack of DuT values'
                     )
@@ -641,7 +648,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             else:
                 logger.debug('Could not find a reference_json file')
                 for test, attr in test_dict.items():
-                    test_dict[test]['result'] = 'Unavailable'
+                    test_dict[test]['result'] = 'REF Unavailable'
                     logger.debug(
                         'Resetting values in test_dict; Triggered by the lack of Ref values'
                     )
