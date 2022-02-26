@@ -7,7 +7,7 @@ import shutil
 import datetime
 import importlib
 import configparser
-import filecmp
+#import filecmp
 import json
 
 from river_core.log import *
@@ -594,23 +594,23 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             for test, attr in test_dict.items():
                 test_wd = attr['work_dir']
                 if not os.path.isfile(test_wd + '/dut.dump'):
-                    logger.error(
-                        'Dut dump for Test: {0} is missing'.format(test))
-                    test_dict[test]['result'] = 'DUT Unavailable'
+                    logger.error(f'{test:<30} : DUT dump is missing')
+                    test_dict[test]['result'] = 'Unavailable'
+                    test_dict[test]['log'] = "DUT dump is missing"
                     continue
                 if not os.path.isfile(test_wd + '/ref.dump'):
-                    logger.error(
-                        'Ref dump for Test: {0} is missing'.format(test))
-                    test_dict[test]['result'] = 'REF Unavailable'
+                    logger.error(f'{test:<30} : REF dump is missing')
+                    test_dict[test]['result'] = 'Unavailable'
+                    test_dict[test]['log'] = "REF dump is missing"
                     continue
-                filecmp.clear_cache()
-                result = filecmp.cmp(test_wd + '/dut.dump',
+                result, log = utils.compare_signature(test_wd + '/dut.dump',
                                      test_wd + '/ref.dump')
-                test_dict[test]['result'] = 'Passed' if result else 'Failed'
-                if not result:
-                    logger.error("{0:<30} : TEST FAILED".format(test))
+                test_dict[test]['result'] = result
+                test_dict[test]['log'] = log
+                if result == 'Passed':
+                    logger.info(f"{test:<30} : TEST {result.upper()}")
                 else:
-                    logger.info("{0:<30} : TEST PASSED".format(test))
+                    logger.error(f"{test:<30} : TEST {result.upper()}")
 
             utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
             failed_dict = {}
