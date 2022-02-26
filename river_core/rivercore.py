@@ -7,7 +7,7 @@ import shutil
 import datetime
 import importlib
 import configparser
-import filecmp
+#import filecmp
 import json
 
 from river_core.log import *
@@ -162,7 +162,7 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
     for test in test_dict:
         num_total = num_total + 1
         try:
-            if test_dict[test]['result'] == 'Unavailable':
+            if 'Unavailable' in test_dict[test]['result']:
                 num_unav = num_unav + 1
                 continue
             elif test_dict[test]['result'] == 'Passed':
@@ -310,7 +310,7 @@ def rivercore_generate(config_file, verbosity):
         generatorpm = pluggy.PluginManager("generator")
         generatorpm.add_hookspecs(RandomGeneratorSpec)
 
-        path_to_module = config['river_core']['path_to_suite']
+        path_to_module = os.path.abspath(config['river_core']['path_to_suite'])
         plugin_suite = suite + '_plugin'
 
         # Get ISA and pass to plugin
@@ -333,7 +333,7 @@ def rivercore_generate(config_file, verbosity):
         except FileNotFoundError as txt:
             logger.error(suite + " not found at : " + path_to_module + ".\n" +
                          str(txt))
-            raise SystemExit
+            raise SystemExit(1)
 
         generatorpm.hook.pre_gen(spec_config=config[suite],
                                  output_dir='{0}/{1}'.format(output_dir, suite))
@@ -344,7 +344,7 @@ def rivercore_generate(config_file, verbosity):
             logger.error(
                 'Test List returned by the gen hook of Generator is of type: ' +
                 str(type(test_list)) + '. Expected Dict')
-            raise SystemExit
+            raise SystemExit(1)
 
         generatorpm.hook.post_gen(
             output_dir='{0}/{1}'.format(output_dir, suite))
@@ -366,7 +366,7 @@ def rivercore_generate(config_file, verbosity):
             error_list = validator.errors
             for x in error_list:
                 logger.error('{0} [ {1} ] : {2}'.format(test, x, error_list[x]))
-            raise SystemExit
+            raise SystemExit(1)
     logger.info('Test List Validated successfully')
 
     # Open generation report in browser
@@ -461,7 +461,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
 
                 isa = config['river_core']['isa']
                 config[target]['isa'] = isa
-                path_to_module = config['river_core']['path_to_target']
+                path_to_module = os.path.abspath(config['river_core']['path_to_target'])
                 plugin_target = target + '_plugin'
                 logger.info('Now running on the Target Plugins')
                 logger.info('Now loading {0}-target'.format(target))
@@ -488,7 +488,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                     logger.debug(
                         'Hello, it seems you are debugging, this usually indicates that the loading failed.\nCheck whether Python file being loaded is fine i.e. no errors and warnings. etc'
                     )
-                    raise SystemExit
+                    raise SystemExit(1)
             if dut_flags == 'init':
                 logger.debug('Single mode flag detected\nRunning init')
                 dutpm.hook.init(ini_config=config[target],
@@ -518,7 +518,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
 
     if '' in ref_list:
         logger.info('No references, so exiting the framework')
-        raise SystemExit
+        raise SystemExit(1)
     else:
         for ref in ref_list:
             if ref_flags:
@@ -530,7 +530,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 refpm = pluggy.PluginManager('dut')
                 refpm.add_hookspecs(DuTSpec)
 
-                path_to_module = config['river_core']['path_to_ref']
+                path_to_module = os.path.abspath(config['river_core']['path_to_ref'])
                 plugin_ref = ref + '_plugin'
                 logger.info('Now loading {0}-target'.format(ref))
                 # Get ISA from river
@@ -556,7 +556,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                     logger.error(
                         "Sorry, requested plugin not found at location, please check config.ini"
                     )
-                    raise SystemExit
+                    raise SystemExit(1)
 
             if ref_flags == 'init':
                 logger.debug('Single mode flag detected\nRunning init')
@@ -586,8 +586,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 logger.warning('Ref Plugin disabled')
 
         ## Comparing Dumps
+        success = True
         if compare:
-            result = 'Unavailable'
             test_dict = utils.load_yaml(test_list)
             gen_json_data = []
             target_json_data = []
@@ -595,25 +595,36 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             for test, attr in test_dict.items():
                 test_wd = attr['work_dir']
                 if not os.path.isfile(test_wd + '/dut.dump'):
-                    logger.error(
-                        'Dut dump for Test: {0} is missing'.format(test))
+                    logger.error(f'{test:<30} : DUT dump is missing')
+                    test_dict[test]['result'] = 'Unavailable'
+                    test_dict[test]['log'] = "DUT dump is missing"
+                    success = False
                     continue
                 if not os.path.isfile(test_wd + '/ref.dump'):
-                    logger.error(
-                        'Ref dump for Test: {0} is missing'.format(test))
+                    logger.error(f'{test:<30} : REF dump is missing')
+                    test_dict[test]['result'] = 'Unavailable'
+                    test_dict[test]['log'] = "REF dump is missing"
+                    success = False
                     continue
-                filecmp.clear_cache()
-                result = filecmp.cmp(test_wd + '/dut.dump',
+                result, log = utils.compare_signature(test_wd + '/dut.dump',
                                      test_wd + '/ref.dump')
-                test_dict[test]['result'] = 'Passed' if result else 'Failed'
-                utils.save_yaml(test_dict, test_list)
-                if not result:
-                    logger.error(
-                        "Dumps for test {0}. Do not match. TEST FAILED".format(
-                            test))
+                test_dict[test]['result'] = result
+                test_dict[test]['log'] = log
+                if result == 'Passed':
+                    logger.info(f"{test:<30} : TEST {result.upper()}")
                 else:
-                    logger.info(
-                        "Dumps for test {0} Match. TEST PASSED".format(test))
+                    success = False
+                    logger.error(f"{test:<30} : TEST {result.upper()}")
+
+            utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
+            failed_dict = {}
+            for test, attr in test_dict.items():
+                if attr['result'] == 'Failed' or 'Unavailable' in attr['result']:
+                    failed_dict[test] = attr
+            failed_dict_file = output_dir+'/failed_list.yaml'
+            logger.info(f'Saving failed list of tests in {failed_dict_file}')
+            utils.save_yaml(failed_dict, failed_dict_file)
+
 
             # Start checking things after running the commands
             # Report generation starts here
@@ -628,7 +639,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             else:
                 logger.debug('Could not find a target_json file')
                 for test, attr in test_dict.items():
-                    test_dict[test]['result'] = 'Unavailable'
+                    test_dict[test]['result'] = 'DUT Unavailable'
                     logger.debug(
                         'Resetting values in test_dict; Triggered by the lack of DuT values'
                     )
@@ -641,7 +652,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             else:
                 logger.debug('Could not find a reference_json file')
                 for test, attr in test_dict.items():
-                    test_dict[test]['result'] = 'Unavailable'
+                    test_dict[test]['result'] = 'REF Unavailable'
                     logger.debug(
                         'Resetting values in test_dict; Triggered by the lack of Ref values'
                     )
@@ -700,6 +711,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 webbrowser.open(report_html)
             except:
                 return 1
+        if not success:
+            raise SystemExit(1)
 
 
 def rivercore_merge(verbosity, db_folders, output, config_file):

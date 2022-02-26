@@ -295,31 +295,25 @@ function filter_table(elem) {
     <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="passed">{{ num_passed }} Passed</span>, <input checked="true" class="filter" data-test-result="failed" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="failed">{{ num_failed }} Failed</span><input checked="true" class="filter" data-test-result="unavailable" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="unavailable"> {{ num_unav }} Unavailable</span>
     <h3> Out of Total: {{ num_failed + num_passed + num_unav }} Tests </h3>
 
-    <table id="simple-table">
+    <table id="results-table">
       <thead id="simple-table-head">
         <tr>
-          <th col="name">Test-name</th>
+          <th class="sortable" col="name">Test-name</th>
           <th col="path">Directory</th>
-          <th col="result">Result</th>
-          </tr>
+          <th class="sortable result initial-sort" col="result">Result</th>
+        </tr>
+      </thead>
         {% for test in test_dict %}
-            {% if test_dict[test]['result'] == 'Passed' %}
-            <tbody class= "passed simple-table-row" >
-            {%- elif test_dict[test]['result'] == 'Unavailable' %}
-            <tbody class= "unavailable simple-table-row" >
-            {%- else %}
-            <tbody class= "failed simple-table-row" >
-            {%- endif %}
-                <tr>
-                <td class="col-name">{{ test }}</td>
-                <td class="col-path">{{ test_dict[test].work_dir }}</td>
-            {% if test_dict[test]['result'] == 'Passed' %}
-                <td class="col-sort-result">Passed</td></tr>
-            {%- elif test_dict[test]['result'] == 'Unavailable' %}
-            <td class="col-sort-result">Unavailable</td></tr>
-            {% else -%}
-                <td class="col-sort-result">Failed</td></tr>
-            {%- endif %}
+            <tbody class= "{{ test_dict[test]['result'].lower() }}  simple-table-row" >
+            <tr>
+              <td class="col-name">{{ test }}</td>
+              <td class="col-path">{{ test_dict[test]['work_dir']}}</td>
+              <td class="col-result">{{ test_dict[test]['result']}}</td>
+            </tr>
+            <tr>
+              <td class="extra" colspan="4">
+                <div class="log">{{ test_dict[test]['log']}}</br></div></td>
+            </tr>
             </tbody>
         {% endfor %}
       </table>
