@@ -310,7 +310,7 @@ def rivercore_generate(config_file, verbosity):
         generatorpm = pluggy.PluginManager("generator")
         generatorpm.add_hookspecs(RandomGeneratorSpec)
 
-        path_to_module = config['river_core']['path_to_suite']
+        path_to_module = os.path.abspath(config['river_core']['path_to_suite'])
         plugin_suite = suite + '_plugin'
 
         # Get ISA and pass to plugin
@@ -461,7 +461,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
 
                 isa = config['river_core']['isa']
                 config[target]['isa'] = isa
-                path_to_module = config['river_core']['path_to_target']
+                path_to_module = os.path.abspath(config['river_core']['path_to_target'])
                 plugin_target = target + '_plugin'
                 logger.info('Now running on the Target Plugins')
                 logger.info('Now loading {0}-target'.format(target))
@@ -530,7 +530,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 refpm = pluggy.PluginManager('dut')
                 refpm.add_hookspecs(DuTSpec)
 
-                path_to_module = config['river_core']['path_to_ref']
+                path_to_module = os.path.abspath(config['river_core']['path_to_ref'])
                 plugin_ref = ref + '_plugin'
                 logger.info('Now loading {0}-target'.format(ref))
                 # Get ISA from river
