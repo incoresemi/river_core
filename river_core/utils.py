@@ -143,25 +143,49 @@ def sys_command(command, timeout=240):
                           start_new_session=True) as process:
         try:
             out, err = process.communicate(timeout=timeout)
+            out = out.rstrip()
+            err = err.rstrip()
         except subprocess.TimeoutExpired:
             process.kill()
+            out, err = process.communicate()
+            out = out.rstrip()
+            err = err.rstrip()
             pgrp = os.getpgid(process.pid)
             os.killpg(pgrp, signal.SIGTERM)
+            logger.error('Process Killed')
+            logger.error("Command did not exit within {0} seconds: {1}".format(timeout,command))
             return 1, "GuruMeditation", "TimeoutExpired"
-
-    out = out.rstrip()
-    err = err.rstrip()
-    if process.returncode != 0:
-        if out:
-            logger.error(out.decode("ascii"))
-        if err:
-            logger.error(err.decode("ascii"))
-    else:
-        if out:
-            logger.debug(out.decode("ascii"))
-        if err:
-            logger.debug(err.decode("ascii"))
-    return (process.returncode, out.decode("ascii"), err.decode("ascii"))
+        rout = ''
+        rerr = ''
+        try:
+            fmt = sys.stdout.encoding if sys.stdout.encoding is not None else 'utf-8'
+            rout = out.decode(fmt)
+            if out:
+                if process.returncode != 0:
+                    logger.error(out.decode(fmt))
+                else:
+                    logger.debug(out.decode(fmt))
+        except UnicodeError:
+            logger.warning("Unable to decode STDOUT for launched subprocess. Output written to:"+
+                    cwd+"/stdout.log")
+            rout = "Unable to decode STDOUT for launched subprocess. Output written to:"+ cwd+"/stdout.log"
+            with open(cwd+"/stdout.log","wb") as f:
+                f.write(out)
+        try:
+            fmt = sys.stderr.encoding if sys.stdout.encoding is not None else 'utf-8'
+            rerr = err.decode(fmt)
+            if err:
+                if process.returncode != 0:
+                    logger.error(err.decode(fmt))
+                else:
+                    logger.debug(err.decode(fmt))
+        except UnicodeError:
+            logger.warning("Unable to decode STDERR for launched subprocess. Output written to:"+
+                    cwd+"/stderr.log")
+            rerr = "Unable to decode STDERR for launched subprocess. Output written to:"+ cwd+"/stderr.log"
+            with open(cwd+"/stderr.log","wb") as f:
+                f.write(out)
+    return (process.returncode, rout, rerr)
 
 
 def sys_command_file(command, filename, timeout=500):
@@ -351,19 +375,25 @@ class Command():
 
     def run(self, **kwargs):
         """Execute the current command.
-
         Uses :py:class:`subprocess.Popen` to execute the command.
-
         :return: The return code of the process     .
         :raise subprocess.CalledProcessError: If `check` is set
                 to true in `kwargs` and the process returns
                 non-zero value.
         """
         kwargs.setdefault('shell', self._is_shell_command())
+        kwargs.setdefault('timeout', 300)
         cwd = self._path2str(kwargs.get(
             'cwd')) if not kwargs.get('cwd') is None else self._path2str(
                 os.getcwd())
         kwargs.update({'cwd': cwd})
+        process_args = dict(kwargs)
+        timeout = kwargs['timeout']
+        del process_args['timeout']
+        in_val = None
+        if 'input' in kwargs:
+            in_val = kwargs['input']
+            del process_args['input']
         logger.debug(cwd)
         # When running as shell command, subprocess expects
         # The arguments to be string.
@@ -372,20 +402,43 @@ class Command():
         x = subprocess.Popen(cmd,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
-                             **kwargs)
-        out, err = x.communicate()
-        out = out.rstrip()
-        err = err.rstrip()
-        if x.returncode != 0:
+                             **process_args)
+        try:
+            out, err = x.communicate(input=in_val,timeout=timeout)
+            out = out.rstrip()
+            err = err.rstrip()
+        except subprocess.TimeoutExpired as cmd:
+            x.kill()
+            out, err = x.communicate()
+            out = out.rstrip()
+            err = err.rstrip()
+            logger.error("Process Killed.")
+            logger.error("Command did not exit within {0} seconds: {1}".format(timeout,cmd))
+
+        try:
+            fmt = sys.stdout.encoding if sys.stdout.encoding is not None else 'utf-8'
             if out:
-                logger.error(out.decode("ascii"))
+                if x.returncode != 0:
+                    logger.error(out.decode(fmt))
+                else:
+                    logger.debug(out.decode(fmt))
+        except UnicodeError:
+            logger.warning("Unable to decode STDOUT for launched subprocess. Output written to:"+
+                    cwd+"/stdout.log")
+            with open(cwd+"/stdout.log","wb") as f:
+                f.write(out)
+        try:
+            fmt = sys.stderr.encoding if sys.stdout.encoding is not None else 'utf-8'
             if err:
-                logger.error(err.decode("ascii"))
-        else:
-            if out:
-                logger.warning(out.decode("ascii"))
-            if err:
-                logger.warning(err.decode("ascii"))
+                if x.returncode != 0:
+                    logger.error(err.decode(fmt))
+                else:
+                    logger.debug(err.decode(fmt))
+        except UnicodeError:
+            logger.warning("Unable to decode STDERR for launched subprocess. Output written to:"+
+                    cwd+"/stderr.log")
+            with open(cwd+"/stderr.log","wb") as f:
+                f.write(out)
         return x.returncode
 
     def _is_shell_command(self):
