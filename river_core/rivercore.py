@@ -242,6 +242,11 @@ def rivercore_clean(config_file, verbosity):
 
     config = configparser.ConfigParser()
     config.read(config_file)
+    # check for ISA string in upper case
+    _isa = config['river_core']['isa']
+    logger.info(f'ISA:  {_isa}')
+    utils.check_isa(_isa)
+
     output_dir = config['river_core']['work_dir']
     logger.level(verbosity)
     logger.info('****** RiVer Core {0} *******'.format(__version__))
@@ -282,7 +287,11 @@ def rivercore_generate(config_file, verbosity):
     logger.level(verbosity)
     config = configparser.ConfigParser()
     config.read(config_file)
-    logger.debug('Read file from {0}'.format(config_file))
+    # check for ISA string in upper case
+    _isa = config['river_core']['isa']
+    logger.info(f'ISA:  {_isa}')
+    utils.check_isa(_isa)
+    logger.debug('Read file from {0}'.format(os.path.abspath(config_file)))
 
     output_dir = config['river_core']['work_dir']
 
@@ -419,7 +428,11 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
     logger.level(verbosity)
     config = configparser.ConfigParser()
     config.read(config_file)
-    logger.debug('Read file from {0}'.format(config_file))
+    # check for ISA string in upper case
+    _isa = config['river_core']['isa']
+    logger.info(f'ISA:  {_isa}')
+    utils.check_isa(_isa)
+    logger.debug('Read file from {0}'.format(os.path.abspath(config_file)))
 
     logger.info('****** Compilation Mode ******')
 
@@ -741,7 +754,11 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
     logger.level(verbosity)
     config = configparser.ConfigParser()
     config.read(config_file)
-    logger.debug('Read file from {0}'.format(config_file))
+    # check for ISA string in upper case
+    _isa = config['river_core']['isa']
+    logger.info(f'ISA:  {_isa}')
+    utils.check_isa(_isa)
+    logger.debug('Read file from {0}'.format(os.path.abspath(config_file)))
     target = config['river_core']['target']
 
     logger.info('****** Merge Mode ******')

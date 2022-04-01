@@ -115,6 +115,20 @@ def load_yaml(input_yaml):
         raise SystemExit
 
 
+def check_isa(isa):
+    if 'Z' in isa:
+        extensions = isa.split('Z')
+        if extensions[0].upper() != extensions[0]:
+            raise Exception('ISA Error: Ratified extensions should be in '
+                            'uppercase')
+    elif 'z' in isa:
+        raise Exception('ISA Error: unratified extension with lowercase Z')
+    else:
+        if isa.upper() != isa:
+            raise Exception('ISA Error: Ratified extensions should be in '
+                            'uppercase')
+
+
 def sys_command(command, timeout=240):
     '''
         Wrapper function to run shell commands with a timeout.
@@ -157,6 +171,7 @@ def sys_command(command, timeout=240):
             return 1, "GuruMeditation", "TimeoutExpired"
         rout = ''
         rerr = ''
+        cwd = os.getcwd()
         try:
             fmt = sys.stdout.encoding if sys.stdout.encoding is not None else 'utf-8'
             rout = out.decode(fmt)
@@ -185,7 +200,7 @@ def sys_command(command, timeout=240):
             rerr = "Unable to decode STDERR for launched subprocess. Output written to:"+ cwd+"/stderr.log"
             with open(cwd+"/stderr.log","wb") as f:
                 f.write(out)
-    return (process.returncode, rout, rerr)
+    return process.returncode, rout, rerr
 
 
 def sys_command_file(command, filename, timeout=500):
