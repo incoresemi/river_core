@@ -33,12 +33,11 @@ def compare_signature(file1, file2):
         logger.error('Signature file : ' + file1 + ' does not exist')
         raise SystemExit(1)
     cmd = f'diff -iw {file1} {file2}'
-    errcode, rout, rerr = sys_command(cmd)
+    errcode, rout, rerr = sys_command(cmd, logging=False)
     if errcode != 0:
         status = 'Failed'
     else:
         status = 'Passed'
-    res = rout
 
 #    file1_lines = open(file1, "r").readlines()
 #    file2_lines = open(file2, "r").readlines()
@@ -71,7 +70,7 @@ def compare_signature(file1, file2):
 #                include = False
 #                prev = rline
 ##        res = error_report
-    return status, res
+    return status, rout
 
 def str_2_bool(string):
     """
@@ -138,7 +137,7 @@ def check_isa(isa):
                             'uppercase')
 
 
-def sys_command(command, timeout=240):
+def sys_command(command, timeout=240, logging=True):
     '''
         Wrapper function to run shell commands with a timeout.
         Uses :py:mod:`subprocess`, :py:mod:`shlex`, :py:mod:`os`
@@ -185,12 +184,13 @@ def sys_command(command, timeout=240):
             fmt = sys.stdout.encoding if sys.stdout.encoding is not None else 'utf-8'
             rout = out.decode(fmt)
             if out:
-                if process.returncode != 0:
+                if process.returncode != 0 and logging:
                     logger.error(out.decode(fmt))
-                else:
+                elif logging:
                     logger.debug(out.decode(fmt))
         except UnicodeError:
-            logger.warning("Unable to decode STDOUT for launched subprocess. Output written to:"+
+            if logging:
+                logger.warning("Unable to decode STDOUT for launched subprocess. Output written to:"+
                     cwd+"/stdout.log")
             rout = "Unable to decode STDOUT for launched subprocess. Output written to:"+ cwd+"/stdout.log"
             with open(cwd+"/stdout.log","wb") as f:
@@ -199,12 +199,13 @@ def sys_command(command, timeout=240):
             fmt = sys.stderr.encoding if sys.stdout.encoding is not None else 'utf-8'
             rerr = err.decode(fmt)
             if err:
-                if process.returncode != 0:
+                if process.returncode != 0 and logging:
                     logger.error(err.decode(fmt))
-                else:
+                elif logging:
                     logger.debug(err.decode(fmt))
         except UnicodeError:
-            logger.warning("Unable to decode STDERR for launched subprocess. Output written to:"+
+            if logging:
+                logger.warning("Unable to decode STDERR for launched subprocess. Output written to:"+
                     cwd+"/stderr.log")
             rerr = "Unable to decode STDERR for launched subprocess. Output written to:"+ cwd+"/stderr.log"
             with open(cwd+"/stderr.log","wb") as f:
