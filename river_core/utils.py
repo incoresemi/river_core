@@ -12,6 +12,7 @@ from ruamel.yaml import YAML
 from threading import Timer
 import pathlib
 import difflib
+import shlex
 
 yaml = YAML(typ="safe")
 yaml.default_flow_style = False
@@ -31,37 +32,45 @@ def compare_signature(file1, file2):
     if not os.path.exists(file1) :
         logger.error('Signature file : ' + file1 + ' does not exist')
         raise SystemExit(1)
-    file1_lines = open(file1, "r").readlines()
-    file2_lines = open(file2, "r").readlines()
-    res = ("".join(
-        difflib.unified_diff(file1_lines,file2_lines, file1, file2))).strip()
-    if res == "":
-        if len(file1_lines)==0:
-            return 'Failed', '---- \nBoth FIles empty\n'
-        else:
-            status = 'Passed'
-    else:
+    cmd = f'diff -iw {file1} {file2}'
+    errcode, rout, rerr = sys_command(cmd)
+    if errcode != 0:
         status = 'Failed'
+    else:
+        status = 'Passed'
+    res = rout
 
-        error_report = '\nFile1 Path:{0}\nFile2 Path:{1}\nMatch  Line#    File1    File2\n'.format(
-                            file1,file2)
-        fmt = "{0:5s} {1:6d} {2:100s} {3:100s}\n"
-        prev = ''
-        include = False
-        for lnum,lines in enumerate(zip(file1_lines,file2_lines)):
-            if lines[0] != lines[1]:
-                include = True
-                if not include:
-                    error_report += prev
-                rline = fmt.format("*",lnum,lines[0].strip(),lines[1].strip())
-                error_report += rline
-                prev = rline
-            elif include:
-                rline = fmt.format("",lnum,lines[0].strip(),lines[1].strip())
-                error_report += rline
-                include = False
-                prev = rline
-#        res = error_report
+#    file1_lines = open(file1, "r").readlines()
+#    file2_lines = open(file2, "r").readlines()
+#    res = ("".join(
+#        difflib.unified_diff(file1_lines,file2_lines, file1, file2))).strip()
+#    if res == "":
+#        if len(file1_lines)==0:
+#            return 'Failed', '---- \nBoth FIles empty\n'
+#        else:
+#            status = 'Passed'
+#    else:
+#        status = 'Failed'
+#
+#        error_report = '\nFile1 Path:{0}\nFile2 Path:{1}\nMatch  Line#    File1    File2\n'.format(
+#                            file1,file2)
+#        fmt = "{0:5s} {1:6d} {2:100s} {3:100s}\n"
+#        prev = ''
+#        include = False
+#        for lnum,lines in enumerate(zip(file1_lines,file2_lines)):
+#            if lines[0] != lines[1]:
+#                include = True
+#                if not include:
+#                    error_report += prev
+#                rline = fmt.format("*",lnum,lines[0].strip(),lines[1].strip())
+#                error_report += rline
+#                prev = rline
+#            elif include:
+#                rline = fmt.format("",lnum,lines[0].strip(),lines[1].strip())
+#                error_report += rline
+#                include = False
+#                prev = rline
+##        res = error_report
     return status, res
 
 def str_2_bool(string):
@@ -147,7 +156,7 @@ def sys_command(command, timeout=240):
 
         :rtype: list
     '''
-    logger.warning('$ timeout={1} {0} '.format(' '.join(shlex.split(command)),
+    logger.debug('$ timeout={1} {0} '.format(' '.join(shlex.split(command)),
                                                timeout))
     out = ''
     err = ''
