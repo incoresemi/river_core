@@ -12,6 +12,7 @@ from ruamel.yaml import YAML
 from threading import Timer
 import pathlib
 import difflib
+import shlex
 
 yaml = YAML(typ="safe")
 yaml.default_flow_style = False
@@ -31,38 +32,45 @@ def compare_signature(file1, file2):
     if not os.path.exists(file1) :
         logger.error('Signature file : ' + file1 + ' does not exist')
         raise SystemExit(1)
-    file1_lines = open(file1, "r").readlines()
-    file2_lines = open(file2, "r").readlines()
-    res = ("".join(
-        difflib.unified_diff(file1_lines,file2_lines, file1, file2))).strip()
-    if res == "":
-        if len(file1_lines)==0:
-            return 'Failed', '---- \nBoth FIles empty\n'
-        else:
-            status = 'Passed'
-    else:
+    cmd = f'diff -iw {file1} {file2}'
+    errcode, rout, rerr = sys_command(cmd, logging=False)
+    if errcode != 0:
         status = 'Failed'
+    else:
+        status = 'Passed'
 
-        error_report = '\nFile1 Path:{0}\nFile2 Path:{1}\nMatch  Line#    File1    File2\n'.format(
-                            file1,file2)
-        fmt = "{0:5s} {1:6d} {2:100s} {3:100s}\n"
-        prev = ''
-        include = False
-        for lnum,lines in enumerate(zip(file1_lines,file2_lines)):
-            if lines[0] != lines[1]:
-                include = True
-                if not include:
-                    error_report += prev
-                rline = fmt.format("*",lnum,lines[0].strip(),lines[1].strip())
-                error_report += rline
-                prev = rline
-            elif include:
-                rline = fmt.format("",lnum,lines[0].strip(),lines[1].strip())
-                error_report += rline
-                include = False
-                prev = rline
-#        res = error_report
-    return status, res
+#    file1_lines = open(file1, "r").readlines()
+#    file2_lines = open(file2, "r").readlines()
+#    res = ("".join(
+#        difflib.unified_diff(file1_lines,file2_lines, file1, file2))).strip()
+#    if res == "":
+#        if len(file1_lines)==0:
+#            return 'Failed', '---- \nBoth FIles empty\n'
+#        else:
+#            status = 'Passed'
+#    else:
+#        status = 'Failed'
+#
+#        error_report = '\nFile1 Path:{0}\nFile2 Path:{1}\nMatch  Line#    File1    File2\n'.format(
+#                            file1,file2)
+#        fmt = "{0:5s} {1:6d} {2:100s} {3:100s}\n"
+#        prev = ''
+#        include = False
+#        for lnum,lines in enumerate(zip(file1_lines,file2_lines)):
+#            if lines[0] != lines[1]:
+#                include = True
+#                if not include:
+#                    error_report += prev
+#                rline = fmt.format("*",lnum,lines[0].strip(),lines[1].strip())
+#                error_report += rline
+#                prev = rline
+#            elif include:
+#                rline = fmt.format("",lnum,lines[0].strip(),lines[1].strip())
+#                error_report += rline
+#                include = False
+#                prev = rline
+##        res = error_report
+    return status, rout
 
 def str_2_bool(string):
     """
@@ -115,7 +123,21 @@ def load_yaml(input_yaml):
         raise SystemExit
 
 
-def sys_command(command, timeout=240):
+def check_isa(isa):
+    if 'Z' in isa:
+        extensions = isa.split('Z')
+        if extensions[0].upper() != extensions[0]:
+            raise Exception('ISA Error: Ratified extensions should be in '
+                            'uppercase')
+    elif 'z' in isa:
+        raise Exception('ISA Error: unratified extension with lowercase Z')
+    else:
+        if isa.upper() != isa:
+            raise Exception('ISA Error: Ratified extensions should be in '
+                            'uppercase')
+
+
+def sys_command(command, timeout=240, logging=True):
     '''
         Wrapper function to run shell commands with a timeout.
         Uses :py:mod:`subprocess`, :py:mod:`shlex`, :py:mod:`os`
@@ -133,7 +155,7 @@ def sys_command(command, timeout=240):
 
         :rtype: list
     '''
-    logger.warning('$ timeout={1} {0} '.format(' '.join(shlex.split(command)),
+    logger.debug('$ timeout={1} {0} '.format(' '.join(shlex.split(command)),
                                                timeout))
     out = ''
     err = ''
@@ -157,16 +179,18 @@ def sys_command(command, timeout=240):
             return 1, "GuruMeditation", "TimeoutExpired"
         rout = ''
         rerr = ''
+        cwd = os.getcwd()
         try:
             fmt = sys.stdout.encoding if sys.stdout.encoding is not None else 'utf-8'
             rout = out.decode(fmt)
             if out:
-                if process.returncode != 0:
+                if process.returncode != 0 and logging:
                     logger.error(out.decode(fmt))
-                else:
+                elif logging:
                     logger.debug(out.decode(fmt))
         except UnicodeError:
-            logger.warning("Unable to decode STDOUT for launched subprocess. Output written to:"+
+            if logging:
+                logger.warning("Unable to decode STDOUT for launched subprocess. Output written to:"+
                     cwd+"/stdout.log")
             rout = "Unable to decode STDOUT for launched subprocess. Output written to:"+ cwd+"/stdout.log"
             with open(cwd+"/stdout.log","wb") as f:
@@ -175,17 +199,18 @@ def sys_command(command, timeout=240):
             fmt = sys.stderr.encoding if sys.stdout.encoding is not None else 'utf-8'
             rerr = err.decode(fmt)
             if err:
-                if process.returncode != 0:
+                if process.returncode != 0 and logging:
                     logger.error(err.decode(fmt))
-                else:
+                elif logging:
                     logger.debug(err.decode(fmt))
         except UnicodeError:
-            logger.warning("Unable to decode STDERR for launched subprocess. Output written to:"+
+            if logging:
+                logger.warning("Unable to decode STDERR for launched subprocess. Output written to:"+
                     cwd+"/stderr.log")
             rerr = "Unable to decode STDERR for launched subprocess. Output written to:"+ cwd+"/stderr.log"
             with open(cwd+"/stderr.log","wb") as f:
                 f.write(out)
-    return (process.returncode, rout, rerr)
+    return process.returncode, rout, rerr
 
 
 def sys_command_file(command, filename, timeout=500):

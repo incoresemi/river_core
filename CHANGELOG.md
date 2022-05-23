@@ -2,6 +2,11 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2022-05-23
+- use unix `diff` for commit log comparison.
+- explicit mechanism to disable logging in `utils.sys_command`
+- print the total number of failed tests in log
+
 ## [1.1.1] - 2022-03-19
 - fix return code out and err in sys\_command and run functions in utils
 
