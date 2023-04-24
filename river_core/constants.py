@@ -66,6 +66,9 @@ include:
 ignore_lines:
     type: integer
     default: 4
+self_checking:
+  type: boolean
+  default: False
 ''' #: This contains the schema for validation
 
 sample_config = '''

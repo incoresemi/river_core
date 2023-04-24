@@ -358,12 +358,6 @@ def rivercore_generate(config_file, verbosity):
         generatorpm.hook.post_gen(
             output_dir='{0}/{1}'.format(output_dir, suite))
 
-    test_list_file = output_dir + '/test_list.yaml'
-    logger.info('Dumping generated Test-List at: ' + str(test_list_file))
-    testfile = open(test_list_file, 'w')
-    utils.yaml.dump(test_list, testfile)
-    testfile.close()
-
     logger.info('Validating Generated Test-List')
     testschema = yaml.load(testlist_schema)
     validator = YamlValidator(testschema)
@@ -376,8 +370,16 @@ def rivercore_generate(config_file, verbosity):
             for x in error_list:
                 logger.error('{0} [ {1} ] : {2}'.format(test, x, error_list[x]))
             raise SystemExit(1)
+        test_list[test] = validator.normalized(fields, testschema)
     logger.info('Test List Validated successfully')
     logger.info(f'Total Tests : {len(test_list)}')
+    
+    test_list_file = output_dir + '/test_list.yaml'
+    logger.info('Dumping generated Test-List at: ' + str(test_list_file))
+    testfile = open(test_list_file, 'w')
+    utils.yaml.dump(test_list, testfile)
+    testfile.close()
+
 
     # Open generation report in browser
     for suite in suite_list:
@@ -608,20 +610,28 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             ref_json_data = []
             for test, attr in test_dict.items():
                 test_wd = attr['work_dir']
-                if not os.path.isfile(test_wd + '/dut.dump'):
-                    logger.error(f'{test:<30} : DUT dump is missing')
-                    test_dict[test]['result'] = 'Unavailable'
-                    test_dict[test]['log'] = "DUT dump is missing"
-                    success = False
-                    continue
-                if not os.path.isfile(test_wd + '/ref.dump'):
-                    logger.error(f'{test:<30} : REF dump is missing')
-                    test_dict[test]['result'] = 'Unavailable'
-                    test_dict[test]['log'] = "REF dump is missing"
-                    success = False
-                    continue
-                result, log = utils.compare_signature(test_wd + '/dut.dump',
-                                     test_wd + '/ref.dump')
+                if not attr['self_checking']:
+                  if not os.path.isfile(test_wd + '/dut.dump'):
+                      logger.error(f'{test:<30} : DUT dump is missing')
+                      test_dict[test]['result'] = 'Unavailable'
+                      test_dict[test]['log'] = "DUT dump is missing"
+                      success = False
+                      continue
+                  if not os.path.isfile(test_wd + '/ref.dump'):
+                      logger.error(f'{test:<30} : REF dump is missing')
+                      test_dict[test]['result'] = 'Unavailable'
+                      test_dict[test]['log'] = "REF dump is missing"
+                      success = False
+                      continue
+                  result, log = utils.compare_signature(test_wd + '/dut.dump', test_wd + '/ref.dump')
+                else:
+                  if not os.path.isfile(test_wd + 'dut.signature'):
+                      logger.error(f'{test:<30} : DUT signature is missing')
+                      test_dict[test]['result'] = 'Unavailable'
+                      test_dict[test]['log'] = "DUT signature is missing"
+                      success = False
+                      continue
+                  result, log = utils.self_check(test_wd + '/dut.signature')
                 test_dict[test]['result'] = result
                 test_dict[test]['log'] = log
                 if result == 'Passed':
