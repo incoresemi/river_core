@@ -18,6 +18,21 @@ yaml = YAML(typ="safe")
 yaml.default_flow_style = False
 yaml.allow_unicode = True
 
+def self_check(file1):
+  '''
+  Function to check if all values in the signature are 0s to indicate a pass,
+  else the test has failed.
+  '''
+  result = 'Passed'
+  rout = ''
+  with open('file1','r') as f:
+    for lineno, line in enumerate(f):
+      line_val = f'0x{line}'
+      if int(line_val,0) != 0:
+        result = 'Failed'
+        rout = f'\nLine:{lineno} has a non-zero value indicating a fail'
+  return result, rout
+
 def compare_signature(file1, file2):
     '''
         Function to check whether two signature files are equivalent. This funcion uses the

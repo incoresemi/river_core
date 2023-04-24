@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2023-04-24
+- print the total number of tests generated in the test-list.yaml
+- adding support for self checking tests
+
 ## [1.2.0] - 2022-05-23
 - use unix `diff` for commit log comparison.
 - explicit mechanism to disable logging in `utils.sys_command`
