@@ -377,6 +377,7 @@ def rivercore_generate(config_file, verbosity):
                 logger.error('{0} [ {1} ] : {2}'.format(test, x, error_list[x]))
             raise SystemExit(1)
     logger.info('Test List Validated successfully')
+    logger.info(f'Total Tests : {len(test_list)}')
 
     # Open generation report in browser
     for suite in suite_list:
