@@ -2,6 +2,9 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2023-04-25
+- use riscv-config isa validator for checking the isa string
+
 ## [1.3.0] - 2023-04-24
 - print the total number of tests generated in the test-list.yaml
 - adding support for self checking tests

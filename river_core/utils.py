@@ -13,6 +13,7 @@ from threading import Timer
 import pathlib
 import difflib
 import shlex
+import riscv_config.isa_validator as isa_val
 
 yaml = YAML(typ="safe")
 yaml.default_flow_style = False
@@ -139,18 +140,11 @@ def load_yaml(input_yaml):
 
 
 def check_isa(isa):
-    if 'Z' in isa:
-        extensions = isa.split('Z')
-        if extensions[0].upper() != extensions[0]:
-            raise Exception('ISA Error: Ratified extensions should be in '
-                            'uppercase')
-    elif 'z' in isa:
-        raise Exception('ISA Error: unratified extension with lowercase Z')
-    else:
-        if isa.upper() != isa:
-            raise Exception('ISA Error: Ratified extensions should be in '
-                            'uppercase')
-
+    (ext_list, err, err_list) = isa_val.get_extension_list(isa)
+    if err:
+      for e in err_list:
+        logger.error(e)
+      raise SystemExit(1)
 
 def sys_command(command, timeout=240, logging=True):
     '''
