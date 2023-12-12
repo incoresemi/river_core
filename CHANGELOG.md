@@ -2,6 +2,9 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2023-12-12
+- count num of instructions executed per test and cummulative number
+
 ## [1.4.0] - 2023-04-25
 - use riscv-config isa validator for checking the isa string
 
