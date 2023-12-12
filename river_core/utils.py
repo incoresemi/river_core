@@ -54,6 +54,9 @@ def compare_signature(file1, file2):
         status = 'Failed'
     else:
         status = 'Passed'
+    with open(f'{file1}','r') as fd:
+      rcount = len(fd.readlines())
+
 
 #    file1_lines = open(file1, "r").readlines()
 #    file2_lines = open(file2, "r").readlines()
@@ -86,7 +89,7 @@ def compare_signature(file1, file2):
 #                include = False
 #                prev = rline
 ##        res = error_report
-    return status, rout
+    return status, rout, rcount
 
 def str_2_bool(string):
     """
@@ -136,7 +139,7 @@ def load_yaml(input_yaml):
         with open(input_yaml, "r") as file:
             return dict(yaml.load(file))
     except ruamel.yaml.constructor.DuplicateKeyError as msg:
-        raise SystemExit
+        raise SystemExit(1)
 
 
 def check_isa(isa):

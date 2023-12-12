@@ -159,6 +159,7 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
     ## Get the proper stats about passed and failed test
     # NOTE: This is the place where you determine when your test passed fail, just add extra things to compare in the if condition if the results become to high
     num_passed = num_total = num_unav = num_failed = 0
+    total_instr = 0
     for test in test_dict:
         num_total = num_total + 1
         try:
@@ -169,6 +170,7 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
                 num_passed = num_passed + 1
             else:
                 num_failed = num_failed + 1
+            total_instr += test_dict[test]['num_instr']
         except:
             logger.warning("Couldn't get a result from the Test List Dict")
 
@@ -193,6 +195,7 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
     html_objects['num_passed'] = num_passed
     html_objects['num_failed'] = num_failed
     html_objects['num_unav'] = num_unav
+    html_objects['total_instr'] = total_instr
 
     if not os.path.exists(report_dir):
         os.makedirs(report_dir)
@@ -623,7 +626,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                       test_dict[test]['log'] = "REF dump is missing"
                       success = False
                       continue
-                  result, log = utils.compare_signature(test_wd + '/dut.dump', test_wd + '/ref.dump')
+                  result, log, insnsize = utils.compare_signature(test_wd + '/dut.dump', test_wd + '/ref.dump')
                 else:
                   if not os.path.isfile(test_wd + 'dut.signature'):
                       logger.error(f'{test:<30} : DUT signature is missing')
@@ -634,6 +637,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                   result, log = utils.self_check(test_wd + '/dut.signature')
                 test_dict[test]['result'] = result
                 test_dict[test]['log'] = log
+                test_dict[test]['num_instr'] = insnsize
                 if result == 'Passed':
                     logger.info(f"{test:<30} : TEST {result.upper()}")
                 else:
@@ -785,7 +789,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
             logger.info(output + ' directory deleted')
         else:
             logger.info('Alright\nBailing out.')
-            raise SystemExit
+            raise SystemExit(1)
     os.makedirs(output)
     asm_dir = output + '/asm'
     common_dir = output + '/common'
@@ -819,7 +823,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
                 folder_yaml[test]['work_dir'], test_asm))
             if ret_val != 0:
                 logger.error('Failed to copy files\nFiles donot exist')
-                raise SystemExit
+                raise SystemExit(1)
             # Check if something common is there
             if folder_yaml[test].get('extra_compile'):
                 for extra in range(0, len(folder_yaml[test]['extra_compile'])):
@@ -898,7 +902,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
         logger.error(
             "Sorry, loading the requested plugin has failed, please check the configuration"
         )
-        raise SystemExit
+        raise SystemExit(1)
 
     # Perform Merge only if coverage enabled
     if (utils.str_2_bool(config['coverage']['code']) or
