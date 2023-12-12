@@ -294,11 +294,13 @@ function filter_table(elem) {
     <h2>Log comparison result:</h2>
     <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="passed">{{ num_passed }} Passed</span>, <input checked="true" class="filter" data-test-result="failed" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="failed">{{ num_failed }} Failed</span><input checked="true" class="filter" data-test-result="unavailable" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="unavailable"> {{ num_unav }} Unavailable</span>
     <h3> Out of Total: {{ num_failed + num_passed + num_unav }} Tests </h3>
+    <h3> Total Instructions Execute: {{ total_instr }} Instructions </h3>
 
     <table id="results-table">
       <thead id="simple-table-head">
         <tr>
           <th class="sortable" col="name">Test-name</th>
+          <th col="numinsns">No. of Insns</th>
           <th col="path">Directory</th>
           <th class="sortable result initial-sort" col="result">Result</th>
         </tr>
@@ -307,11 +309,12 @@ function filter_table(elem) {
             <tbody class= "{{ test_dict[test]['result'].lower() }}  simple-table-row" >
             <tr>
               <td class="col-name">{{ test }}</td>
+              <td class="col-numinsns">{{ test_dict[test]['num_instr'] }}</td>
               <td class="col-path">{{ test_dict[test]['work_dir']}}</td>
               <td class="col-result">{{ test_dict[test]['result']}}</td>
             </tr>
             <tr>
-              <td class="extra" colspan="4">
+              <td class="extra" colspan="5">
                 <div class="log">{{ test_dict[test]['log']}}</br></div></td>
             </tr>
             </tbody>

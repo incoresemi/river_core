@@ -23,7 +23,7 @@ def check_config():
         return str(os.getcwd()) + '/river_core.ini'
     else:
         logger.error("Couldn't find config file anywhere. Exiting")
-        raise SystemExit
+        raise SystemExit(1)
 
 
 @click.group()
