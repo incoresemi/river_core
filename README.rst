@@ -4,4 +4,4 @@ RiVer Core is an open source Python based verification framework.
 
 LICENSE: BSD-3 Clause.
 
-Latest documentation of river_core is available at `Read the Docs <https://river_core.readthedocs.io/>`_
+Latest documentation of river_core is available at `Read the Docs <https://river-core.readthedocs.io/>`_
