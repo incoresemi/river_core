@@ -628,7 +628,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                       continue
                   result, log, insnsize = utils.compare_signature(test_wd + '/dut.dump', test_wd + '/ref.dump')
                 else:
-                  if not os.path.isfile(test_wd + 'dut.signature'):
+                  if not os.path.isfile(test_wd + '/dut.signature'):
                       logger.error(f'{test:<30} : DUT signature is missing')
                       test_dict[test]['result'] = 'Unavailable'
                       test_dict[test]['log'] = "DUT signature is missing"
