@@ -26,7 +26,7 @@ def self_check(file1):
   '''
   result = 'Passed'
   rout = ''
-  with open('file1','r') as f:
+  with open(file1,'r') as f:
     for lineno, line in enumerate(f):
       line_val = f'0x{line}'
       if int(line_val,0) != 0:

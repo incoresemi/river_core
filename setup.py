@@ -62,6 +62,6 @@ setup(
     tests_require=test_requirements,
     url=
     'https://github.com/incoresemi/river_core',
-    version='1.4.1',
+    version='1.4.2',
     zip_safe=False,
 )
