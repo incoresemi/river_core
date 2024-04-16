@@ -2,6 +2,9 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.3] - 2024-04-16
+- bug fixes; instruction count populated only for non-self-checking tests
+
 ## [1.4.2] - 2024-01-18
 - bug fixes pertaining to self-checking
 
