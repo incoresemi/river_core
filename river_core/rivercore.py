@@ -613,7 +613,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             ref_json_data = []
             for test, attr in test_dict.items():
                 test_wd = attr['work_dir']
-                if not attr['self_checking']:
+                is_self_checking = attr['self_checking']
+                if not is_self_checking:
                   if not os.path.isfile(test_wd + '/dut.dump'):
                       logger.error(f'{test:<30} : DUT dump is missing')
                       test_dict[test]['result'] = 'Unavailable'
@@ -627,6 +628,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                       success = False
                       continue
                   result, log, insnsize = utils.compare_signature(test_wd + '/dut.dump', test_wd + '/ref.dump')
+                  test_dict[test]['num_instr'] = insnsize
                 else:
                   if not os.path.isfile(test_wd + '/dut.signature'):
                       logger.error(f'{test:<30} : DUT signature is missing')
@@ -637,7 +639,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                   result, log = utils.self_check(test_wd + '/dut.signature')
                 test_dict[test]['result'] = result
                 test_dict[test]['log'] = log
-                test_dict[test]['num_instr'] = insnsize
                 if result == 'Passed':
                     logger.info(f"{test:<30} : TEST {result.upper()}")
                 else:
