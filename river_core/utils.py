@@ -34,6 +34,14 @@ def self_check(file1):
         rout = f'\nLine:{lineno} has a non-zero value indicating a fail'
   return result, rout
 
+def get_file_size(file):
+    '''
+    Function to give the number of lines
+    '''
+    with open(f'{file}','r') as fd:
+      rcount = len(fd.readlines())
+    return rcount
+
 def compare_signature(file1, file2):
     '''
         Function to check whether two signature files are equivalent. This funcion uses the

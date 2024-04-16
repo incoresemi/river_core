@@ -628,7 +628,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                       success = False
                       continue
                   result, log, insnsize = utils.compare_signature(test_wd + '/dut.dump', test_wd + '/ref.dump')
-                  test_dict[test]['num_instr'] = insnsize
                 else:
                   if not os.path.isfile(test_wd + '/dut.signature'):
                       logger.error(f'{test:<30} : DUT signature is missing')
@@ -637,6 +636,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                       success = False
                       continue
                   result, log = utils.self_check(test_wd + '/dut.signature')
+                  insnsize = utils.get_file_size(test_wd + '/dut.dump')
+                test_dict[test]['num_instr'] = insnsize
                 test_dict[test]['result'] = result
                 test_dict[test]['log'] = log
                 if result == 'Passed':
