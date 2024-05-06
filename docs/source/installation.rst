@@ -219,6 +219,8 @@ Output for ``river_core generate --help``:
                           Auto detects
                           river_core.ini in current directory or in the ~
                           directory
+    --filter_testgen TEXT Pass sublist of test generators to use from the 
+                          ones given in the config INI file 
     -v, --verbosity TEXT  Set the verbosity level for the framework
     --version             Show the version and exit.
     --help                Show this message and exit.
