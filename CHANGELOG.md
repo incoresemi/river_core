@@ -2,6 +2,9 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.4] - 2024-04-16
+- test generator filter for generate phase is added
+
 ## [1.4.3] - 2024-04-16
 - bug fixes; instruction count functionality added to self-checks
 
