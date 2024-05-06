@@ -274,7 +274,7 @@ def rivercore_clean(config_file, verbosity):
             logger.info(output_dir + ' directory deleted')
 
 
-def rivercore_generate(config_file, verbosity):
+def rivercore_generate(config_file, verbosity, filter_testgen):
     '''
         Function to generate the assembly programs using the plugin as configured in the config.ini.
 
@@ -312,7 +312,21 @@ def rivercore_generate(config_file, verbosity):
     logger.info("ISA : {0}".format(config['river_core']['isa']))
     test_list = {}
 
+    if filter_testgen:
+        filter_testgen = filter_testgen.rstrip().split(',')
+        # check if chosen test generators does not exist in the config[generator]
+        suite_list_set = set(suite_list)
+        filter_testgen_set = set(filter_testgen)
+        if not filter_testgen_set.issubset(suite_list_set):
+            logger.err("Test generator(s) passed does not exist in the config file")
+        suite_list = list(suite_list_set.intersection(filter_testgen_set))
+
     for suite in suite_list:
+
+        # for suite not in filter_testgen
+        if filter_testgen:
+            if suite not in filter_testgen:
+                continue
 
         # Give Plugin Info
         logger.info("Plugin Jobs : {0}".format(config[suite]['jobs']))

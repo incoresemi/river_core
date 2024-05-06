@@ -190,15 +190,20 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
     help=
     'Read option defaults from the INI file\nAuto detects river_core.ini in current directory or in the ~ directory'
 )
+@click.option(
+    '--filter_testgen',
+    help=
+    'Override the test generators given by the config file'
+)
 @cli.command()
-def generate(config, verbosity):
+def generate(config, verbosity, filter_testgen):
     """
     subcommand to generate programs.
     """
     logger.info(constants.header_temp.format(__version__))
     if not config:
         config = check_config()
-    rivercore_generate(config, verbosity)
+    rivercore_generate(config, verbosity, filter_testgen)
 
 
 @click.version_option(version=__version__)
