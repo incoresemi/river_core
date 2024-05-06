@@ -143,9 +143,14 @@ def setup(config, dut, gen, ref, verbosity):
     '--coverage',
     is_flag=True,
     help='Enable collection of coverage statistics from the DuT plugin')
+@click.option(
+    "--filter_tests",
+    help=
+    'Choose to run tests only from particular set of test generator(s)'
+)
 @cli.command()
 def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
-            compare):
+            compare, filter_tests):
     '''
         subcommand to compile generated programs.
     '''
@@ -175,7 +180,7 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
                     'Compare is enabled\nThis will be generating incomplete reports'
                 )
     rivercore_compile(config, test_list, coverage, verbosity, dut_stage,
-                      ref_stage, compare)
+                      ref_stage, compare, filter_tests)
 
 
 @click.version_option(version=__version__)

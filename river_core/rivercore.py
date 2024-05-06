@@ -398,7 +398,7 @@ def rivercore_generate(config_file, verbosity):
 
 
 def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
-                      ref_flags, compare):
+                      ref_flags, compare, testgen_filter):
     '''
 
         Function to compile generated assembly programs using the plugin as configured in the config.ini.
@@ -455,6 +455,12 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
     logger.info("Generator Plugin : {0}".format(asm_gen))
     logger.info("Target Plugin : {0}".format(target_list))
     logger.info("Reference Plugin : {0}".format(ref_list))
+    logger.info("Running tests for the test generators: {0}".format(testgen_filter))
+
+    # filtering out nodes from other testgens
+    testlist_dict = utils.load_yaml(test_list)
+    testgen_filter = testgen_filter.strip().split(',')
+    filtered_testlist = {k : v for k, v in testlist_dict.items() if testlist_dict[k]['generator'] in testgen_filter}
 
     # Set default values:
     target_json = None
@@ -511,14 +517,14 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             if dut_flags == 'init':
                 logger.debug('Single mode flag detected\nRunning init')
                 dutpm.hook.init(ini_config=config[target],
-                                test_list=test_list,
+                                test_list=filtered_testlist,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
                                 plugin_path=path_to_module)
             elif dut_flags == 'build':
                 logger.debug('Single mode flag detected\nRunning build')
                 dutpm.hook.init(ini_config=config[target],
-                                test_list=test_list,
+                                test_list=filtered_testlist,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
                                 plugin_path=path_to_module)
@@ -526,7 +532,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             elif dut_flags == 'run':
                 logger.debug('All modes enabled\nRunning run')
                 dutpm.hook.init(ini_config=config[target],
-                                test_list=test_list,
+                                test_list=filtered_testlist,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
                                 plugin_path=path_to_module)
@@ -580,14 +586,14 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             if ref_flags == 'init':
                 logger.debug('Single mode flag detected\nRunning init')
                 refpm.hook.init(ini_config=config[ref],
-                                test_list=test_list,
+                                test_list=filtered_testlist,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
                                 plugin_path=path_to_module)
             elif ref_flags == 'build':
                 logger.debug('Single mode flag detected\nRunning build')
                 refpm.hook.init(ini_config=config[ref],
-                                test_list=test_list,
+                                test_list=filtered_testlist,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
                                 plugin_path=path_to_module)
@@ -595,7 +601,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             elif ref_flags == 'run':
                 logger.debug('All modes detected\nRunning build')
                 refpm.hook.init(ini_config=config[ref],
-                                test_list=test_list,
+                                test_list=filtered_testlist,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
                                 plugin_path=path_to_module)
@@ -607,7 +613,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
         ## Comparing Dumps
         success = True
         if compare:
-            test_dict = utils.load_yaml(test_list)
+            test_dict = filtered_testlist
             gen_json_data = []
             target_json_data = []
             ref_json_data = []
@@ -722,7 +728,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             logger.info(
                 'Comparison was disabled\nHence no diff would be available')
             result = 'Unavailable'
-            test_dict = utils.load_yaml(test_list)
+            test_dict = filtered_testlist
             logger.debug('Resetting values in test_dict')
             for test, attr in test_dict.items():
                 test_dict[test]['result'] = 'Unavailable'
