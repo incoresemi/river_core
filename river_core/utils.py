@@ -14,6 +14,9 @@ import pathlib
 import difflib
 import shlex
 import riscv_config.isa_validator as isa_val
+import re
+
+dump_regex = re.compile(r'.*core\s*(?P<coreid>\d):\s*(?P<priv>\d)\s*(?P<pc>.*?)\s+\((?P<instr>.*?)\)(?P<change>.*?)$')
 
 yaml = YAML(typ="safe")
 yaml.default_flow_style = False
@@ -42,10 +45,71 @@ def get_file_size(file):
       rcount = len(fd.readlines())
     return rcount
 
+def compare_dumps(file1, file2):
+    '''
+        Function to check whether two dump files are equivalent. This funcion ucore\s*(?P<coreid>\d):\s*(?P<priv>\d)\s*(?P<pc>.*?)\s+\((?P<instr>.*?)\)(?P<change>.*?)$ses the
+        :param file1: The path to the first signature.
+        :param file2: The path to the second signature.
+        :type file1: str
+        :type file2: str
+        :return: A string indicating whether the test "Passed" (if files are the same)
+            or "Failed" (if the files are different) and the diff of the files.
+    '''
+    if not os.path.exists(file1) :
+        logger.error('Signature file : ' + file1 + ' does not exist')
+        raise SystemExit(1)
+    cmd = f'diff -iw {file1} {file2}'
+    errcode, rout, rerr = sys_command(cmd, logging=False)
+    if errcode != 0:
+        # initial status
+        status = 'Passed'
+
+        # get lines that start with < or >
+        mimatch_str_lst = filter(lambda x: x[0] in ['<', '>'], rout.split('\n'))
+
+        # for each mismatched strings
+        for mismatch_str in mimatch_str_lst:
+            
+            # get strings
+            file1_str = mismatch_str
+            file2_str = next(mimatch_str_lst)
+
+            # get regex strings
+            file1_dat = dump_regex.findall(file1_str)[0]
+            file2_dat = dump_regex.findall(file2_str)[0]
+
+            # ensure commit message exists in same line number else fail
+            if file1_dat and file2_dat:
+                
+                # if any of coreid, priv, pc or instr encoding fails, the diff has failed
+                if file1[0:3] != file2[0:3]:
+                    logger.err('Mismatch in architectural states found!')
+                    status = 'Failed'
+                    break
+                else:
+                    # check if the architectural change is the same
+                    file1_change = set(file1_dat[-1].split()[1::2])
+                    file2_change = set(file2_dat[-1].split()[1::2])
+
+                    if file1_change != file2_change:
+                        logger.err('Mismatch in architectural states found!')
+                        status = 'Failed'
+            
+            else: # if regex match fails
+                status = 'Failed'
+                logger.err('Regex matching has failed!')
+    else:
+        status = 'Passed'
+    
+    # get number of instructions executed
+    with open(f'{file1}','r') as fd:
+      rcount = len(fd.readlines())
+
+    return status, rout, rcount
+
 def compare_signature(file1, file2):
     '''
         Function to check whether two signature files are equivalent. This funcion uses the
-        :py:mod:`difflib` to perform the comparision and obtain the difference.
         :param file1: The path to the first signature.
         :param file2: The path to the second signature.
         :type file1: str
@@ -62,41 +126,11 @@ def compare_signature(file1, file2):
         status = 'Failed'
     else:
         status = 'Passed'
+
+    # number of lines in the signature file
     with open(f'{file1}','r') as fd:
       rcount = len(fd.readlines())
-
-
-#    file1_lines = open(file1, "r").readlines()
-#    file2_lines = open(file2, "r").readlines()
-#    res = ("".join(
-#        difflib.unified_diff(file1_lines,file2_lines, file1, file2))).strip()
-#    if res == "":
-#        if len(file1_lines)==0:
-#            return 'Failed', '---- \nBoth FIles empty\n'
-#        else:
-#            status = 'Passed'
-#    else:
-#        status = 'Failed'
-#
-#        error_report = '\nFile1 Path:{0}\nFile2 Path:{1}\nMatch  Line#    File1    File2\n'.format(
-#                            file1,file2)
-#        fmt = "{0:5s} {1:6d} {2:100s} {3:100s}\n"
-#        prev = ''
-#        include = False
-#        for lnum,lines in enumerate(zip(file1_lines,file2_lines)):
-#            if lines[0] != lines[1]:
-#                include = True
-#                if not include:
-#                    error_report += prev
-#                rline = fmt.format("*",lnum,lines[0].strip(),lines[1].strip())
-#                error_report += rline
-#                prev = rline
-#            elif include:
-#                rline = fmt.format("",lnum,lines[0].strip(),lines[1].strip())
-#                error_report += rline
-#                include = False
-#                prev = rline
-##        res = error_report
+    
     return status, rout, rcount
 
 def str_2_bool(string):
