@@ -88,13 +88,13 @@ def compare_dumps(file1, file2):
                     break
                 else:
                     # check if the architectural change is the same
-                    file1_change = set(file1_dat[-1].split()[1::2])
-                    file2_change = set(file2_dat[-1].split()[1::2])
+                    file1_change = set(file1_dat[-1].split())
+                    file2_change = set(file2_dat[-1].split())
 
                     if file1_change != file2_change:
                         logger.err('Mismatch in architectural states found!')
                         status = 'Failed'
-            
+
             else: # if regex match fails
                 status = 'Failed'
                 logger.err('Regex matching has failed!')
