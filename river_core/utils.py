@@ -60,44 +60,56 @@ def compare_dumps(file1, file2):
         raise SystemExit(1)
     cmd = f'diff -iw {file1} {file2}'
     errcode, rout, rerr = sys_command(cmd, logging=False)
+
     if errcode != 0:
+
+        rout += '\nMismatch infos:'
+
         # initial status
         status = 'Passed'
 
         # get lines that start with < or >
-        mimatch_str_lst = filter(lambda x: x[0] in ['<', '>'], rout.split('\n'))
+        mismatch_str_lst = list(filter(lambda x: x[0] in ['<', '>'], rout.split('\n')))
 
         # for each mismatched strings
-        for mismatch_str in mimatch_str_lst:
+        start_val = -1
+        for file1_str in mismatch_str_lst:
             
-            # get strings
-            file1_str = mismatch_str
-            file2_str = next(mimatch_str_lst)
-
-            # get regex strings
-            file1_dat = dump_regex.findall(file1_str)[0]
-            file2_dat = dump_regex.findall(file2_str)[0]
-
-            # ensure commit message exists in same line number else fail
-            if file1_dat and file2_dat:
+            if file1_str[0] != '<':
+                continue
+            
+            for i in range(start_val + 1, len(mismatch_str_lst)):
                 
-                # if any of coreid, priv, pc or instr encoding fails, the diff has failed
-                if file1[0:3] != file2[0:3]:
-                    logger.err('Mismatch in architectural states found!')
+                file2_str = mismatch_str_lst[i]
+                if file2_str[0] != '>':
+                    continue
+
+                # get regex strings
+                try:
+                    file1_dat = dump_regex.findall(file1_str)[0]
+                    file2_dat = dump_regex.findall(file2_str)[0]
+                except IndexError:
                     status = 'Failed'
-                    break
+                    continue
+
+                # ensure commit message exists in same line number else fail
+                # if any of coreid, priv, pc or instr encoding fails, the diff has failed
+                if file1_dat[0:3] != file2_dat[0:3]:
+                    rout = rout + f'\n\t{file1} at PC: {file1_dat[2]} and {file2} at PC: {file2_dat[2]}'
+                    status = 'Failed'
+                    continue
                 else:
                     # check if the architectural change is the same
-                    file1_change = set(file1_dat[-1].split())
-                    file2_change = set(file2_dat[-1].split())
+                    file1dat_iter = iter(file1_dat[-1].split())
+                    file2dat_iter = iter(file2_dat[-1].split())
+                    file1_change = dict(zip(file1dat_iter, file1dat_iter))
+                    file2_change = dict(zip(file2dat_iter, file2dat_iter))
 
                     if file1_change != file2_change:
-                        logger.err('Mismatch in architectural states found!')
+                        rout = rout + f'\n\t{file1} at PC: {file1_dat[2]} and {file2} at PC: {file2_dat[2]}'
                         status = 'Failed'
-
-            else: # if regex match fails
-                status = 'Failed'
-                logger.err('Regex matching has failed!')
+                start_val = i
+                break
     else:
         status = 'Passed'
     
@@ -111,9 +123,7 @@ def compare_signature(file1, file2):
     '''
         Function to check whether two signature files are equivalent. This funcion uses the
         :param file1: The path to the first signature.
-        :param file2: The path to the second signature.
-        :type file1: str
-        :type file2: str
+        :param file2: The path to the second signature.raise
         :return: A string indicating whether the test "Passed" (if files are the same)
             or "Failed" (if the files are different) and the diff of the files.
     '''
