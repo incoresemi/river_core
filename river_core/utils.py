@@ -11,7 +11,6 @@ import signal
 from ruamel.yaml import YAML
 from threading import Timer
 import pathlib
-import difflib
 import shlex
 import riscv_config.isa_validator as isa_val
 import re
@@ -61,6 +60,9 @@ def compare_dumps(file1, file2):
     cmd = f'diff -iw {file1} {file2}'
     errcode, rout, rerr = sys_command(cmd, logging=False)
 
+    # warning flag to state normal diff fails but smart diff passes
+    warn = False
+
     if errcode != 0:
 
         rout += '\nMismatch infos:'
@@ -99,9 +101,21 @@ def compare_dumps(file1, file2):
                     status = 'Failed'
                     continue
                 else:
+                    
+                    # most probably a log mismatch
+                    warn = True
+
+                    # some cleanup
+                    change1 = file1_dat[-1].split()
+
+                    # if odd number, it's a load
+                    if len(change1) % 2:
+                        change1.remove('mem')
+
                     # check if the architectural change is the same
-                    file1dat_iter = iter(file1_dat[-1].split())
+                    file1dat_iter = iter(change1)
                     file2dat_iter = iter(file2_dat[-1].split())
+
                     file1_change = dict(zip(file1dat_iter, file1dat_iter))
                     file2_change = dict(zip(file2dat_iter, file2dat_iter))
 
@@ -117,7 +131,7 @@ def compare_dumps(file1, file2):
     with open(f'{file1}','r') as fd:
       rcount = len(fd.readlines())
 
-    return status, rout, rcount
+    return status, rout, rcount, warn
 
 def compare_signature(file1, file2):
     '''
