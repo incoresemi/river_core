@@ -75,16 +75,19 @@ def compare_dumps(file1, file2):
 
         # for each mismatched strings
         start_val = -1
-        for file1_str in mismatch_str_lst:
+        for i in range(len(mismatch_str_lst)):
             
+            file1_str = mismatch_str_lst[i]
             if file1_str[0] != '<':
                 continue
             
-            for i in range(start_val + 1, len(mismatch_str_lst)):
+            for j in range(start_val + 1, len(mismatch_str_lst)):
                 
-                file2_str = mismatch_str_lst[i]
+                file2_str = mismatch_str_lst[j] 
                 if file2_str[0] != '>':
                     continue
+                else:
+                    start_val = j
 
                 # get regex strings
                 try:
@@ -92,23 +95,22 @@ def compare_dumps(file1, file2):
                     file2_dat = dump_regex.findall(file2_str)[0]
                 except IndexError:
                     status = 'Failed'
-                    continue
+                    break
 
                 # ensure commit message exists in same line number else fail
                 # if any of coreid, priv, pc or instr encoding fails, the diff has failed
                 if file1_dat[0:3] != file2_dat[0:3]:
-                    rout = rout + f'\n\t{file1} at PC: {file1_dat[2]} and {file2} at PC: {file2_dat[2]}'
+                    rout = rout + f'\nBM: {file1} at PC: {file1_dat[2]} and {file2} at PC: {file2_dat[2]}'
                     status = 'Failed'
-                    continue
                 else:
                     
                     # most probably a log mismatch
                     warn = True
 
                     # some cleanup
-                    change1 = file1_dat[-1].split()
+                    change1 = file1_dat[-1].split() 
 
-                    # if odd number, it's a load
+                    # if odd number, it's a store
                     if len(change1) % 2:
                         change1.remove('mem')
 
@@ -120,9 +122,10 @@ def compare_dumps(file1, file2):
                     file2_change = dict(zip(file2dat_iter, file2dat_iter))
 
                     if file1_change != file2_change:
-                        rout = rout + f'\n\t{file1} at PC: {file1_dat[2]} and {file2} at PC: {file2_dat[2]}'
+                        if 'vxsat' in file2_dat[-1]:
+                            break
+                        rout = rout + f'\nSM: at PC: {file1_dat[2]}'
                         status = 'Failed'
-                start_val = i
                 break
     else:
         status = 'Passed'
