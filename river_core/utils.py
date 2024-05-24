@@ -60,8 +60,6 @@ def compare_dumps(file1, file2):
     cmd = f'diff -iw {file1} {file2}'
     errcode, rout, rerr = sys_command(cmd, logging=False)
 
-    insts_involved = dict()
-
     # warning flag to state normal diff fails but smart diff passes
     warn = False
 
@@ -135,7 +133,7 @@ def compare_dumps(file1, file2):
     with open(f'{file1}','r') as fd:
       rcount = len(fd.readlines())
 
-    return status, rout, rcount, warn, insts_involved
+    return status, rout, rcount, warn
 
 def compare_signature(file1, file2):
     '''
