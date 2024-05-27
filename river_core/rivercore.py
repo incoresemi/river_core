@@ -25,6 +25,7 @@ yaml.default_flow_style = False
 yaml.allow_unicode = True
 yaml.compact(seq_seq=False, seq_map=False)
 
+from multiprocessing import Process, Manager
 
 # Misc Helper Functions
 def sanitise_pytest_json(json):
@@ -409,8 +410,45 @@ def rivercore_generate(config_file, verbosity, filter_testgen):
                 webbrowser.open(report_html)
             except:
                 return 1
-
-
+#Helper function for parallel processing
+def task(item,success,test_dict):
+    test = item[0]
+    attr = item[1]
+    test_wd = attr['work_dir']
+    is_self_checking = attr['self_checking']
+    if not is_self_checking:
+        if not os.path.isfile(test_wd + '/dut.dump'):
+            logger.error(f'{test:<30} : DUT dump is missing')
+            test_dict[test]['result'] = 'Unavailable'
+            test_dict[test]['log'] = "DUT dump is missing"
+            success[0] = False
+            return
+        if not os.path.isfile(test_wd + '/ref.dump'):
+            logger.error(f'{test:<30} : REF dump is missing')
+            test_dict[test]['result'] = 'Unavailable'
+            test_dict[test]['log'] = "REF dump is missing"
+            success[0] = False
+            return
+        result, log, insnsize = utils.compare_signature(test_wd + '/dut.dump', test_wd + '/ref.dump')
+    else:
+        if not os.path.isfile(test_wd + '/dut.signature'):
+            logger.error(f'{test:<30} : DUT signature is missing')
+            test_dict[test]['result'] = 'Unavailable'
+            test_dict[test]['log'] = "DUT signature is missing"
+            success[0] = False
+            return
+        result, log = utils.self_check(test_wd + '/dut.signature')
+        insnsize = utils.get_file_size(test_wd + '/dut.dump')
+    test_dict[test]['num_instr'] = insnsize
+    test_dict[test]['result'] = result
+    test_dict[test]['log'] = log
+    if result == 'Passed':
+        logger.info(f"{test:<30} : TEST {result.upper()}")
+    else:
+        success[0] = False
+        logger.error(f"{test:<30} : TEST {result.upper()}")
+        return 
+    
 def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                       ref_flags, compare):
     '''
@@ -625,41 +663,16 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             gen_json_data = []
             target_json_data = []
             ref_json_data = []
-            for test, attr in test_dict.items():
-                test_wd = attr['work_dir']
-                is_self_checking = attr['self_checking']
-                if not is_self_checking:
-                  if not os.path.isfile(test_wd + '/dut.dump'):
-                      logger.error(f'{test:<30} : DUT dump is missing')
-                      test_dict[test]['result'] = 'Unavailable'
-                      test_dict[test]['log'] = "DUT dump is missing"
-                      success = False
-                      continue
-                  if not os.path.isfile(test_wd + '/ref.dump'):
-                      logger.error(f'{test:<30} : REF dump is missing')
-                      test_dict[test]['result'] = 'Unavailable'
-                      test_dict[test]['log'] = "REF dump is missing"
-                      success = False
-                      continue
-                  result, log, insnsize = utils.compare_signature(test_wd + '/dut.dump', test_wd + '/ref.dump')
-                else:
-                  if not os.path.isfile(test_wd + '/dut.signature'):
-                      logger.error(f'{test:<30} : DUT signature is missing')
-                      test_dict[test]['result'] = 'Unavailable'
-                      test_dict[test]['log'] = "DUT signature is missing"
-                      success = False
-                      continue
-                  result, log = utils.self_check(test_wd + '/dut.signature')
-                  insnsize = utils.get_file_size(test_wd + '/dut.dump')
-                test_dict[test]['num_instr'] = insnsize
-                test_dict[test]['result'] = result
-                test_dict[test]['log'] = log
-                if result == 'Passed':
-                    logger.info(f"{test:<30} : TEST {result.upper()}")
-                else:
-                    success = False
-                    logger.error(f"{test:<30} : TEST {result.upper()}")
 
+            # parallelized
+            # TODO
+            success = [True]
+            with Manager() as process_manager:
+                l = process_manager.list(test_dict.items())
+                p = Process(target= task, args=(l,success,test_dict))
+                p.start()
+                p.join()
+            success = success[0]
             utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
             failed_dict = {}
             for test, attr in test_dict.items():
@@ -1123,3 +1136,4 @@ def rivercore_setup(config, dut, gen, ref, verbosity):
 
         logger.info(
             'Created {0} Plugin in the current working directory'.format(ref))
+
