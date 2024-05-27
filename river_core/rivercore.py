@@ -641,7 +641,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                       test_dict[test]['log'] = "REF dump is missing"
                       success = False
                       continue
-                  result, log, insnsize, warn = utils.compare_dumps(test_wd + '/dut.dump', test_wd + '/ref.dump')
+                  result, log, insnsize = utils.compare_dumps(test_wd + '/dut.dump', test_wd + '/ref.dump')
                 else:
                   if not os.path.isfile(test_wd + '/dut.signature'):
                       logger.error(f'{test:<30} : DUT signature is missing')
@@ -655,10 +655,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 test_dict[test]['result'] = result
                 test_dict[test]['log'] = log
                 if result == 'Passed':
-                    if warn:
-                        logger.warn(f"{test:<30} : TEST {result.upper()}")
-                    else:
-                        logger.info(f"{test:<30} : TEST {result.upper()}")
+                    logger.info(f"{test:<30} : TEST {result.upper()}")
                 else:
                     success = False
                     logger.error(f"{test:<30} : TEST {result.upper()}")

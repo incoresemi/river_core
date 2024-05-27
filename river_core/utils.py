@@ -60,9 +60,6 @@ def compare_dumps(file1, file2):
     cmd = f'diff -iw {file1} {file2}'
     errcode, rout, rerr = sys_command(cmd, logging=False)
 
-    # warning flag to state normal diff fails but smart diff passes
-    warn = False
-
     if errcode != 0:
 
         rout += '\nMismatch infos:'
@@ -103,9 +100,6 @@ def compare_dumps(file1, file2):
                     rout = rout + f'\nBM: {file1} at PC: {file1_dat[2]} and {file2} at PC: {file2_dat[2]}'
                     status = 'Failed'
                 else:
-                    
-                    # most probably a log mismatch
-                    warn = True
 
                     # some cleanup
                     change1 = file1_dat[-1].split() 
@@ -124,7 +118,6 @@ def compare_dumps(file1, file2):
                     if file1_change != file2_change:
                         rout = rout + f'\nSM: at PC: {file1_dat[2]}'
                         status = 'Failed'
-                
                 break
     else:
         status = 'Passed'
@@ -133,8 +126,8 @@ def compare_dumps(file1, file2):
     with open(f'{file1}','r') as fd:
       rcount = len(fd.readlines())
 
-    return status, rout, rcount, warn
-
+    return status, rout, rcount
+    
 def compare_signature(file1, file2):
     '''
         Function to check whether two signature files are equivalent. This funcion uses the
