@@ -411,9 +411,10 @@ def rivercore_generate(config_file, verbosity, filter_testgen):
             except:
                 return 1
 #Helper function for parallel processing
+
 def comparesignature(item,success,test_dict):
-    test = item[0]
-    attr = item[1]
+    test = item
+    attr = test_dict[test]
     test_wd = attr['work_dir']
     is_self_checking = attr['self_checking']
     if not is_self_checking:
@@ -668,10 +669,10 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             # TODO
             success = [True]
             with Manager() as process_manager:
-                l = process_manager.list(test_dict.items())
-                p = Process(target= comparesignature, args=(l,success,test_dict))
-                p.start()
-                p.join()
+                item = process_manager.list(test_dict.keys())
+                process = Process(target= comparesignature, args=(item,success,test_dict))
+                process.start()
+                process.join()
             success = success[0]
             utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
             failed_dict = {}
