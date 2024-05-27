@@ -411,7 +411,7 @@ def rivercore_generate(config_file, verbosity, filter_testgen):
             except:
                 return 1
 #Helper function for parallel processing
-def task(item,success,test_dict):
+def comparesignature(item,success,test_dict):
     test = item[0]
     attr = item[1]
     test_wd = attr['work_dir']
@@ -669,7 +669,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             success = [True]
             with Manager() as process_manager:
                 l = process_manager.list(test_dict.items())
-                p = Process(target= task, args=(l,success,test_dict))
+                p = Process(target= comparesignature, args=(l,success,test_dict))
                 p.start()
                 p.join()
             success = success[0]
