@@ -25,7 +25,7 @@ yaml.default_flow_style = False
 yaml.allow_unicode = True
 yaml.compact(seq_seq=False, seq_map=False)
 
-from multiprocessing import Process, Manager
+from multiprocessing import Pool
 
 # Misc Helper Functions
 def sanitise_pytest_json(json):
@@ -666,11 +666,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             # parallelized
             # TODO
             success = [True]
-            with Manager() as process_manager:
-                item = process_manager.list(test_dict.keys())
-                process = Process(target= comparesignature, args=item)
-                process.start()
-                process.join()
+            with Pool() as process_pool:
+                process_pool.map(comparesignature,test_dict.keys())
             success = success[0]
             utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
             failed_dict = {}
