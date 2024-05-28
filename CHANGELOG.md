@@ -2,6 +2,9 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2024-05-28
+- parallelization of the log comparisons
+
 ## [1.6.0] - 2024-05-27
 - smart-diff integration with river_core
 
