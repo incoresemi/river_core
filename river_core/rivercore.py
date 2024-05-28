@@ -25,7 +25,7 @@ yaml.default_flow_style = False
 yaml.allow_unicode = True
 yaml.compact(seq_seq=False, seq_map=False)
 
-from multiprocessing import Pool
+from multiprocessing import Pool,Manager
 
 
 # Misc Helper Functions
@@ -625,15 +625,17 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
         success = True
         if compare:
             global test_dict
-            test_dict = utils.load_yaml(test_list)
+            process_manager = Manager()
+            test_dict = process_manager.dict(utils.load_yaml(test_list))
             gen_json_data = []
             target_json_data = []
             ref_json_data = []
             # parallelized
             # TODO
-            success = [True]
+            success = process_manager.list(True)
+            items = process_manager.list(test_dict.items())
             with Pool() as process_pool:
-                process_pool.map(comparesignature,test_dict.items())
+                process_pool.map(comparesignature,items)
             success = success[0]
             utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
             failed_dict = {}
