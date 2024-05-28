@@ -48,7 +48,6 @@ def sanitise_pytest_json(json):
 
     return return_data
 
-
 def generate_coverage_report(output_dir, config, coverage_report,
                              coverage_rank_report, db_files):
     '''
