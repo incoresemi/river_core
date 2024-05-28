@@ -956,7 +956,7 @@ def comparesignature(item):
             test_dict[test]['log'] = "REF dump is missing"
             success[0] = False
             return
-        result, log, insnsize = utils.compare_signature(test_wd + '/dut.dump', test_wd + '/ref.dump')
+        result, log, insnsize = utils.compare_dumps(test_wd + '/dut.dump', test_wd + '/ref.dump')
     else:
         if not os.path.isfile(test_wd + '/dut.signature'):
             logger.error(f'{test:<30} : DUT signature is missing')
