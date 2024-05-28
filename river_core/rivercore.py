@@ -27,6 +27,7 @@ yaml.compact(seq_seq=False, seq_map=False)
 
 from multiprocessing import Pool
 
+
 # Misc Helper Functions
 def sanitise_pytest_json(json):
     '''
@@ -620,54 +621,19 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 logger.warning('Ref Plugin disabled')
 
         ## Comparing Dumps
+        global success 
         success = True
         if compare:
+            global test_dict
             test_dict = utils.load_yaml(test_list)
             gen_json_data = []
             target_json_data = []
             ref_json_data = []
-            def comparesignature(item):
-                test = item
-                attr = test_dict[test]
-                test_wd = attr['work_dir']
-                is_self_checking = attr['self_checking']
-                if not is_self_checking:
-                    if not os.path.isfile(test_wd + '/dut.dump'):
-                        logger.error(f'{test:<30} : DUT dump is missing')
-                        test_dict[test]['result'] = 'Unavailable'
-                        test_dict[test]['log'] = "DUT dump is missing"
-                        success[0] = False
-                        return
-                    if not os.path.isfile(test_wd + '/ref.dump'):
-                        logger.error(f'{test:<30} : REF dump is missing')
-                        test_dict[test]['result'] = 'Unavailable'
-                        test_dict[test]['log'] = "REF dump is missing"
-                        success[0] = False
-                        return
-                    result, log, insnsize = utils.compare_signature(test_wd + '/dut.dump', test_wd + '/ref.dump')
-                else:
-                    if not os.path.isfile(test_wd + '/dut.signature'):
-                        logger.error(f'{test:<30} : DUT signature is missing')
-                        test_dict[test]['result'] = 'Unavailable'
-                        test_dict[test]['log'] = "DUT signature is missing"
-                        success[0] = False
-                        return
-                    result, log = utils.self_check(test_wd + '/dut.signature')
-                    insnsize = utils.get_file_size(test_wd + '/dut.dump')
-                test_dict[test]['num_instr'] = insnsize
-                test_dict[test]['result'] = result
-                test_dict[test]['log'] = log
-                if result == 'Passed':
-                    logger.info(f"{test:<30} : TEST {result.upper()}")
-                else:
-                    success[0] = False
-                    logger.error(f"{test:<30} : TEST {result.upper()}")
-                    return 
             # parallelized
             # TODO
             success = [True]
             with Pool() as process_pool:
-                process_pool.map(comparesignature,test_dict.keys())
+                process_pool.map(comparesignature,test_dict.items())
             success = success[0]
             utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
             failed_dict = {}
@@ -970,7 +936,43 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
         except:
             logger.info("Couldn't open the browser")
 
-
+def comparesignature(item):
+    global test_dict,success
+    test, attr = item
+    test_wd = attr['work_dir']
+    is_self_checking = attr['self_checking']
+    if not is_self_checking:
+        if not os.path.isfile(test_wd + '/dut.dump'):
+            logger.error(f'{test:<30} : DUT dump is missing')
+            test_dict[test]['result'] = 'Unavailable'
+            test_dict[test]['log'] = "DUT dump is missing"
+            success[0] = False
+            return
+        if not os.path.isfile(test_wd + '/ref.dump'):
+            logger.error(f'{test:<30} : REF dump is missing')
+            test_dict[test]['result'] = 'Unavailable'
+            test_dict[test]['log'] = "REF dump is missing"
+            success[0] = False
+            return
+        result, log, insnsize = utils.compare_signature(test_wd + '/dut.dump', test_wd + '/ref.dump')
+    else:
+        if not os.path.isfile(test_wd + '/dut.signature'):
+            logger.error(f'{test:<30} : DUT signature is missing')
+            test_dict[test]['result'] = 'Unavailable'
+            test_dict[test]['log'] = "DUT signature is missing"
+            success[0] = False
+            return
+        result, log = utils.self_check(test_wd + '/dut.signature')
+        insnsize = utils.get_file_size(test_wd + '/dut.dump')
+    test_dict[test]['num_instr'] = insnsize
+    test_dict[test]['result'] = result
+    test_dict[test]['log'] = log
+    if result == 'Passed':
+        logger.info(f"{test:<30} : TEST {result.upper()}")
+    else:
+        success[0] = False
+        logger.error(f"{test:<30} : TEST {result.upper()}")
+        return 
 def rivercore_setup(config, dut, gen, ref, verbosity):
     '''
         Function to generate sample plugins 
