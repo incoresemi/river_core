@@ -412,44 +412,7 @@ def rivercore_generate(config_file, verbosity, filter_testgen):
                 return 1
 #Helper function for parallel processing
 
-def comparesignature(item,success,test_dict):
-    test = item
-    attr = test_dict[test]
-    test_wd = attr['work_dir']
-    is_self_checking = attr['self_checking']
-    if not is_self_checking:
-        if not os.path.isfile(test_wd + '/dut.dump'):
-            logger.error(f'{test:<30} : DUT dump is missing')
-            test_dict[test]['result'] = 'Unavailable'
-            test_dict[test]['log'] = "DUT dump is missing"
-            success[0] = False
-            return
-        if not os.path.isfile(test_wd + '/ref.dump'):
-            logger.error(f'{test:<30} : REF dump is missing')
-            test_dict[test]['result'] = 'Unavailable'
-            test_dict[test]['log'] = "REF dump is missing"
-            success[0] = False
-            return
-        result, log, insnsize = utils.compare_signature(test_wd + '/dut.dump', test_wd + '/ref.dump')
-    else:
-        if not os.path.isfile(test_wd + '/dut.signature'):
-            logger.error(f'{test:<30} : DUT signature is missing')
-            test_dict[test]['result'] = 'Unavailable'
-            test_dict[test]['log'] = "DUT signature is missing"
-            success[0] = False
-            return
-        result, log = utils.self_check(test_wd + '/dut.signature')
-        insnsize = utils.get_file_size(test_wd + '/dut.dump')
-    test_dict[test]['num_instr'] = insnsize
-    test_dict[test]['result'] = result
-    test_dict[test]['log'] = log
-    if result == 'Passed':
-        logger.info(f"{test:<30} : TEST {result.upper()}")
-    else:
-        success[0] = False
-        logger.error(f"{test:<30} : TEST {result.upper()}")
-        return 
-    
+
 def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                       ref_flags, compare):
     '''
@@ -664,13 +627,49 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             gen_json_data = []
             target_json_data = []
             ref_json_data = []
-
+            def comparesignature(item):
+                test = item
+                attr = test_dict[test]
+                test_wd = attr['work_dir']
+                is_self_checking = attr['self_checking']
+                if not is_self_checking:
+                    if not os.path.isfile(test_wd + '/dut.dump'):
+                        logger.error(f'{test:<30} : DUT dump is missing')
+                        test_dict[test]['result'] = 'Unavailable'
+                        test_dict[test]['log'] = "DUT dump is missing"
+                        success[0] = False
+                        return
+                    if not os.path.isfile(test_wd + '/ref.dump'):
+                        logger.error(f'{test:<30} : REF dump is missing')
+                        test_dict[test]['result'] = 'Unavailable'
+                        test_dict[test]['log'] = "REF dump is missing"
+                        success[0] = False
+                        return
+                    result, log, insnsize = utils.compare_signature(test_wd + '/dut.dump', test_wd + '/ref.dump')
+                else:
+                    if not os.path.isfile(test_wd + '/dut.signature'):
+                        logger.error(f'{test:<30} : DUT signature is missing')
+                        test_dict[test]['result'] = 'Unavailable'
+                        test_dict[test]['log'] = "DUT signature is missing"
+                        success[0] = False
+                        return
+                    result, log = utils.self_check(test_wd + '/dut.signature')
+                    insnsize = utils.get_file_size(test_wd + '/dut.dump')
+                test_dict[test]['num_instr'] = insnsize
+                test_dict[test]['result'] = result
+                test_dict[test]['log'] = log
+                if result == 'Passed':
+                    logger.info(f"{test:<30} : TEST {result.upper()}")
+                else:
+                    success[0] = False
+                    logger.error(f"{test:<30} : TEST {result.upper()}")
+                    return 
             # parallelized
             # TODO
             success = [True]
             with Manager() as process_manager:
                 item = process_manager.list(test_dict.keys())
-                process = Process(target= comparesignature, args=(item,success,test_dict))
+                process = Process(target= comparesignature, args=item)
                 process.start()
                 process.join()
             success = success[0]
