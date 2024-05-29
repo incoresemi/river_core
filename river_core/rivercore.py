@@ -645,9 +645,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             for test, attr in test_dict.items():
                 if attr['result'] == 'Failed' or 'Unavailable' in attr['result']:
                     failed_dict[test] = attr
-                if (i<1):
-                    print(attr,end = "\n\n")
-                    i+=1
+
             if len(failed_dict) != 0:
                 logger.error(f'Total Tests that Failed :{len(failed_dict)}')
                 failed_dict_file = output_dir+'/failed_list.yaml'
