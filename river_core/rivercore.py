@@ -414,7 +414,7 @@ def rivercore_generate(config_file, verbosity, filter_testgen):
 
 
 def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
-                      ref_flags, compare):
+                      ref_flags, compare, process_count = 1):
     '''
 
         Function to compile generated assembly programs using the plugin as configured in the config.ini.
@@ -634,7 +634,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             # TODO
             success = process_manager.list(True)
             items = process_manager.list(test_dict.items())
-            with Pool() as process_pool:
+            with Pool(processes = process_count) as process_pool:
                 process_pool.map(comparesignature,items)
             success = success[0]
             utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
