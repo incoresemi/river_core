@@ -653,6 +653,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 utils.save_yaml(failed_dict, failed_dict_file)
             toc = time.perf_counter()
             time_passed = toc-tic
+            logger.debug(str(time_passed))
 
             # Start checking things after running the commands
             # Report generation starts here
