@@ -25,8 +25,8 @@ yaml.default_flow_style = False
 yaml.allow_unicode = True
 yaml.compact(seq_seq=False, seq_map=False)
 
-from multiprocessing import Pool,Manager
-
+from multiprocessing import Pool
+import time
 
 # Misc Helper Functions
 def sanitise_pytest_json(json):
@@ -414,7 +414,7 @@ def rivercore_generate(config_file, verbosity, filter_testgen):
 
 
 def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
-                      ref_flags, compare, process_count = 1):
+                      ref_flags, compare, process_count = 4):
     '''
 
         Function to compile generated assembly programs using the plugin as configured in the config.ini.
@@ -621,33 +621,40 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 logger.warning('Ref Plugin disabled')
 
         ## Comparing Dumps
-        global success 
+        tic = time.perf_counter()
         success = True
         if compare:
-            global test_dict
-            process_manager = Manager()
-            test_dict = process_manager.dict(utils.load_yaml(test_list))
+            test_dict = utils.load_yaml(test_list)
             gen_json_data = []
             target_json_data = []
             ref_json_data = []
             # parallelized
             # TODO
-            success = process_manager.list(True)
-            items = process_manager.list(test_dict.items())
+            success = True
+            items = test_dict.items()
             with Pool(processes = process_count) as process_pool:
-                process_pool.map(comparesignature,items)
-            success = success[0]
+                output = process_pool.map(comparesignature,items)
+            for i in output:
+                success = success and i[0]
+                test_dict[i[1]]['result'] = i[2]
+                test_dict[i[1]]['log'] = i[3]
+                test_dict[i[1]]['num_instr'] = i[4]
             utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
             failed_dict = {}
+            i=0
             for test, attr in test_dict.items():
                 if attr['result'] == 'Failed' or 'Unavailable' in attr['result']:
                     failed_dict[test] = attr
+                if (i<1):
+                    print(attr,end = "\n\n")
+                    i+=1
             if len(failed_dict) != 0:
                 logger.error(f'Total Tests that Failed :{len(failed_dict)}')
                 failed_dict_file = output_dir+'/failed_list.yaml'
                 logger.error(f'Saving failed list of tests in {failed_dict_file}')
                 utils.save_yaml(failed_dict, failed_dict_file)
-
+            toc = time.perf_counter()
+            time_passed = toc-tic
 
             # Start checking things after running the commands
             # Report generation starts here
@@ -939,42 +946,43 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
             logger.info("Couldn't open the browser")
 
 def comparesignature(item):
-    global test_dict,success
+    success = True
     test, attr = item
     test_wd = attr['work_dir']
     is_self_checking = attr['self_checking']
     if not is_self_checking:
         if not os.path.isfile(test_wd + '/dut.dump'):
             logger.error(f'{test:<30} : DUT dump is missing')
-            test_dict[test]['result'] = 'Unavailable'
-            test_dict[test]['log'] = "DUT dump is missing"
-            success[0] = False
-            return
+            attr['result'] = 'Unavailable'
+            attr['log'] = "DUT dump is missing"
+            success = False
+            return False, test, 'Unavailable', "DUT dump is missing", None
         if not os.path.isfile(test_wd + '/ref.dump'):
             logger.error(f'{test:<30} : REF dump is missing')
-            test_dict[test]['result'] = 'Unavailable'
-            test_dict[test]['log'] = "REF dump is missing"
-            success[0] = False
-            return
+            attr['result'] = 'Unavailable'
+            attr['log'] = "REF dump is missing"
+            success = False
+            return False, test, 'Unavailable', 'REF dump is missing', None
         result, log, insnsize = utils.compare_dumps(test_wd + '/dut.dump', test_wd + '/ref.dump')
     else:
         if not os.path.isfile(test_wd + '/dut.signature'):
             logger.error(f'{test:<30} : DUT signature is missing')
-            test_dict[test]['result'] = 'Unavailable'
-            test_dict[test]['log'] = "DUT signature is missing"
-            success[0] = False
-            return
+            attr['result'] = 'Unavailable'
+            attr['log'] = "DUT signature is missing"
+            success = False
+            return False, test, 'Unavailable',"DUT signature is missing", None
         result, log = utils.self_check(test_wd + '/dut.signature')
         insnsize = utils.get_file_size(test_wd + '/dut.dump')
-    test_dict[test]['num_instr'] = insnsize
-    test_dict[test]['result'] = result
-    test_dict[test]['log'] = log
+    attr['num_instr'] = insnsize
+    attr['result'] = result
+    attr['log'] = log
     if result == 'Passed':
         logger.info(f"{test:<30} : TEST {result.upper()}")
+        return success, test, result, log, insnsize
     else:
-        success[0] = False
+        success = False
         logger.error(f"{test:<30} : TEST {result.upper()}")
-        return 
+        return success, test, result, log, insnsize
 def rivercore_setup(config, dut, gen, ref, verbosity):
     '''
         Function to generate sample plugins 
