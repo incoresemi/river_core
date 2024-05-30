@@ -639,7 +639,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 test_dict[i[1]]['num_instr'] = i[4]
             utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
             failed_dict = {}
-            i=0
             for test, attr in test_dict.items():
                 if attr['result'] == 'Failed' or 'Unavailable' in attr['result']:
                     failed_dict[test] = attr
@@ -943,7 +942,7 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
             logger.info("Couldn't open the browser")
 
 #Helper function for parallel processing
-#Returns success,test,attr['result'],attr['log'],attr['insnsize']
+#Returns success,test,attr['result'],attr['log'],attr['numinstr']
 def logcomparison(item):
     test, attr = item
     test_wd = attr['work_dir']
