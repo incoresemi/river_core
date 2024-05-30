@@ -410,11 +410,10 @@ def rivercore_generate(config_file, verbosity, filter_testgen):
                 webbrowser.open(report_html)
             except:
                 return 1
-#Helper function for parallel processing
 
 
 def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
-                      ref_flags, compare, process_count = 4):
+                      ref_flags, compare, process_count):
     '''
 
         Function to compile generated assembly programs using the plugin as configured in the config.ini.
@@ -629,11 +628,10 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             target_json_data = []
             ref_json_data = []
             # parallelized
-            # TODO
             success = True
             items = test_dict.items()
             with Pool(processes = process_count) as process_pool:
-                output = process_pool.map(comparesignature,items)
+                output = process_pool.map(logcomparison, items)
             for i in output:
                 success = success and i[0]
                 test_dict[i[1]]['result'] = i[2]
@@ -944,7 +942,8 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
         except:
             logger.info("Couldn't open the browser")
 
-def comparesignature(item):
+#Helper function for parallel processing
+def logcomparison(item):
     success = True
     test, attr = item
     test_wd = attr['work_dir']
@@ -952,36 +951,23 @@ def comparesignature(item):
     if not is_self_checking:
         if not os.path.isfile(test_wd + '/dut.dump'):
             logger.error(f'{test:<30} : DUT dump is missing')
-            attr['result'] = 'Unavailable'
-            attr['log'] = "DUT dump is missing"
-            success = False
             return False, test, 'Unavailable', "DUT dump is missing", None
         if not os.path.isfile(test_wd + '/ref.dump'):
             logger.error(f'{test:<30} : REF dump is missing')
-            attr['result'] = 'Unavailable'
-            attr['log'] = "REF dump is missing"
-            success = False
             return False, test, 'Unavailable', 'REF dump is missing', None
         result, log, insnsize = utils.compare_dumps(test_wd + '/dut.dump', test_wd + '/ref.dump')
     else:
         if not os.path.isfile(test_wd + '/dut.signature'):
             logger.error(f'{test:<30} : DUT signature is missing')
-            attr['result'] = 'Unavailable'
-            attr['log'] = "DUT signature is missing"
-            success = False
             return False, test, 'Unavailable',"DUT signature is missing", None
         result, log = utils.self_check(test_wd + '/dut.signature')
         insnsize = utils.get_file_size(test_wd + '/dut.dump')
-    attr['num_instr'] = insnsize
-    attr['result'] = result
-    attr['log'] = log
     if result == 'Passed':
         logger.info(f"{test:<30} : TEST {result.upper()}")
         return success, test, result, log, insnsize
     else:
-        success = False
         logger.error(f"{test:<30} : TEST {result.upper()}")
-        return success, test, result, log, insnsize
+        return False, test, result, log, insnsize
 def rivercore_setup(config, dut, gen, ref, verbosity):
     '''
         Function to generate sample plugins 
