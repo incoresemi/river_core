@@ -620,8 +620,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 logger.warning('Ref Plugin disabled')
 
         ## Comparing Dumps
-        tic = time.perf_counter()
-        success = True
+        tic = time.perf_counter()#Start measuring time
         if compare:
             test_dict = utils.load_yaml(test_list)
             gen_json_data = []
@@ -631,7 +630,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             success = True
             items = test_dict.items()
             with Pool(processes = process_count) as process_pool:
-                output = process_pool.map(logcomparison, items)
+                output = process_pool.map(logcomparison, items) #Collecting the return values from each process in the Pool
+            #Updating values
             for i in output:
                 success = success and i[0]
                 test_dict[i[1]]['result'] = i[2]
@@ -649,7 +649,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 failed_dict_file = output_dir+'/failed_list.yaml'
                 logger.error(f'Saving failed list of tests in {failed_dict_file}')
                 utils.save_yaml(failed_dict, failed_dict_file)
-            toc = time.perf_counter()
+            toc = time.perf_counter() #Stop measuring time
             time_passed = toc-tic
             logger.debug(str(time_passed))
 
@@ -943,8 +943,8 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
             logger.info("Couldn't open the browser")
 
 #Helper function for parallel processing
+#Returns success,test,attr['result'],attr['log'],attr['insnsize']
 def logcomparison(item):
-    success = True
     test, attr = item
     test_wd = attr['work_dir']
     is_self_checking = attr['self_checking']
@@ -964,7 +964,7 @@ def logcomparison(item):
         insnsize = utils.get_file_size(test_wd + '/dut.dump')
     if result == 'Passed':
         logger.info(f"{test:<30} : TEST {result.upper()}")
-        return success, test, result, log, insnsize
+        return True, test, result, log, insnsize
     else:
         logger.error(f"{test:<30} : TEST {result.upper()}")
         return False, test, result, log, insnsize
