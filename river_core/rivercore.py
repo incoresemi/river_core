@@ -7,9 +7,10 @@ import shutil
 import datetime
 import importlib
 import configparser
+import lief
 #import filecmp
 import json
-
+import pytest
 from river_core.log import *
 import river_core.utils as utils
 from river_core.constants import *
@@ -24,8 +25,8 @@ yaml = YAML(typ="rt")
 yaml.default_flow_style = False
 yaml.allow_unicode = True
 yaml.compact(seq_seq=False, seq_map=False)
-
 from multiprocessing import Pool
+
 
 # Misc Helper Functions
 def sanitise_pytest_json(json):
@@ -1124,3 +1125,44 @@ def rivercore_setup(config, dut, gen, ref, verbosity):
         logger.info(
             'Created {0} Plugin in the current working directory'.format(ref))
 
+
+def rivercore_enquire(testyaml):
+    @pytest.mark.parametrize('testname', testyaml)
+    def test_enquire(testname):
+        '''
+        Utility function that gives the status of each test 
+        '''
+        
+        node = testyaml[testname]
+        # check if compilation of the test is over
+        elffile = node['work_dir'] + '/dut.elf'
+        if not os.path.exists(elffile):
+            assert False, testname + ' has not compiled.\n'
+        else:
+            dumpfile = node['work_dir'] + '/rtl.dump'
+            if not os.path.exists(dumpfile):
+                # check if rtl.dump is created
+                assert False, testname + ' rtl.dump not created\n'
+            else:
+                # check if rtl.dump is complete
+
+                binary = lief.parse(elffile)
+                tohost_addr = str.format('0x{:08X}', int(hex(binary.get_symbol('tohost').value), 16))
+                with open(dumpfile) as rtlfptr:
+                    dump_lines = rtlfptr.readlines()
+                    last_line = dump_lines[-1]
+                    if tohost_addr not in last_line:
+                        assert False, testname + ' tohost is not written to yet'
+                    else:
+                        # check if spike simulation is over
+                        spikedumpfile = node['work_dir'] + '/temp'
+                        if not os.path.exists(spikedumpfile):
+                            assert False, testname + ' spike has not finished execution'
+                        else:
+                            # check if tohost is written to in spike.dump
+                            with open(spikedumpfile) as spikefptr:
+                                spike_dump_lines = spikefptr.readlines()
+                                last_line = spike_dump_lines[-1]
+                                if tohost_addr not in last_line:
+                                    assert False, testname + ' spike simulation has some errors'  
+    

@@ -13,3 +13,4 @@ configparser
 ansi2html
 Cerberus>=1.3.4
 envyaml
+lief

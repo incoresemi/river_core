@@ -5,7 +5,7 @@ import click
 import os
 
 from river_core.log import *
-from river_core.rivercore import rivercore_clean, rivercore_compile, rivercore_generate, rivercore_merge, rivercore_setup
+from river_core.rivercore import rivercore_clean, rivercore_compile, rivercore_generate, rivercore_merge, rivercore_setup, rivercore_enquire
 from river_core.__init__ import __version__
 import river_core.constants as constants
 
@@ -180,6 +180,15 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
                 )
     rivercore_compile(config, test_list, coverage, verbosity, dut_stage,
                       ref_stage, compare, nproc)
+    
+@click.option('-t',
+              '--test_list',
+              type=click.Path(dir_okay=False, exists=True),
+              help='Test List file to pass',
+              required=True)
+@cli.command()
+def enquire(test_list):
+    rivercore_enquire(test_list)
 
 
 @click.version_option(version=__version__)
