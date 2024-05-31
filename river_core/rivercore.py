@@ -26,7 +26,6 @@ yaml.allow_unicode = True
 yaml.compact(seq_seq=False, seq_map=False)
 
 from multiprocessing import Pool
-import time
 
 # Misc Helper Functions
 def sanitise_pytest_json(json):
@@ -620,7 +619,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 logger.warning('Ref Plugin disabled')
 
         ## Comparing Dumps
-        tic = time.perf_counter()#Start measuring time
         if compare:
             test_dict = utils.load_yaml(test_list)
             gen_json_data = []
@@ -648,9 +646,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 failed_dict_file = output_dir+'/failed_list.yaml'
                 logger.error(f'Saving failed list of tests in {failed_dict_file}')
                 utils.save_yaml(failed_dict, failed_dict_file)
-            toc = time.perf_counter() #Stop measuring time
-            time_passed = toc-tic
-            logger.debug(str(time_passed))
 
             # Start checking things after running the commands
             # Report generation starts here
