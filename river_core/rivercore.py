@@ -27,6 +27,7 @@ yaml.allow_unicode = True
 yaml.compact(seq_seq=False, seq_map=False)
 from multiprocessing import Pool
 
+from multiprocessing import Pool
 
 # Misc Helper Functions
 def sanitise_pytest_json(json):
@@ -1188,3 +1189,4 @@ def rivercore_enquire(testyaml):
                                     if tohost_addr not in last_line:
                                         assert False, testname + ' spike simulation has some errors'  
     
+
