@@ -273,6 +273,7 @@ Output for ``river_core compile --help``:
                                     detects river_core.ini in current directory
                                     or in the ~ directory
     -t, --test_list FILE            Test List file to pass  [required]
+    --nproc JOBS                    Number of processes dedicated to river_core
     -v, --verbosity TEXT            Set the verbosity level for the framework
     --version                       Show the version and exit.
     --help                          Show this message and exit.
