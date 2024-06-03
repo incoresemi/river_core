@@ -1135,17 +1135,14 @@ def rivercore_enquire(testyaml):
         
         node = testyaml[testname]
         # check if compilation of the test is over
-        elffile = node['work_dir'] + '/dut.elf'
+        elffile = node['work_dir'] + '/'+testname + '.elf'
         if not os.path.exists(elffile):
             assert False, testname + ' has not compiled.\n'
         else:
-            dumpfile = node['work_dir'] + '/rtl.dump'
-            if not os.path.exists(dumpfile):
-                # check if rtl.dump is created
-                assert False, testname + ' rtl.dump not created\n'
-            else:
-                # check if rtl.dump is complete
-
+            dumpfile = node['work_dir'] + '/dut.dump'
+            if os.path.exists(dumpfile):
+                # check if dtl.dump is created
+                # check if dut.dump is complete
                 binary = lief.parse(elffile)
                 tohost_addr = str.format('0x{:08X}', int(hex(binary.get_symbol('tohost').value), 16))
                 with open(dumpfile) as rtlfptr:
@@ -1164,5 +1161,30 @@ def rivercore_enquire(testyaml):
                                 spike_dump_lines = spikefptr.readlines()
                                 last_line = spike_dump_lines[-1]
                                 if tohost_addr not in last_line:
-                                    assert False, testname + ' spike simulation has some errors'  
+                                    assert False, testname + ' spike simulation has some errors'
+            else:
+                dumpfile = node['work_dir'] + '/rtl'+'0'+'.dump'
+                if not os.path.exists(dumpfile):
+                    assert False, testname + ' rtl dump not created'
+                # check if rtl<coreid>.dump is complete
+                else:
+                    binary = lief.parse(elffile)
+                    tohost_addr = str.format('0x{:08X}', int(hex(binary.get_symbol('tohost').value), 16))
+                    with open(dumpfile) as rtlfptr:
+                        dump_lines = rtlfptr.readlines()
+                        last_line = dump_lines[-1]
+                        if tohost_addr not in last_line:
+                            assert False, testname + ' tohost is not written to yet'
+                        else:
+                            # check if spike simulation is over
+                            spikedumpfile = node['work_dir'] + '/temp'
+                            if not os.path.exists(spikedumpfile):
+                                assert False, testname + ' spike has not finished execution'
+                            else:
+                                # check if tohost is written to in spike.dump
+                                with open(spikedumpfile) as spikefptr:
+                                    spike_dump_lines = spikefptr.readlines()
+                                    last_line = spike_dump_lines[-1]
+                                    if tohost_addr not in last_line:
+                                        assert False, testname + ' spike simulation has some errors'  
     
