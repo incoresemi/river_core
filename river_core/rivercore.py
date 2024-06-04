@@ -1127,13 +1127,13 @@ def rivercore_setup(config, dut, gen, ref, verbosity):
 
 
 def rivercore_enquire(testyaml):
-    @pytest.mark.parametrize('testname', testyaml)
+    testyaml_dict = utils.load_yaml(testyaml)
+    #@pytest.mark.parametrize('testname', testyaml_dict)
     def test_enquire(testname):
         '''
         Utility function that gives the status of each test 
         '''
-        
-        node = testyaml[testname]
+        node = testyaml_dict[testname]
         # check if compilation of the test is over
         elffile = node['work_dir'] + '/'+testname + '.elf'
         if not os.path.exists(elffile):
@@ -1186,5 +1186,14 @@ def rivercore_enquire(testyaml):
                                     spike_dump_lines = spikefptr.readlines()
                                     last_line = spike_dump_lines[-1]
                                     if tohost_addr not in last_line:
-                                        assert False, testname + ' spike simulation has some errors'  
-    pytest.main(['-k enquire',' -o ','--log_cli=True',' --capture=tee-sys',' -v ',' --log-cli-level=0','--html=test_enquire-report.html',' --self-contained-html'])
+                                        assert False, testname + ' spike simulation has some errors'
+    for testname in testyaml_dict.keys():
+        test_enquire(testname)
+    # cmd = 'pytest -k enquire \
+    #     -o log_cli=True --capture=tee-sys -v --log-cli-level=0 \
+    #     --html=test_enquire-report.html --self-contained-html\
+    #      --noconftest'
+    # errcode, rout, rerr = utils.sys_command(cmd, logging =False)
+    # print(errcode)
+    # print(rout)
+    # print(rerr)
