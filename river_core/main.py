@@ -185,9 +185,14 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
               type=click.Path(dir_okay=False, exists=True),
               help='Test List file to pass',
               required=True)
+@click.option('-hid',
+              '--hart_id',
+              help='Hartid to be used',
+              required=True)
 @cli.command()
-def enquire(test_list):
+def enquire(test_list,hart_id):
     enquire.test_list = test_list
+    enquire.hart_id = hart_id
     pytest.main(['--log-cli-level=0', \
                  '--html=test_enquire-report.html', \
                 '--self-contained-html', \

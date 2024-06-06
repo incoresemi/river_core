@@ -5,6 +5,7 @@ import lief
 from river_core.main import enquire
 
 testyaml_dict = utils.load_yaml(enquire.test_list)
+hart_id = enquire.hart_id
 @pytest.mark.parametrize('testname', testyaml_dict.keys())
 def test_enquire(testname):
     '''
@@ -30,17 +31,14 @@ def test_enquire(testname):
                 else:
                     # check if spike simulation is over
                     spikedumpfile = node['work_dir'] + '/ref.dump'
-                    if not os.path.exists(spikedumpfile):
-                        assert False, testname + ' spike has not finished execution'
-                    else:
-                        # check if tohost is written to in spike.dump
-                        with open(spikedumpfile) as spikefptr:
-                            spike_dump_lines = spikefptr.readlines()
-                            last_line = spike_dump_lines[-1]
-                            if tohost_addr.lower() not in last_line:
-                                assert False, testname + ' spike simulation has some errors'
+                    # check if tohost is written to in spike.dump
+                    with open(spikedumpfile) as spikefptr:
+                        spike_dump_lines = spikefptr.readlines()
+                        last_line = spike_dump_lines[-1]
+                        if tohost_addr.lower() not in last_line:
+                            assert False, testname + ' spike simulation has some errors'
         else:
-            dumpfile = node['work_dir'] + '/rtl'+'0'+'.dump'
+            dumpfile = node['work_dir'] + '/rtl_'+ str(hart_id) +'.dump'
             if not os.path.exists(dumpfile):
                 assert False, testname + ' rtl dump not created'
             # check if rtl<coreid>.dump is complete
@@ -52,15 +50,3 @@ def test_enquire(testname):
                     last_line = dump_lines[-1]
                     if tohost_addr not in last_line:
                         assert False, testname + ' tohost is not written to yet'
-                    else:
-                        # check if spike simulation is over
-                        spikedumpfile = node['work_dir'] + '/temp'
-                        if not os.path.exists(spikedumpfile):
-                            assert False, testname + ' spike has not finished execution'
-                        else:
-                            # check if tohost is written to in spike.dump
-                            with open(spikedumpfile) as spikefptr:
-                                spike_dump_lines = spikefptr.readlines()
-                                last_line = spike_dump_lines[-1]
-                                if tohost_addr.lower() not in last_line:
-                                    assert False, testname + ' spike simulation has some errors'
