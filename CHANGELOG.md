@@ -2,6 +2,9 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2024-06-06
+- added river_core enquire command
+
 ## [1.7.0] - 2024-05-28
 - parallelization of the log comparisons
 - added --nproc to river_core compile api
