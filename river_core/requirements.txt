@@ -5,6 +5,7 @@ click>=7.0
 ruamel.yaml>=0.16.0
 pytest
 pytest-runner
+pytest-timeout
 pytest-xdist
 pytest-reportlog
 pytest-html
