@@ -1,7 +1,7 @@
 # CHANGELOG
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-## [1.7.1] - 2024-06-18
+## [1.8.1] - 2024-06-18
 - update to requirements to allow timeout of tests
 
 ## [1.8.0] - 2024-06-06
