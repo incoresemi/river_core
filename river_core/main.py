@@ -146,9 +146,14 @@ def setup(config, dut, gen, ref, verbosity):
     '--nproc',
     default=1,
     help='Number of processes dedicated to rivercore framework')
+@click.option(
+    '--timeout',
+    default = -1,
+    help = 'Timeout period for tests'
+)
 @cli.command()
 def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
-            compare, nproc):
+            compare, nproc, timeout):
     '''
         subcommand to compile generated programs.
     '''
@@ -178,7 +183,7 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
                     'Compare is enabled\nThis will be generating incomplete reports'
                 )
     rivercore_compile(config, test_list, coverage, verbosity, dut_stage,
-                      ref_stage, compare, nproc)
+                      ref_stage, compare, nproc, timeout)
     
 @click.option('-t',
               '--test_list',
