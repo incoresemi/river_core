@@ -601,14 +601,16 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                                 test_list=test_list,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
-                                plugin_path=path_to_module)
+                                plugin_path=path_to_module,
+                                timeout = timeout)
             elif ref_flags == 'build':
                 logger.debug('Single mode flag detected\nRunning build')
                 refpm.hook.init(ini_config=config[ref],
                                 test_list=test_list,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
-                                plugin_path=path_to_module)
+                                plugin_path=path_to_module,
+                                timeout = timeout)
                 refpm.hook.build()
             elif ref_flags == 'run':
                 logger.debug('All modes detected\nRunning build')
@@ -616,7 +618,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                                 test_list=test_list,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
-                                plugin_path=path_to_module)
+                                plugin_path=path_to_module,
+                                timeout = timeout)
                 refpm.hook.build()
                 ref_json = refpm.hook.run(module_dir=path_to_module)
             else:
