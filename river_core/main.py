@@ -90,7 +90,7 @@ def clean(config, verbosity):
 @cli.command()
 def setup(config, dut, gen, ref, verbosity):
     '''
-        subcommand to generate template setup files
+        subcommand to generate template setup files.
     '''
     logger.info(constants.header_temp.format(__version__))
 
@@ -196,6 +196,9 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
               required=True)
 @cli.command()
 def enquire(test_list,hart_id):
+    '''
+    subcommand to enquire status of tests.
+    '''
     enquire.test_list = test_list
     enquire.hart_id = hart_id
     pytest.main(['--log-cli-level=0', \
