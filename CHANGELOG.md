@@ -1,6 +1,11 @@
 # CHANGELOG
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.8.0] - 2024-06-06
+- added river_core enquire command
+- added --timeout to the river_core compile api
+- update to requirements to allow timeout of tests
+- changed default timeout value in utils.py to 1800
 
 ## [1.7.0] - 2024-05-28
 - parallelization of the log comparisons

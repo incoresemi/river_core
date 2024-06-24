@@ -7,9 +7,10 @@ import shutil
 import datetime
 import importlib
 import configparser
+import lief
 #import filecmp
 import json
-
+import pytest
 from river_core.log import *
 import river_core.utils as utils
 from river_core.constants import *
@@ -24,8 +25,8 @@ yaml = YAML(typ="rt")
 yaml.default_flow_style = False
 yaml.allow_unicode = True
 yaml.compact(seq_seq=False, seq_map=False)
-
 from multiprocessing import Pool
+
 
 # Misc Helper Functions
 def sanitise_pytest_json(json):
@@ -412,7 +413,7 @@ def rivercore_generate(config_file, verbosity, filter_testgen):
 
 
 def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
-                      ref_flags, compare, process_count):
+                      ref_flags, compare, process_count, timeout):
     '''
 
         Function to compile generated assembly programs using the plugin as configured in the config.ini.
@@ -528,14 +529,16 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                                 test_list=test_list,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
-                                plugin_path=path_to_module)
+                                plugin_path=path_to_module,
+                                timeout=timeout)
             elif dut_flags == 'build':
                 logger.debug('Single mode flag detected\nRunning build')
                 dutpm.hook.init(ini_config=config[target],
                                 test_list=test_list,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
-                                plugin_path=path_to_module)
+                                plugin_path=path_to_module,
+                                timeout=timeout)
                 dutpm.hook.build()
             elif dut_flags == 'run':
                 logger.debug('All modes enabled\nRunning run')
@@ -543,7 +546,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                                 test_list=test_list,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
-                                plugin_path=path_to_module)
+                                plugin_path=path_to_module,
+                                timeout=timeout)
                 dutpm.hook.build()
                 target_json = dutpm.hook.run(module_dir=path_to_module)
             else:
@@ -597,14 +601,16 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                                 test_list=test_list,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
-                                plugin_path=path_to_module)
+                                plugin_path=path_to_module,
+                                timeout = timeout)
             elif ref_flags == 'build':
                 logger.debug('Single mode flag detected\nRunning build')
                 refpm.hook.init(ini_config=config[ref],
                                 test_list=test_list,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
-                                plugin_path=path_to_module)
+                                plugin_path=path_to_module,
+                                timeout = timeout)
                 refpm.hook.build()
             elif ref_flags == 'run':
                 logger.debug('All modes detected\nRunning build')
@@ -612,7 +618,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                                 test_list=test_list,
                                 work_dir=output_dir,
                                 coverage_config=coverage_config,
-                                plugin_path=path_to_module)
+                                plugin_path=path_to_module,
+                                timeout = timeout)
                 refpm.hook.build()
                 ref_json = refpm.hook.run(module_dir=path_to_module)
             else:
@@ -1124,3 +1131,4 @@ def rivercore_setup(config, dut, gen, ref, verbosity):
         logger.info(
             'Created {0} Plugin in the current working directory'.format(ref))
 
+    

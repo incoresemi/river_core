@@ -480,7 +480,7 @@ class Command():
                 non-zero value.
         """
         kwargs.setdefault('shell', self._is_shell_command())
-        kwargs.setdefault('timeout', 300)
+        kwargs.setdefault('timeout', 1800)
         cwd = self._path2str(kwargs.get(
             'cwd')) if not kwargs.get('cwd') is None else self._path2str(
                 os.getcwd())

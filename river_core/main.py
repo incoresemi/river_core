@@ -1,14 +1,13 @@
 # See LICENSE for details
 """Console script for river_core."""
-
 import click
 import os
-
 from river_core.log import *
 from river_core.rivercore import rivercore_clean, rivercore_compile, rivercore_generate, rivercore_merge, rivercore_setup
 from river_core.__init__ import __version__
 import river_core.constants as constants
-
+import river_core.utils as utils
+import pytest
 
 def check_config():
     """ Checks if 
@@ -91,7 +90,7 @@ def clean(config, verbosity):
 @cli.command()
 def setup(config, dut, gen, ref, verbosity):
     '''
-        subcommand to generate template setup files
+        subcommand to generate template setup files.
     '''
     logger.info(constants.header_temp.format(__version__))
 
@@ -147,9 +146,14 @@ def setup(config, dut, gen, ref, verbosity):
     '--nproc',
     default=1,
     help='Number of processes dedicated to rivercore framework')
+@click.option(
+    '--timeout',
+    default = -1,
+    help = 'Timeout period for tests'
+)
 @cli.command()
 def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
-            compare, nproc):
+            compare, nproc, timeout):
     '''
         subcommand to compile generated programs.
     '''
@@ -179,7 +183,28 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
                     'Compare is enabled\nThis will be generating incomplete reports'
                 )
     rivercore_compile(config, test_list, coverage, verbosity, dut_stage,
-                      ref_stage, compare, nproc)
+                      ref_stage, compare, nproc, timeout)
+    
+@click.option('-t',
+              '--test_list',
+              type=click.Path(dir_okay=False, exists=True),
+              help='Test List file to pass',
+              required=True)
+@click.option('-hid',
+              '--hart_id',
+              help='Hartid to be used',
+              required=True)
+@cli.command()
+def enquire(test_list,hart_id):
+    '''
+    subcommand to enquire status of tests.
+    '''
+    enquire.test_list = test_list
+    enquire.hart_id = hart_id
+    pytest.main(['--log-cli-level=0', \
+                 '--html=test_enquire-report.html', \
+                '--self-contained-html', \
+                __file__.rstrip('main.py')+'enquire.py'])
 
 
 @click.version_option(version=__version__)

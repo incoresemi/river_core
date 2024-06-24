@@ -78,7 +78,7 @@ class DuTSpec(object):
 
     @dut_hookspec
     def init(self, ini_config, test_list, work_dir, coverage_config,
-             plugin_path):
+             plugin_path, timeout):
         """ 
         This stage is used to capture configurations from the input ``config.ini`` and build
         and set up the environment. If a core generator is the target, then this stage can be used to
