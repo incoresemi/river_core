@@ -44,87 +44,83 @@ def get_file_size(file):
       rcount = len(fd.readlines())
     return rcount
 
+
 def compare_dumps(file1, file2):
     '''
-        Function to check whether two dump files are equivalent. This funcion ucore\s*(?P<coreid>\d):\s*(?P<priv>\d)\s*(?P<pc>.*?)\s+\((?P<instr>.*?)\)(?P<change>.*?)$ses the
-        :param file1: The path to the first signature.
-        :param file2: The path to the second signature.
-        :type file1: str
-        :type file2: str
-        :return: A string indicating whether the test "Passed" (if files are the same)
-            or "Failed" (if the files are different) and the diff of the files.
+    Function to check whether two dump files are equivalent. This function uses
+    the diff command in bash and processes the output.
+    :param file1: The path to the first signature.
+    :param file2: The path to the second signature.
+    :type file1: str
+    :type file2: str
+    :return: A string indicating whether the test "Passed" (if files are the same)
+             or "Failed" (if the files are different) and the diff of the files.
     '''
-    if not os.path.exists(file1) :
-        logger.error('Signature file : ' + file1 + ' does not exist')
-        raise SystemExit(1)
-    cmd = f'diff -iw {file1} {file2}'
-    errcode, rout, rerr = sys_command(cmd, logging=False)
+    if not os.path.exists(file1):
+        raise FileNotFoundError(f'Signature file : {file1} does not exist')
 
-    if errcode != 0:
+    cmd = f'''
+    diff -iw {file1} {file2} | grep -E '^[<>]' | awk -v file1="{file1}" -v file2="{file2}" '
+    BEGIN {{
+        status = "Passed";
+        output = "";
+        start_val = -1;
+    }}
+    /^[<]/ {{
+        sub(/^< /, "", $0);
+        split($0, file1_dat, /: | /);
+        file1_dat[5] = file1_dat[4] " " file1_dat[5];
+        file1_str = $0;
+    }}
+    /^[>]/ {{
+        sub(/^> /, "", $0);
+        split($0, file2_dat, /: | /);
+        file2_dat[5] = file2_dat[4] " " file2_dat[5];
+        file2_str = $0;
+        
+        if (file1_dat[1] != file2_dat[1] || file1_dat[2] != file2_dat[2] || file1_dat[3] != file2_dat[3]) {{
+            output = output "\\nBM: " file1 " at PC: " file1_dat[3] " and " file2 " at PC: " file2_dat[3];
+            status = "Failed";
+        }} else {{
+            split(file1_dat[5], change1, " ");
+            split(file2_dat[5], change2, " ");
+            if (length(change1) % 2) {{
+                delete change1["mem"];
+            }}
+            if (length(change1) != length(change2)) {{
+                output = output "\\nSM: at PC: " file1_dat[3];
+                status = "Failed";
+            }} else {{
+                for (i in change1) {{
+                    if (change1[i] != change2[i]) {{
+                        output = output "\\nSM: at PC: " file1_dat[3];
+                        status = "Failed";
+                        break;
+                    }}
+                }}
+            }}
+        }}
+    }}
+    END {{
+        print status;
+        print output;
+    }}'
+    '''
 
-        rout += '\nMismatch infos:'
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    stdout, stderr = process.communicate()
 
-        # initial status
-        status = 'Passed'
-
-        # get lines that start with < or >
-        mismatch_str_lst = list(filter(lambda x: x[0] in ['<', '>'], rout.split('\n')))
-
-        # for each mismatched strings
-        start_val = -1
-        for i in range(len(mismatch_str_lst)):
-            
-            file1_str = mismatch_str_lst[i]
-            if file1_str[0] != '<':
-                continue
-            
-            for j in range(start_val + 1, len(mismatch_str_lst)):
-                
-                file2_str = mismatch_str_lst[j] 
-                if file2_str[0] != '>':
-                    continue
-                else:
-                    start_val = j
-
-                # get regex strings
-                try:
-                    file1_dat = dump_regex.findall(file1_str)[0]
-                    file2_dat = dump_regex.findall(file2_str)[0]
-                except IndexError:
-                    status = 'Failed'
-                    break
-
-                # ensure commit message exists in same line number else fail
-                # if any of coreid, priv, pc or instr encoding fails, the diff has failed
-                if file1_dat[0:3] != file2_dat[0:3]:
-                    rout = rout + f'\nBM: {file1} at PC: {file1_dat[2]} and {file2} at PC: {file2_dat[2]}'
-                    status = 'Failed'
-                else:
-
-                    # some cleanup
-                    change1 = file1_dat[-1].split() 
-
-                    # if odd number, it's a store
-                    if len(change1) % 2:
-                        change1.remove('mem')
-
-                    # check if the architectural change is the same
-                    file1dat_iter = iter(change1)
-                    file2dat_iter = iter(file2_dat[-1].split())
-
-                    file1_change = dict(zip(file1dat_iter, file1dat_iter))
-                    file2_change = dict(zip(file2dat_iter, file2dat_iter))
-
-                    if file1_change != file2_change:
-                        rout = rout + f'\nSM: at PC: {file1_dat[2]}'
-                        status = 'Failed'
-                break
+    if process.returncode != 0:
+        status = "Failed"
+        rout = stderr
     else:
-        status = 'Passed'
-    
+        lines = stdout.strip().split('\n')
+        status = lines[0]
+        rout = '\n'.join(lines[1:])
+
     # get number of instructions executed
-    with open(f'{file1}','r') as fd:
-      rcount = len(fd.readlines())
+    with open(file1, 'r') as fd:
+        rcount = len(fd.readlines())
 
     return status, rout, rcount
     
