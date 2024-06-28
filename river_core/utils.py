@@ -44,86 +44,97 @@ def get_file_size(file):
       rcount = len(fd.readlines())
     return rcount
 
-
-def compare_dumps(file1, file2):
+def compare_dumps(file1, file2, timeout=120):
     '''
-    Function to check whether two dump files are equivalent. This function uses
-    the diff command in bash and processes the output.
+    Function to check whether two dump files are equivalent. This function uses the
     :param file1: The path to the first signature.
     :param file2: The path to the second signature.
+    :param timeout: The timeout in seconds for the command execution.
     :type file1: str
     :type file2: str
+    :type timeout: int
     :return: A string indicating whether the test "Passed" (if files are the same)
-             or "Failed" (if the files are different) and the diff of the files.
+        or "Failed" (if the files are different) and the diff of the files.
     '''
     if not os.path.exists(file1):
-        raise FileNotFoundError(f'Signature file : {file1} does not exist')
+        logging.error('Signature file : ' + file1 + ' does not exist')
+        raise SystemExit(1)
 
-    cmd = f'''
-    diff -iw {file1} {file2} | grep -E '^[<>]' | awk -v file1="{file1}" -v file2="{file2}" '
+    cmd = f"""
+    diff -iw {file1} {file2} | grep '^[<>]' | awk '
+    function extract(line, arr) {{
+        match(line, /core\s*(\\d+):\s*(\\d+)\s*(.*?)\s+\\((.*?)\\)(.*)$/, arr);
+        return arr[0] == "" ? 0 : 1;
+    }}
+    function format_mismatch(coreid, priv, pc, instr, change) {{
+        return "BM: " coreid " at PC: " pc " and " instr " " change;
+    }}
     BEGIN {{
         status = "Passed";
-        output = "";
-        start_val = -1;
+        mismatches = "";
     }}
-    /^[<]/ {{
-        sub(/^< /, "", $0);
-        split($0, file1_dat, /: | /);
-        file1_dat[5] = file1_dat[4] " " file1_dat[5];
-        file1_str = $0;
-    }}
-    /^[>]/ {{
-        sub(/^> /, "", $0);
-        split($0, file2_dat, /: | /);
-        file2_dat[5] = file2_dat[4] " " file2_dat[5];
-        file2_str = $0;
-        
-        if (file1_dat[1] != file2_dat[1] || file1_dat[2] != file2_dat[2] || file1_dat[3] != file2_dat[3]) {{
-            output = output "\\nBM: " file1 " at PC: " file1_dat[3] " and " file2 " at PC: " file2_dat[3];
-            status = "Failed";
-        }} else {{
-            split(file1_dat[5], change1, " ");
-            split(file2_dat[5], change2, " ");
-            if (length(change1) % 2) {{
-                delete change1["mem"];
-            }}
-            if (length(change1) != length(change2)) {{
-                output = output "\\nSM: at PC: " file1_dat[3];
+    {{
+        if ($0 ~ /^< /) {{
+            if (!extract(substr($0, 3), a1)) {{
                 status = "Failed";
-            }} else {{
-                for (i in change1) {{
-                    if (change1[i] != change2[i]) {{
-                        output = output "\\nSM: at PC: " file1_dat[3];
-                        status = "Failed";
+                mismatches = mismatches "\\n" $0;
+            }}
+        }} else if ($0 ~ /^> /) {{
+            if (!extract(substr($0, 3), a2)) {{
+                status = "Failed";
+                mismatches = mismatches "\\n" $0;
+            }}
+            if (a1[1] != a2[1] || a1[2] != a2[2] || a1[3] != a2[3] || a1[4] != a2[4]) {{
+                status = "Failed";
+                mismatches = mismatches "\\n" format_mismatch(a1[1], a1[2], a1[3], a1[4], a1[5]);
+            }}
+            else {{
+                split(a1[5], c1, " ");
+                split(a2[5], c2, " ");
+                if (length(c1) % 2) {{
+                    c1[length(c1)] = "";
+                }}
+                changes_equal = 1;
+                for (i = 1; i <= length(c1); i += 2) {{
+                    if (c1[i] != c2[i] || c1[i+1] != c2[i+1]) {{
+                        changes_equal = 0;
                         break;
                     }}
+                }}
+                if (!changes_equal) {{
+                    status = "Failed";
+                    mismatches = mismatches "\\nSM: at PC: " a1[3];
                 }}
             }}
         }}
     }}
     END {{
-        print status;
-        print output;
-    }}'
-    '''
+        print "Status: " status;
+        if (mismatches != "") {{
+            print "Mismatch infos:" mismatches;
+        }}
+    }}
+    '"""
 
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    stdout, stderr = process.communicate()
+    try:
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=timeout)
+        rout = result.stdout.strip()
 
-    if process.returncode != 0:
-        status = "Failed"
-        rout = stderr
-    else:
-        lines = stdout.strip().split('\n')
-        status = lines[0]
-        rout = '\n'.join(lines[1:])
+        # Determine the status from the command output
+        status_line = rout.split('\n')[0]
+        status = 'Failed' if 'Failed' in status_line else 'Passed'
+        rout = '\n'.join(rout.split('\n')[1:])  # Remove the status line from the rout
 
-    # get number of instructions executed
-    with open(file1, 'r') as fd:
+    except subprocess.TimeoutExpired:
+        logging.error(f'The command timed out after {timeout} seconds')
+        raise SystemExit(1)
+
+    # Get number of instructions executed
+    with open(f'{file1}', 'r') as fd:
         rcount = len(fd.readlines())
 
     return status, rout, rcount
-    
+
 def compare_signature(file1, file2):
     '''
         Function to check whether two signature files are equivalent. This funcion uses the
