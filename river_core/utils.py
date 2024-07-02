@@ -47,23 +47,29 @@ def get_file_size(file):
 def compare_dumps(file1, file2, timeout=120):
     '''
     Function to check whether two dump files are equivalent. This function uses the
+    diff command and custom logic to compare the files.
+    
     :param file1: The path to the first signature.
     :param file2: The path to the second signature.
     :param timeout: The timeout in seconds for the command execution.
     :type file1: str
     :type file2: str
     :type timeout: int
-    :return: A string indicating whether the test "Passed" (if files are the same)
-        or "Failed" (if the files are different) and the diff of the files.
+    :return: A tuple containing the status ("Passed" or "Failed"), the output of the diff command,
+             and the number of lines in the first file.
     '''
     if not os.path.exists(file1):
         logging.error('Signature file : ' + file1 + ' does not exist')
         raise SystemExit(1)
 
+    if not os.path.exists(file2):
+        logging.error('Signature file : ' + file2 + ' does not exist')
+        raise SystemExit(1)
+
     cmd = f"""
-    diff -iw {file1} {file2} | grep '^[<>]' | awk '
+    diff -u {file1} {file2} | grep '^[<>]' | awk '
     function extract(line, arr) {{
-        match(line, /core\s*(\\d+):\s*(\\d+)\s*(.*?)\s+\\((.*?)\\)(.*)$/, arr);
+        match(line, /core\\s*(\\d+):\\s*(\\d+)\\s*(.*?)\\s+\\((.*?)\\)(.*)$/, arr);
         return arr[0] == "" ? 0 : 1;
     }}
     function format_mismatch(coreid, priv, pc, instr, change) {{
@@ -87,8 +93,7 @@ def compare_dumps(file1, file2, timeout=120):
             if (a1[1] != a2[1] || a1[2] != a2[2] || a1[3] != a2[3] || a1[4] != a2[4]) {{
                 status = "Failed";
                 mismatches = mismatches "\\n" format_mismatch(a1[1], a1[2], a1[3], a1[4], a1[5]);
-            }}
-            else {{
+            }} else {{
                 split(a1[5], c1, " ");
                 split(a2[5], c2, " ");
                 if (length(c1) % 2) {{
@@ -119,7 +124,6 @@ def compare_dumps(file1, file2, timeout=120):
     try:
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=timeout)
         rout = result.stdout.strip()
-
         # Determine the status from the command output
         status_line = rout.split('\n')[0]
         status = 'Failed' if 'Failed' in status_line else 'Passed'
@@ -129,11 +133,16 @@ def compare_dumps(file1, file2, timeout=120):
         logging.error(f'The command timed out after {timeout} seconds')
         raise SystemExit(1)
 
-    # Get number of instructions executed
-    with open(f'{file1}', 'r') as fd:
-        rcount = len(fd.readlines())
+    # Format the output to match the desired format
+    formatted_rout = ""
+    for line in rout.splitlines():
+        formatted_rout += f"{line}\n"
 
-    return status, rout, rcount
+    # Get number of instructions executed
+    with open(file1, 'r') as fd:
+        rcount = len(fd.readlines())
+        
+    return status, formatted_rout, rcount
 
 def compare_signature(file1, file2):
     '''
