@@ -44,17 +44,104 @@ def get_file_size(file):
       rcount = len(fd.readlines())
     return rcount
 
-def compare_dumps(file1, file2, timeout=120):
+def compare_dumps(file1, file2, start_hex=None):
+    '''
+        Legacy Function to check whether two dump files are equivalent. This funcion ucore\s*(?P<coreid>\d):\s*(?P<priv>\d)\s*(?P<pc>.*?)\s+\((?P<instr>.*?)\)(?P<change>.*?)$ses the
+        :param file1: The path to the first signature.
+        :param file2: The path to the second signature.
+        :type file1: str
+        :type file2: str
+        :return: A string indicating whether the test "Passed" (if files are the same)
+            or "Failed" (if the files are different) and the diff of the files.
+    '''
+    if not os.path.exists(file1) :
+        logger.error('Signature file : ' + file1 + ' does not exist')
+        raise SystemExit(1)
+    if start_hex == None:
+        cmd = f'diff -iw {file1} {file2}'
+    else:
+        cmd = f"diff <(sed -n '/{start_hex}/,$p' {file1}) <(sed -n '/{start_hex}/,$p' {file2})"
+    errcode, rout, rerr = sys_command(cmd, logging=False)
+
+    if errcode != 0 and rout!='':
+
+        rout += '\nMismatch infos:'
+
+        # initial status
+        status = 'Passed'
+
+        # get lines that start with < or >
+        mismatch_str_lst = list(filter(lambda x: x[0] in ['<', '>'], rout.split('\n')))
+
+        # for each mismatched strings
+        start_val = -1
+        for i in range(len(mismatch_str_lst)):
+            
+            file1_str = mismatch_str_lst[i]
+            if file1_str[0] != '<':
+                continue
+            
+            for j in range(start_val + 1, len(mismatch_str_lst)):
+                
+                file2_str = mismatch_str_lst[j] 
+                if file2_str[0] != '>':
+                    continue
+                else:
+                    start_val = j
+
+                # get regex strings
+                try:
+                    file1_dat = dump_regex.findall(file1_str)[0]
+                    file2_dat = dump_regex.findall(file2_str)[0]
+                except IndexError:
+                    status = 'Failed'
+                    break
+
+                # ensure commit message exists in same line number else fail
+                # if any of coreid, priv, pc or instr encoding fails, the diff has failed
+                if file1_dat[0:3] != file2_dat[0:3]:
+                    rout = rout + f'\nBM: {file1} at PC: {file1_dat[2]} and {file2} at PC: {file2_dat[2]}'
+                    status = 'Failed'
+                else:
+
+                    # some cleanup
+                    change1 = file1_dat[-1].split() 
+
+                    # if odd number, it's a store
+                    if len(change1) % 2:
+                        change1.remove('mem')
+
+                    # check if the architectural change is the same
+                    file1dat_iter = iter(change1)
+                    file2dat_iter = iter(file2_dat[-1].split())
+
+                    file1_change = dict(zip(file1dat_iter, file1dat_iter))
+                    file2_change = dict(zip(file2dat_iter, file2dat_iter))
+
+                    if file1_change != file2_change:
+                        rout = rout + f'\nSM: at PC: {file1_dat[2]}'
+                        status = 'Failed'
+                break
+    else:
+        status = 'Passed'
+    
+    # get number of instructions executed
+    with open(f'{file1}','r') as fd:
+      rcount = len(fd.readlines())
+
+    return status, rout, rcount
+
+
+def compare_dumps_bash(file1, file2, start_hex= ''):
     '''
     Function to check whether two dump files are equivalent. This function uses the
     diff command and custom logic to compare the files.
-    
     :param file1: The path to the first signature.
     :param file2: The path to the second signature.
     :param timeout: The timeout in seconds for the command execution.
     :type file1: str
     :type file2: str
-    :type timeout: int
+    :type start_hex: str
     :return: A tuple containing the status ("Passed" or "Failed"), the output of the diff command,
              and the number of lines in the first file.
     '''
@@ -65,84 +152,127 @@ def compare_dumps(file1, file2, timeout=120):
     if not os.path.exists(file2):
         logging.error('Signature file : ' + file2 + ' does not exist')
         raise SystemExit(1)
-
-    cmd = f"""
-    diff -u {file1} {file2} | grep '^[<>]' | awk '
-    function extract(line, arr) {{
-        match(line, /core\\s*(\\d+):\\s*(\\d+)\\s*(.*?)\\s+\\((.*?)\\)(.*)$/, arr);
-        return arr[0] == "" ? 0 : 1;
-    }}
-    function format_mismatch(coreid, priv, pc, instr, change) {{
-        return "BM: " coreid " at PC: " pc " and " instr " " change;
-    }}
-    BEGIN {{
-        status = "Passed";
-        mismatches = "";
-    }}
-    {{
-        if ($0 ~ /^< /) {{
-            if (!extract(substr($0, 3), a1)) {{
-                status = "Failed";
-                mismatches = mismatches "\\n" $0;
-            }}
-        }} else if ($0 ~ /^> /) {{
-            if (!extract(substr($0, 3), a2)) {{
-                status = "Failed";
-                mismatches = mismatches "\\n" $0;
-            }}
-            if (a1[1] != a2[1] || a1[2] != a2[2] || a1[3] != a2[3] || a1[4] != a2[4]) {{
-                status = "Failed";
-                mismatches = mismatches "\\n" format_mismatch(a1[1], a1[2], a1[3], a1[4], a1[5]);
-            }} else {{
-                split(a1[5], c1, " ");
-                split(a2[5], c2, " ");
-                if (length(c1) % 2) {{
-                    c1[length(c1)] = "";
+    if start_hex == '':
+        cmd = f"""
+        diff -u {file1} {file2} | grep '^[<>]' | awk '
+        function extract(line, arr) {{
+            match(line, /core\\s*(\\d+):\\s*(\\d+)\\s*(.*?)\\s+\\((.*?)\\)(.*)$/, arr);
+            return arr[0] == "" ? 0 : 1;
+        }}
+        function format_mismatch(coreid, priv, pc, instr, change) {{
+            return "BM: " coreid " at PC: " pc " and " instr " " change;
+        }}
+        BEGIN {{
+            status = "Passed";
+            mismatches = "";
+        }}
+        {{
+            if ($0 ~ /^< /) {{
+                if (!extract(substr($0, 3), a1)) {{
+                    status = "Failed";
+                    mismatches = mismatches "\\n" $0;
                 }}
-                changes_equal = 1;
-                for (i = 1; i <= length(c1); i += 2) {{
-                    if (c1[i] != c2[i] || c1[i+1] != c2[i+1]) {{
-                        changes_equal = 0;
-                        break;
+            }} else if ($0 ~ /^> /) {{
+                if (!extract(substr($0, 3), a2)) {{
+                    status = "Failed";
+                    mismatches = mismatches "\\n" $0;
+                }}
+                if (a1[1] != a2[1] || a1[2] != a2[2] || a1[3] != a2[3] || a1[4] != a2[4]) {{
+                    status = "Failed";
+                    mismatches = mismatches "\\n" format_mismatch(a1[1], a1[2], a1[3], a1[4], a1[5]);
+                }} else {{
+                    split(a1[5], c1, " ");
+                    split(a2[5], c2, " ");
+                    if (length(c1) % 2) {{
+                        c1[length(c1)] = "";
+                    }}
+                    changes_equal = 1;
+                    for (i = 1; i <= length(c1); i += 2) {{
+                        if (c1[i] != c2[i] || c1[i+1] != c2[i+1]) {{
+                            changes_equal = 0;
+                            break;
+                        }}
+                    }}
+                    if (!changes_equal) {{
+                        status = "Failed";
+                        mismatches = mismatches "\\nSM: at PC: " a1[3];
                     }}
                 }}
-                if (!changes_equal) {{
+            }}
+        }}
+        END {{
+            print "Status: " status;
+            if (mismatches != "") {{
+                print "Mismatch infos:" mismatches;
+            }}
+        }}
+        '"""
+    else:    
+        cmd = f"""
+        diff -u <(sed -n '/{start_hex}/,$p' {file1}) <(sed -n '/{start_hex}/,$p' {file2}) | grep '^[<>]' | awk '
+        function extract(line, arr) {{
+            match(line, /core\\s*(\\d+):\\s*(\\d+)\\s*(.*?)\\s+\\((.*?)\\)(.*)$/, arr);
+            return arr[0] == "" ? 0 : 1;
+        }}
+        function format_mismatch(coreid, priv, pc, instr, change) {{
+            return "BM: " coreid " at PC: " pc " and " instr " " change;
+        }}
+        BEGIN {{
+            status = "Passed";
+            mismatches = "";
+        }}
+        {{
+            if ($0 ~ /^< /) {{
+                if (!extract(substr($0, 3), a1)) {{
                     status = "Failed";
-                    mismatches = mismatches "\\nSM: at PC: " a1[3];
+                    mismatches = mismatches "\\n" $0;
+                }}
+            }} else if ($0 ~ /^> /) {{
+                if (!extract(substr($0, 3), a2)) {{
+                    status = "Failed";
+                    mismatches = mismatches "\\n" $0;
+                }}
+                if (a1[1] != a2[1] || a1[2] != a2[2] || a1[3] != a2[3] || a1[4] != a2[4]) {{
+                    status = "Failed";
+                    mismatches = mismatches "\\n" format_mismatch(a1[1], a1[2], a1[3], a1[4], a1[5]);
+                }} else {{
+                    split(a1[5], c1, " ");
+                    split(a2[5], c2, " ");
+                    if (length(c1) % 2) {{
+                        c1[length(c1)] = "";
+                    }}
+                    changes_equal = 1;
+                    for (i = 1; i <= length(c1); i += 2) {{
+                        if (c1[i] != c2[i] || c1[i+1] != c2[i+1]) {{
+                            changes_equal = 0;
+                            break;
+                        }}
+                    }}
+                    if (!changes_equal) {{
+                        status = "Failed";
+                        mismatches = mismatches "\\nSM: at PC: " a1[3];
+                    }}
                 }}
             }}
         }}
-    }}
-    END {{
-        print "Status: " status;
-        if (mismatches != "") {{
-            print "Mismatch infos:" mismatches;
+        END {{
+            print "Status: " status;
+            if (mismatches != "") {{
+                print "Mismatch infos:" mismatches;
+            }}
         }}
-    }}
-    '"""
-
-    try:
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=timeout)
-        rout = result.stdout.strip()
-        # Determine the status from the command output
-        status_line = rout.split('\n')[0]
-        status = 'Failed' if 'Failed' in status_line else 'Passed'
-        rout = '\n'.join(rout.split('\n')[1:])  # Remove the status line from the rout
-
-    except subprocess.TimeoutExpired:
-        logging.error(f'The command timed out after {timeout} seconds')
-        raise SystemExit(1)
-
-    # Format the output to match the desired format
-    formatted_rout = ""
-    for line in rout.splitlines():
-        formatted_rout += f"{line}\n"
+        '"""
+    exitcode, rout, rerr = sys_command(cmd, logging=False)
+    # Determine the status from the command output
+    status_line = rout.split('\n')[0]
+    status = 'Failed' if 'Failed' in status_line else 'Passed'
+    rout = '\n'.join(rout.split('\n')[1:])  # Remove the status line from the rout
 
     # Get number of instructions executed
     with open(file1, 'r') as fd:
         rcount = len(fd.readlines())
         
-    return status, formatted_rout, rcount
+    return status, rout, rcount
 
 def compare_signature(file1, file2):
     '''
