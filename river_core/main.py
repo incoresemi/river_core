@@ -151,9 +151,14 @@ def setup(config, dut, gen, ref, verbosity):
     default = -1,
     help = 'Timeout period for tests'
 )
+@click.option(
+    '--comparestartpc',
+    default = '-1',
+    help = 'Start pc value'
+)
 @cli.command()
 def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
-            compare, nproc, timeout):
+            compare, nproc, timeout, comparestartpc):
     '''
         subcommand to compile generated programs.
     '''
@@ -183,7 +188,7 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
                     'Compare is enabled\nThis will be generating incomplete reports'
                 )
     rivercore_compile(config, test_list, coverage, verbosity, dut_stage,
-                      ref_stage, compare, nproc, timeout)
+                      ref_stage, compare, nproc, timeout,comparestartpc)
     
 @click.option('-t',
               '--test_list',
