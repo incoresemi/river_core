@@ -44,7 +44,7 @@ def get_file_size(file):
       rcount = len(fd.readlines())
     return rcount
 
-def compare_dumps_legacy(file1, file2, start_hex=None):
+def compare_dumps(file1, file2, start_hex=None):
     '''
         Legacy Function to check whether two dump files are equivalent. This funcion ucore\s*(?P<coreid>\d):\s*(?P<priv>\d)\s*(?P<pc>.*?)\s+\((?P<instr>.*?)\)(?P<change>.*?)$ses the
         :param file1: The path to the first signature.
@@ -132,7 +132,7 @@ def compare_dumps_legacy(file1, file2, start_hex=None):
     return status, rout, rcount
 
 
-def compare_dumps(file1, file2, start_hex= ''):
+def compare_dumps_bash(file1, file2, start_hex = ''):
     '''
     Function to check whether two dump files are equivalent. This function uses
     the diff command in bash and processes the output.
@@ -147,42 +147,58 @@ def compare_dumps(file1, file2, start_hex= ''):
         raise FileNotFoundError(f'Signature file : {file1} does not exist')
     if start_hex=='':
         cmd = f'''
-        diff -iw {file1} {file2} | grep -E '^[<>]' | awk -v file1="{file1}" -v file2="{file2}" '
-        BEGIN {{
-            status = "Passed";
-            output = "";
-        }}
-        /^[<]/ {{
-            sub(/^< /, "", $0);
-            split($0, file1_dat, /: | /);
-            file1_dat[5] = file1_dat[4] " " file1_dat[5];
-            if (file1_dat[1] != "" && file2_dat[1] != "" && (file1_dat[1] != file2_dat[1] || file1_dat[2] != file2_dat[2] || file1_dat[3] != file2_dat[3])) {{
-                output = output "\\nBM: " file1 " at PC: " file1_dat[3] " and " file2 " at PC: " file2_dat[3];
-                status = "Failed";
-            }} else {{
-                split(file1_dat[5], change1, " ");
-                split(file2_dat[5], change2, " ");
-                if (length(change1) % 2) {{
-                    delete change1["mem"];
+            diff -iw {file1} {file2} | grep -E '^[<>]' | awk -v file1="{file1}" -v file2="{file2}" '
+            BEGIN {{
+                status = "Passed";
+                output = "";
+            }}
+            /^[<]/ {{
+                sub(/^< /, "", $0);
+                split($0, file1_dat, /: | /);
+                for (i=(length(file1_dat)-1); i>=8; i=i-1) {{
+                    file1_dat[length(file1_dat)] = file1_dat[i] " " file1_dat[length(file1_dat)];
                 }}
-                if (length(change1) != length(change2)) {{
-                    output = output "\\nSM: at PC: " file1_dat[3];
+            }}
+            /^[>]/ {{
+                sub(/^> /, "", $0);
+                split($0, file2_dat, /: | /);
+                for (i=(length(file2_dat)-1); i>=8; i=i-1) {{
+                    file2_dat[length(file2_dat)] = file2_dat[i] " " file2_dat[length(file2_dat)];
+                }}
+                if (file1_dat[1] != "" && file2_dat[1] != "" && (file1_dat[4] != file2_dat[4] || file1_dat[5] != file2_dat[5] || file1_dat[6] != file2_dat[6])) {{
+                    output = output "\\nBM: " file1 " at PC: " file1_dat[6] " and " file2 " at PC: " file2_dat[6];
                     status = "Failed";
                 }} else {{
-                    for (i in change1) {{
-                        if (change1[i] != change2[i]) {{
-                            output = output "\\nSM: at PC: " file1_dat[3];
-                            status = "Failed";
-                            break;
+                    split(file1_dat[length(file1_dat)], change1, " ");
+                    split(file2_dat[length(file2_dat)], change2, " ");
+                    if (length(change1) % 2) {{
+                        delete change1["mem"];
+                    }}
+                    if (length(change1) != length(change2)) {{
+                        output = output "\\nSM: at PC: " file1_dat[6];
+                        status = "Failed";
+                    }} else {{
+                        for (i in change1) {{
+                            found = 0;
+                            for (j in change2) {{
+                                if (change1[i] == change2[j]) {{
+                                    found = 1;
+                                    break;
+                                }}
+                            }}
+                            if (found == 0) {{
+                                output = output "\\nSM: at PC: " file1_dat[6];
+                                status = "Failed";
+                                break;
+                            }}
                         }}
                     }}
                 }}
             }}
-        }}
-        END {{
-            print status;
-            print output;
-        }}'
+            END {{
+                print status;
+                print output;
+            }}'
         '''
     else:
         cmd = f'''
@@ -194,25 +210,40 @@ def compare_dumps(file1, file2, start_hex= ''):
         /^[<]/ {{
             sub(/^< /, "", $0);
             split($0, file1_dat, /: | /);
-            file1_dat[5] = file1_dat[4] " " file1_dat[5];
-            if (file1_dat[1] != "" && file2_dat[1] != "" && (file1_dat[1] != file2_dat[1] || file1_dat[2] != file2_dat[2] || file1_dat[3] != file2_dat[3])) {{
-                output = output "\\nBM: " file1 " at PC: " file1_dat[3] " and " file2 " at PC: " file2_dat[3];
+        }}
+        /^[>]/ {{
+            sub(/^> /, "", $0);
+            split($0, file2_dat, /: | /);
+            
+            if (file1_dat[1] != "" && file2_dat[1] != "" && (file1_dat[4] != file2_dat[4] || file1_dat[5] != file2_dat[5] || file1_dat[6] != file2_dat[6])) {{
+                output = output "\\nBM: " file1 " at PC: " file1_dat[6] " and " file2 " at PC: " file2_dat[6];
                 status = "Failed";
             }} else {{
-                split(file1_dat[5], change1, " ");
-                split(file2_dat[5], change2, " ");
+                for (i=(length(file1_dat));i>=8;i=i-1){{
+                change1[i-7] = file1_dat[i]
+                }}
+                for (i=(length(file2_dat));i>=8;i=i-1){{
+                change2[i-7] = file2_dat[i]
+                }}
                 if (length(change1) % 2) {{
                     delete change1["mem"];
                 }}
                 if (length(change1) != length(change2)) {{
-                    output = output "\\nSM: at PC: " file1_dat[3];
+                    output = output "\\nSM: at PC: " file1_dat[6];
                     status = "Failed";
                 }} else {{
                     for (i in change1) {{
-                        if (change1[i] != change2[i]) {{
-                            output = output "\\nSM: at PC: " file1_dat[3];
-                            status = "Failed";
+                        found=0;
+                        for (j in change2){{
+                            if (change1[i] == change2[j]) {{
+                            found=1;
                             break;
+                        }}
+                        }}
+                        if (found==0){{
+                        output = output "\\nSM: at PC: " file1_dat[6];
+                        status = "Failed";
+                        break;
                         }}
                     }}
                 }}
@@ -225,7 +256,6 @@ def compare_dumps(file1, file2, start_hex= ''):
         '''
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     stdout, stderr = process.communicate()
-
     if process.returncode != 0:
         status = "Failed"
         rout = stderr
