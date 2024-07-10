@@ -243,6 +243,31 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
 @cli.command()
 def comparison(config, test_list, coverage, verbosity, dut_stage, ref_stage,
             compare, nproc, timeout, comparestartpc):
+    logger.info(constants.header_temp.format(__version__))
+    if not config:
+        config = check_config()
+    # Checking if the flags are ok
+    if dut_stage == 'auto':
+        logger.info('Auto mode detected for DuT Plugin')
+        if ref_stage == 'auto':
+            logger.info('Auto mode detected for Ref Plugin')
+            dut_stage = 'run'
+            ref_stage = 'run'
+        else:
+            logger.debug('Auto mode has disabled DuT Plugin')
+            dut_stage = None
+            if compare:
+                logger.warning(
+                    'Compare is enabled\nThis will be generating incomplete reports'
+                )
+    else:
+        if ref_stage == 'auto':
+            logger.debug('Auto mode has disabled Ref Plugin')
+            ref_stage = None
+            if compare:
+                logger.warning(
+                    'Compare is enabled\nThis will be generating incomplete reports'
+                )
     rivercore_comparison(config, test_list, coverage, verbosity, dut_stage,
                       ref_stage, compare, nproc, timeout,comparestartpc)
     
