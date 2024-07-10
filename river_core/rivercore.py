@@ -769,8 +769,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
         if not success:
             raise SystemExit(1)
     
-def rivercore_comparison(config_file, test_list, coverage, verbosity, dut_flags,
-                      ref_flags, compare, process_count, timeout, comparestartpc):
+def rivercore_comparison(config, test_list, process_count, timeout, comparestartpc):
     '''
 
         Function to compile generated assembly programs using the plugin as configured in the config.ini.
@@ -830,15 +829,10 @@ def rivercore_comparison(config_file, test_list, coverage, verbosity, dut_flags,
         else:
             logger.error(f"{test:<30} : TEST {result.upper()}")
             return False, test, result, log, insnsize
-    
+    verbosity = 'info'
     logger.level(verbosity)
     config = configparser.ConfigParser()
     config.read(config_file)
-    # check for ISA string in upper case
-    _isa = config['river_core']['isa']
-    logger.info(f'ISA:  {_isa}')
-    utils.check_isa(_isa)
-    logger.debug('Read file from {0}'.format(os.path.abspath(config_file)))
 
     logger.info('****** Compilation Mode ******')
 
@@ -860,16 +854,9 @@ def rivercore_comparison(config_file, test_list, coverage, verbosity, dut_flags,
     target_json = None
     ref_json = None
     # Load coverage stats
-    if coverage:
-        logger.info("Coverage mode is enabled")
-        coverage_config = config['coverage']
-    else:
-        coverage_config = None
-    if '' in target_list:
-        logger.info('No targets configured, so moving on the reference')
-    else:
+    if True:
         ## Comparing Dumps
-        if compare:
+        if True:
             test_dict = utils.load_yaml(test_list)
             gen_json_data = []
             target_json_data = []
