@@ -26,7 +26,7 @@ yaml.default_flow_style = False
 yaml.allow_unicode = True
 yaml.compact(seq_seq=False, seq_map=False)
 from multiprocessing import Pool
-
+startpc = '-1'
 
 # Misc Helper Functions
 def sanitise_pytest_json(json):
@@ -446,33 +446,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
 
         :type compare: bool 
     '''
-    #Helper function for parallel processing
-    #Returns success,test,attr['result'],attr['log'],attr['numinstr']
-    def logcomparison(item):
-        test, attr = item
-        test_wd = attr['work_dir']
-        is_self_checking = attr['self_checking']
-        if not is_self_checking:
-            if not os.path.isfile(test_wd + '/dut.dump'):
-                logger.error(f'{test:<30} : DUT dump is missing')
-                return False, test, 'Unavailable', "DUT dump is missing", None
-            if not os.path.isfile(test_wd + '/ref.dump'):
-                logger.error(f'{test:<30} : REF dump is missing')
-                return False, test, 'Unavailable', 'REF dump is missing', None
-            start_pc = str(comparestartpc) if comparestartpc!=-1 else ''
-            result, log, insnsize = utils.compare_dumps(test_wd + '/dut.dump', test_wd + '/ref.dump',start_pc)
-        else:
-            if not os.path.isfile(test_wd + '/dut.signature'):
-                logger.error(f'{test:<30} : DUT signature is missing')
-                return False, test, 'Unavailable',"DUT signature is missing", None
-            result, log = utils.self_check(test_wd + '/dut.signature')
-            insnsize = utils.get_file_size(test_wd + '/dut.dump')
-        if result == 'Passed':
-            logger.info(f"{test:<30} : TEST {result.upper()}")
-            return True, test, result, log, insnsize
-        else:
-            logger.error(f"{test:<30} : TEST {result.upper()}")
-            return False, test, result, log, insnsize
     
     logger.level(verbosity)
     config = configparser.ConfigParser()
@@ -655,6 +628,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
 
         ## Comparing Dumps
         if compare:
+            global startpc
+            startpc = comparestartpc
             test_dict = utils.load_yaml(test_list)
             gen_json_data = []
             target_json_data = []
@@ -769,7 +744,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
         if not success:
             raise SystemExit(1)
     
-def rivercore_comparison(config, test_list, process_count, timeout, comparestartpc):
+def rivercore_comparison( test_list,output_dir, process_count, timeout, comparestartpc):
     '''
 
         Function to compile generated assembly programs using the plugin as configured in the config.ini.
@@ -802,53 +777,13 @@ def rivercore_comparison(config, test_list, process_count, timeout, comparestart
 
         :type compare: bool 
     '''
-    #Helper function for parallel processing
-    #Returns success,test,attr['result'],attr['log'],attr['numinstr']
-    def logcomparison(item):
-        test, attr = item
-        test_wd = attr['work_dir']
-        is_self_checking = attr['self_checking']
-        if not is_self_checking:
-            if not os.path.isfile(test_wd + '/dut.dump'):
-                logger.error(f'{test:<30} : DUT dump is missing')
-                return False, test, 'Unavailable', "DUT dump is missing", None
-            if not os.path.isfile(test_wd + '/ref.dump'):
-                logger.error(f'{test:<30} : REF dump is missing')
-                return False, test, 'Unavailable', 'REF dump is missing', None
-            start_pc = str(comparestartpc) if comparestartpc!=-1 else ''
-            result, log, insnsize = utils.compare_dumps(test_wd + '/dut.dump', test_wd + '/ref.dump',start_pc)
-        else:
-            if not os.path.isfile(test_wd + '/dut.signature'):
-                logger.error(f'{test:<30} : DUT signature is missing')
-                return False, test, 'Unavailable',"DUT signature is missing", None
-            result, log = utils.self_check(test_wd + '/dut.signature')
-            insnsize = utils.get_file_size(test_wd + '/dut.dump')
-        if result == 'Passed':
-            logger.info(f"{test:<30} : TEST {result.upper()}")
-            return True, test, result, log, insnsize
-        else:
-            logger.error(f"{test:<30} : TEST {result.upper()}")
-            return False, test, result, log, insnsize
-    verbosity = 'info'
-    logger.level(verbosity)
-    config = configparser.ConfigParser()
-    config.read(config_file)
 
     logger.info('****** Compilation Mode ******')
-
-    output_dir = config['river_core']['work_dir']
-    asm_gen = config['river_core']['generator']
-    target_list = config['river_core']['target'].split(',')
-    ref_list = config['river_core']['reference'].split(',')
 
     logger.info(
         "The river_core is currently configured to run with following parameters"
     )
     logger.info("The Output Directory (work_dir) : {0}".format(output_dir))
-    logger.info("ISA : {0}".format(config['river_core']['isa']))
-    logger.info("Generator Plugin : {0}".format(asm_gen))
-    logger.info("Target Plugin : {0}".format(target_list))
-    logger.info("Reference Plugin : {0}".format(ref_list))
 
     # Set default values:
     target_json = None
@@ -857,6 +792,8 @@ def rivercore_comparison(config, test_list, process_count, timeout, comparestart
     if True:
         ## Comparing Dumps
         if True:
+            global startpc
+            startpc = comparestartpc
             test_dict = utils.load_yaml(test_list)
             gen_json_data = []
             target_json_data = []
@@ -938,38 +875,37 @@ def rivercore_comparison(config, test_list, process_count, timeout, comparestart
                 gen_json_data = []
                 gen_json_file = []
 
-            if (target_json and ref_json and gen_json_file):
-                # See if space saver is enabled when we have all the data
-                dutpm.hook.post_run(test_dict=test_dict, config=config)
-                refpm.hook.post_run(test_dict=test_dict, config=config)
-
-        else:
-            logger.info(
-                'Comparison was disabled\nHence no diff would be available')
-            result = 'Unavailable'
-            test_dict = utils.load_yaml(test_list)
-            logger.debug('Resetting values in test_dict')
-            for test, attr in test_dict.items():
-                test_dict[test]['result'] = 'Unavailable'
-            gen_json_data = []
-            target_json_data = []
-            ref_json_data = []
-
-        logger.info("Now generating some good HTML reports for you")
-        report_html = generate_report(output_dir, gen_json_data,
-                                      target_json_data, ref_json_data, config,
-                                      test_dict)
-
-        # Check if web browser
-        if utils.str_2_bool(config['river_core']['open_browser']):
-            try:
-                import webbrowser
-                logger.info("Opening test report in web-browser")
-                webbrowser.open(report_html)
-            except:
-                return 1
         if not success:
             raise SystemExit(1)
+    
+
+#Helper function for parallel processing
+#Returns success,test,attr['result'],attr['log'],attr['numinstr']
+def logcomparison(item):
+    test, attr = item
+    test_wd = attr['work_dir']
+    is_self_checking = attr['self_checking']
+    if not is_self_checking:
+        if not os.path.isfile(test_wd + '/dut.dump'):
+            logger.error(f'{test:<30} : DUT dump is missing')
+            return False, test, 'Unavailable', "DUT dump is missing", None
+        if not os.path.isfile(test_wd + '/ref.dump'):
+            logger.error(f'{test:<30} : REF dump is missing')
+            return False, test, 'Unavailable', 'REF dump is missing', None
+        compare_start_pc = str(startpc) if str(startpc)!='-1' else ''
+        result, log, insnsize = utils.compare_dumps(test_wd + '/dut.dump', test_wd + '/ref.dump',compare_start_pc)
+    else:
+        if not os.path.isfile(test_wd + '/dut.signature'):
+            logger.error(f'{test:<30} : DUT signature is missing')
+            return False, test, 'Unavailable',"DUT signature is missing", None
+        result, log = utils.self_check(test_wd + '/dut.signature')
+        insnsize = utils.get_file_size(test_wd + '/dut.dump')
+    if result == 'Passed':
+        logger.info(f"{test:<30} : TEST {result.upper()}")
+        return True, test, result, log, insnsize
+    else:
+        logger.error(f"{test:<30} : TEST {result.upper()}")
+        return False, test, result, log, insnsize
 
 
 def rivercore_merge(verbosity, db_folders, output, config_file):

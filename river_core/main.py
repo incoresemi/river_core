@@ -194,6 +194,11 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
               type=click.Path(dir_okay=False, exists=True),
               help='Test List file to pass',
               required=True)
+@click.option('-o',
+              '--output_dir',
+              type=click.Path(dir_okay=True, exists=True),
+              help='Output directory',
+              required=True)
 @click.option(
     '--nproc',
     default=1,
@@ -209,10 +214,9 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
     help = 'Start pc value in Hex for log comparisons'
 )
 @cli.command()
-def comparison(test_list, nproc, timeout, comparestartpc):
-    config = check_config()
+def comparison(test_list, output_dir, nproc, timeout, comparestartpc):
     logger.info(constants.header_temp.format(__version__))  
-    rivercore_comparison(config, test_list, nproc, timeout,comparestartpc)
+    rivercore_comparison(test_list, output_dir, nproc, timeout,comparestartpc)
     
 @click.option('-t',
               '--test_list',
