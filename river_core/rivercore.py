@@ -8,6 +8,7 @@ import datetime
 import importlib
 import configparser
 import lief
+#import time
 #import filecmp
 import json
 import pytest
@@ -801,8 +802,11 @@ def rivercore_comparison( test_list,output_dir, process_count, timeout, compares
             # parallelized
             success = True
             items = test_dict.items()
+            #start = time.time()
             with Pool(processes = process_count) as process_pool:
                 output = process_pool.map(logcomparison, items) #Collecting the return values from each process in the Pool
+            #stop = time.time()
+            #logger.warn(stop - start)
             #Updating values
             for i in output:
                 success = success and i[0]
@@ -824,56 +828,6 @@ def rivercore_comparison( test_list,output_dir, process_count, timeout, compares
             # Report generation starts here
             # Target
             # Move this into a function
-            if target_json:
-                json_file = open(target_json[0] + '.json', 'r')
-                target_json_list = json_file.readlines()
-                json_file.close()
-                for line in target_json_list:
-                    target_json_data.append(json.loads(line))
-            else:
-                logger.debug('Could not find a target_json file')
-                for test, attr in test_dict.items():
-                    test_dict[test]['result'] = 'DUT Unavailable'
-                    logger.debug(
-                        'Resetting values in test_dict; Triggered by the lack of DuT values'
-                    )
-            if ref_json:
-                json_file = open(ref_json[0] + '.json', 'r')
-                ref_json_list = json_file.readlines()
-                json_file.close()
-                for line in ref_json_list:
-                    ref_json_data.append(json.loads(line))
-            else:
-                logger.debug('Could not find a reference_json file')
-                for test, attr in test_dict.items():
-                    test_dict[test]['result'] = 'REF Unavailable'
-                    logger.debug(
-                        'Resetting values in test_dict; Triggered by the lack of Ref values'
-                    )
-
-            # Need to an Gen json file for final report
-            # TODO:CHECK: Only issue is that this can ideally be a wrong approach
-
-            try:
-                logger.info(
-                    "Checking for a generator json to create final report")
-                json_files = glob.glob(output_dir + '/.json/{0}*.json'.format(
-                    config['river_core']['generator']))
-                logger.debug(
-                    "Detected generated JSON Files: {0}".format(json_files))
-
-                # Can only get one file back
-                gen_json_file = max(json_files, key=os.path.getctime)
-                json_file = open(gen_json_file, 'r')
-                target_json_list = json_file.readlines()
-                json_file.close()
-                for line in target_json_list:
-                    gen_json_data.append(json.loads(line))
-
-            except:
-                logger.warning("Couldn't find a generator JSON file")
-                gen_json_data = []
-                gen_json_file = []
 
         if not success:
             raise SystemExit(1)
