@@ -768,6 +768,221 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 return 1
         if not success:
             raise SystemExit(1)
+    
+def rivercore_comparison(config_file, test_list, coverage, verbosity, dut_flags,
+                      ref_flags, compare, process_count, timeout, comparestartpc):
+    '''
+
+        Function to compile generated assembly programs using the plugin as configured in the config.ini.
+
+        :param config_file: Config.ini file for generation
+
+        :param test_list: Test List exported from generate sub-command 
+
+        :param coverage: Enable coverage merge and stats from the reports 
+
+        :param verbosity: Verbosity level for the framework
+
+        :param dut_flags: Verbosity level for the framework
+
+        :param ref_flags: Verbosity level for the framework
+
+        :param compare: Verbosity level for the framework
+
+        :type config_file: click.Path
+
+        :type test_list: click.Path
+
+        :type coverage: bool 
+
+        :type verbosity: str
+
+        :type dut_flags: click.Choice 
+
+        :type ref_flags: click.Choice 
+
+        :type compare: bool 
+    '''
+    #Helper function for parallel processing
+    #Returns success,test,attr['result'],attr['log'],attr['numinstr']
+    def logcomparison(item):
+        test, attr = item
+        test_wd = attr['work_dir']
+        is_self_checking = attr['self_checking']
+        if not is_self_checking:
+            if not os.path.isfile(test_wd + '/dut.dump'):
+                logger.error(f'{test:<30} : DUT dump is missing')
+                return False, test, 'Unavailable', "DUT dump is missing", None
+            if not os.path.isfile(test_wd + '/ref.dump'):
+                logger.error(f'{test:<30} : REF dump is missing')
+                return False, test, 'Unavailable', 'REF dump is missing', None
+            start_pc = str(comparestartpc) if comparestartpc!=-1 else ''
+            result, log, insnsize = utils.compare_dumps(test_wd + '/dut.dump', test_wd + '/ref.dump',start_pc)
+        else:
+            if not os.path.isfile(test_wd + '/dut.signature'):
+                logger.error(f'{test:<30} : DUT signature is missing')
+                return False, test, 'Unavailable',"DUT signature is missing", None
+            result, log = utils.self_check(test_wd + '/dut.signature')
+            insnsize = utils.get_file_size(test_wd + '/dut.dump')
+        if result == 'Passed':
+            logger.info(f"{test:<30} : TEST {result.upper()}")
+            return True, test, result, log, insnsize
+        else:
+            logger.error(f"{test:<30} : TEST {result.upper()}")
+            return False, test, result, log, insnsize
+    
+    logger.level(verbosity)
+    config = configparser.ConfigParser()
+    config.read(config_file)
+    # check for ISA string in upper case
+    _isa = config['river_core']['isa']
+    logger.info(f'ISA:  {_isa}')
+    utils.check_isa(_isa)
+    logger.debug('Read file from {0}'.format(os.path.abspath(config_file)))
+
+    logger.info('****** Compilation Mode ******')
+
+    output_dir = config['river_core']['work_dir']
+    asm_gen = config['river_core']['generator']
+    target_list = config['river_core']['target'].split(',')
+    ref_list = config['river_core']['reference'].split(',')
+
+    logger.info(
+        "The river_core is currently configured to run with following parameters"
+    )
+    logger.info("The Output Directory (work_dir) : {0}".format(output_dir))
+    logger.info("ISA : {0}".format(config['river_core']['isa']))
+    logger.info("Generator Plugin : {0}".format(asm_gen))
+    logger.info("Target Plugin : {0}".format(target_list))
+    logger.info("Reference Plugin : {0}".format(ref_list))
+
+    # Set default values:
+    target_json = None
+    ref_json = None
+    # Load coverage stats
+    if coverage:
+        logger.info("Coverage mode is enabled")
+        coverage_config = config['coverage']
+    else:
+        coverage_config = None
+    if '' in target_list:
+        logger.info('No targets configured, so moving on the reference')
+    else:
+        ## Comparing Dumps
+        if compare:
+            test_dict = utils.load_yaml(test_list)
+            gen_json_data = []
+            target_json_data = []
+            ref_json_data = []
+            # parallelized
+            success = True
+            items = test_dict.items()
+            with Pool(processes = process_count) as process_pool:
+                output = process_pool.map(logcomparison, items) #Collecting the return values from each process in the Pool
+            #Updating values
+            for i in output:
+                success = success and i[0]
+                test_dict[i[1]]['result'] = i[2]
+                test_dict[i[1]]['log'] = i[3]
+                test_dict[i[1]]['num_instr'] = i[4]
+            utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
+            failed_dict = {}
+            for test, attr in test_dict.items():
+                if attr['result'] == 'Failed' or 'Unavailable' in attr['result']:
+                    failed_dict[test] = attr
+
+            if len(failed_dict) != 0:
+                logger.error(f'Total Tests that Failed :{len(failed_dict)}')
+                failed_dict_file = output_dir+'/failed_list.yaml'
+                logger.error(f'Saving failed list of tests in {failed_dict_file}')
+                utils.save_yaml(failed_dict, failed_dict_file)
+            # Start checking things after running the commands
+            # Report generation starts here
+            # Target
+            # Move this into a function
+            if target_json:
+                json_file = open(target_json[0] + '.json', 'r')
+                target_json_list = json_file.readlines()
+                json_file.close()
+                for line in target_json_list:
+                    target_json_data.append(json.loads(line))
+            else:
+                logger.debug('Could not find a target_json file')
+                for test, attr in test_dict.items():
+                    test_dict[test]['result'] = 'DUT Unavailable'
+                    logger.debug(
+                        'Resetting values in test_dict; Triggered by the lack of DuT values'
+                    )
+            if ref_json:
+                json_file = open(ref_json[0] + '.json', 'r')
+                ref_json_list = json_file.readlines()
+                json_file.close()
+                for line in ref_json_list:
+                    ref_json_data.append(json.loads(line))
+            else:
+                logger.debug('Could not find a reference_json file')
+                for test, attr in test_dict.items():
+                    test_dict[test]['result'] = 'REF Unavailable'
+                    logger.debug(
+                        'Resetting values in test_dict; Triggered by the lack of Ref values'
+                    )
+
+            # Need to an Gen json file for final report
+            # TODO:CHECK: Only issue is that this can ideally be a wrong approach
+
+            try:
+                logger.info(
+                    "Checking for a generator json to create final report")
+                json_files = glob.glob(output_dir + '/.json/{0}*.json'.format(
+                    config['river_core']['generator']))
+                logger.debug(
+                    "Detected generated JSON Files: {0}".format(json_files))
+
+                # Can only get one file back
+                gen_json_file = max(json_files, key=os.path.getctime)
+                json_file = open(gen_json_file, 'r')
+                target_json_list = json_file.readlines()
+                json_file.close()
+                for line in target_json_list:
+                    gen_json_data.append(json.loads(line))
+
+            except:
+                logger.warning("Couldn't find a generator JSON file")
+                gen_json_data = []
+                gen_json_file = []
+
+            if (target_json and ref_json and gen_json_file):
+                # See if space saver is enabled when we have all the data
+                dutpm.hook.post_run(test_dict=test_dict, config=config)
+                refpm.hook.post_run(test_dict=test_dict, config=config)
+
+        else:
+            logger.info(
+                'Comparison was disabled\nHence no diff would be available')
+            result = 'Unavailable'
+            test_dict = utils.load_yaml(test_list)
+            logger.debug('Resetting values in test_dict')
+            for test, attr in test_dict.items():
+                test_dict[test]['result'] = 'Unavailable'
+            gen_json_data = []
+            target_json_data = []
+            ref_json_data = []
+
+        logger.info("Now generating some good HTML reports for you")
+        report_html = generate_report(output_dir, gen_json_data,
+                                      target_json_data, ref_json_data, config,
+                                      test_dict)
+
+        # Check if web browser
+        if utils.str_2_bool(config['river_core']['open_browser']):
+            try:
+                import webbrowser
+                logger.info("Opening test report in web-browser")
+                webbrowser.open(report_html)
+            except:
+                return 1
+        if not success:
+            raise SystemExit(1)
 
 
 def rivercore_merge(verbosity, db_folders, output, config_file):
