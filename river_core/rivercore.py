@@ -8,7 +8,6 @@ import datetime
 import importlib
 import configparser
 import lief
-import time
 #import filecmp
 import json
 import pytest
@@ -663,7 +662,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             # parallelized
             success = True
             items = test_dict.items()
-            start_time = time.time()
             with Pool(processes = process_count) as process_pool:
                 output = process_pool.map(logcomparison, items) #Collecting the return values from each process in the Pool
             #Updating values
@@ -673,7 +671,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 test_dict[i[1]]['log'] = i[3]
                 test_dict[i[1]]['num_instr'] = i[4]
             utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
-            end_time = time.time()
             failed_dict = {}
             for test, attr in test_dict.items():
                 if attr['result'] == 'Failed' or 'Unavailable' in attr['result']:
@@ -684,7 +681,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 failed_dict_file = output_dir+'/failed_list.yaml'
                 logger.error(f'Saving failed list of tests in {failed_dict_file}')
                 utils.save_yaml(failed_dict, failed_dict_file)
-            logger.warn(f" TIME TAKEN: {end_time - start_time}")
             # Start checking things after running the commands
             # Report generation starts here
             # Target

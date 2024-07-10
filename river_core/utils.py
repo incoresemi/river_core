@@ -44,9 +44,9 @@ def get_file_size(file):
       rcount = len(fd.readlines())
     return rcount
 
-def compare_dumps(file1, file2, start_hex=None):
+def compare_dumps(file1, file2, start_hex=''):
     '''
-        Legacy Function to check whether two dump files are equivalent. This funcion ucore\s*(?P<coreid>\d):\s*(?P<priv>\d)\s*(?P<pc>.*?)\s+\((?P<instr>.*?)\)(?P<change>.*?)$ses the
+        Function to check whether two dump files are equivalent. This funcion ucore\s*(?P<coreid>\d):\s*(?P<priv>\d)\s*(?P<pc>.*?)\s+\((?P<instr>.*?)\)(?P<change>.*?)$ses the
         :param file1: The path to the first signature.
         :param file2: The path to the second signature.
         :type file1: str
@@ -57,7 +57,7 @@ def compare_dumps(file1, file2, start_hex=None):
     if not os.path.exists(file1) :
         logger.error('Signature file : ' + file1 + ' does not exist')
         raise SystemExit(1)
-    if start_hex == None:
+    if start_hex == '':
         cmd = f'diff -iw {file1} {file2}'
     else:
         cmd = f"diff -iw <(sed -n '/{start_hex}/,$p' {file1}) <(sed -n '/{start_hex}/,$p' {file2})"

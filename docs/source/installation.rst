@@ -236,6 +236,7 @@ Output for ``river_core compile --help``:
     subcommand to compile generated programs.
   
   Options:
+    --comparestartpc TEXT           Start pc value in Hex for log comparisons
     --timeout INTEGER               Timeout period for tests
     --nproc INTEGER                 Number of processes dedicated to river_core framework
     --coverage                      Enable collection of coverage statistics

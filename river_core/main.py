@@ -154,7 +154,7 @@ def setup(config, dut, gen, ref, verbosity):
 @click.option(
     '--comparestartpc',
     default = '-1',
-    help = 'Start pc value'
+    help = 'Start pc value in Hex for log comparisons'
 )
 @cli.command()
 def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
