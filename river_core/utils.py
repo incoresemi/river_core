@@ -211,33 +211,31 @@ def compare_dumps_bash(file1, file2, start_hex = ''):
         /^[>]/ {{
             sub(/^> /, "", $0);
             split($0, file2_dat, /: | /);
-            
-            if (file1_dat[1] != "" && file2_dat[1] != "" && (file1_dat[4] != file2_dat[4] || file1_dat[5] != file2_dat[5] || file1_dat[6] != file2_dat[6])) {{
+
+            if (file1_dat[4] != file2_dat[4] || file1_dat[5] != file2_dat[5] || file1_dat[6] != file2_dat[6]) {{
                 output = output "\\nBM: " file1 " at PC: " file1_dat[6] " and " file2 " at PC: " file2_dat[6];
                 status = "Failed";
             }} else {{
                 for (i=(length(file1_dat));i>=8;i=i-1){{
-                change1[i-7] = file1_dat[i]
+                if (file1_dat[i]!=""){{
+                    change1[file1_dat[i]] = 0;
+                    }}
                 }}
                 for (i=(length(file2_dat));i>=8;i=i-1){{
-                change2[i-7] = file2_dat[i]
+                if (file2_dat[i]!=""){{
+                    change2[file2_dat[i]] = 0;
+                    }}
                 }}
                 if (length(change1) % 2) {{
                     delete change1["mem"];
                 }}
+                
                 if (length(change1) != length(change2)) {{
                     output = output "\\nSM: at PC: " file1_dat[6];
                     status = "Failed";
                 }} else {{
                     for (i in change1) {{
-                        found=0;
-                        for (j in change2){{
-                            if (change1[i] == change2[j]) {{
-                            found=1;
-                            break;
-                        }}
-                        }}
-                        if (found==0){{
+                        if (!(i in change2)){{
                         output = output "\\nSM: at PC: " file1_dat[6];
                         status = "Failed";
                         break;

@@ -198,7 +198,13 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
     html_objects['num_failed'] = num_failed
     html_objects['num_unav'] = num_unav
     html_objects['total_instr'] = total_instr
-
+    generator_count = {}
+    for i in test_dict:
+        if test_dict[i]['generator'] not in generator_count:
+            generator_count[test_dict[i]['generator']] = 1
+        else:
+            generator_count[test_dict[i]['generator']] += 1
+    html_objects['generator_count'] = generator_count
     if not os.path.exists(report_dir):
         os.makedirs(report_dir)
 
@@ -791,14 +797,12 @@ def rivercore_comparison( test_list,output_dir, process_count, timeout, compares
     ref_json = None
     # Load coverage stats
     if True:
+        logger.level("info")
         ## Comparing Dumps
         if True:
             global startpc
             startpc = comparestartpc
             test_dict = utils.load_yaml(test_list)
-            gen_json_data = []
-            target_json_data = []
-            ref_json_data = []
             # parallelized
             success = True
             items = test_dict.items()
@@ -824,10 +828,6 @@ def rivercore_comparison( test_list,output_dir, process_count, timeout, compares
                 failed_dict_file = output_dir+'/failed_list.yaml'
                 logger.error(f'Saving failed list of tests in {failed_dict_file}')
                 utils.save_yaml(failed_dict, failed_dict_file)
-            # Start checking things after running the commands
-            # Report generation starts here
-            # Target
-            # Move this into a function
 
         if not success:
             raise SystemExit(1)

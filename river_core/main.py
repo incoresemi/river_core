@@ -215,6 +215,9 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
 )
 @cli.command()
 def comparison(test_list, output_dir, nproc, timeout, comparestartpc):
+    '''
+        subcommand to compare compiled test logs.
+    '''
     logger.info(constants.header_temp.format(__version__))  
     rivercore_comparison(test_list, output_dir, nproc, timeout,comparestartpc)
     

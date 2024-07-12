@@ -295,6 +295,23 @@ function filter_table(elem) {
     <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="passed">{{ num_passed }} Passed</span>, <input checked="true" class="filter" data-test-result="failed" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="failed">{{ num_failed }} Failed</span><input checked="true" class="filter" data-test-result="unavailable" name="filter_checkbox" onChange="filter_table(this)" type="checkbox"/><span class="unavailable"> {{ num_unav }} Unavailable</span>
     <h3> Out of Total: {{ num_failed + num_passed + num_unav }} Tests </h3>
     <h3> Total Instructions Execute: {{ total_instr }} Instructions </h3>
+    <br> 
+    <table id="generator-type-table">
+        <thead id="simple-table-head">
+          <tr>
+            <th col="name">Generator  </th>
+            <th col="numinsns">Test Count</th>
+          </tr>
+        </thead>
+          {% for generator in generator_count %}
+              <tbody class= "{{ generator_count[generator]}}  simple-table-row" >
+              <tr>
+                <td class="col-name">{{ generator }}</td>
+                <td class="col-numinsns">{{ generator_count[generator] }}</td>
+              </tr>
+              </tbody>
+          {% endfor %}
+        </table>
 
     <table id="results-table">
       <thead id="simple-table-head">
