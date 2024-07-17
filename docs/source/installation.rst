@@ -183,6 +183,7 @@ Output for ``river_core --help``:
   
   Commands:
     clean     subcommand to clean generated programs.
+    comparison  subcommand to compare compiled test logs.
     compile   subcommand to compile generated programs.
     enquire   subcommand to enquire status of tests.
     generate  subcommand to generate programs.
@@ -205,6 +206,23 @@ Output for ``river_core clean --help``:
     -v, --verbosity TEXT  Set the verbosity level for the framework
     --version             Show the version and exit.
     --help                Show this message and exit.
+
+
+Output for ``river_core generate --help``:
+
+.. code-block:: console
+
+  Usage: river_core comparison [OPTIONS]
+
+    subcommand to compare compiled test logs.
+
+  Options:
+    --comparestartpc TEXT  Start pc value in Hex for log comparisons
+    --timeout INTEGER      Timeout period for tests
+    --nproc INTEGER        Number of processes dedicated to rivercore framework
+    -o, --output_dir PATH  Output directory  [required]
+    -t, --test_list FILE   Test List file to pass  [required]
+    --help                 Show this message and exit.
 
 
 Output for ``river_core generate --help``:
@@ -236,6 +254,7 @@ Output for ``river_core compile --help``:
     subcommand to compile generated programs.
   
   Options:
+    --comparestartpc TEXT           Start pc value in Hex for log comparisons
     --timeout INTEGER               Timeout period for tests
     --nproc INTEGER                 Number of processes dedicated to river_core framework
     --coverage                      Enable collection of coverage statistics

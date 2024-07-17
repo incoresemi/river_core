@@ -8,6 +8,7 @@ import datetime
 import importlib
 import configparser
 import lief
+#import time
 #import filecmp
 import json
 import pytest
@@ -26,7 +27,7 @@ yaml.default_flow_style = False
 yaml.allow_unicode = True
 yaml.compact(seq_seq=False, seq_map=False)
 from multiprocessing import Pool
-
+startpc = '-1'
 
 # Misc Helper Functions
 def sanitise_pytest_json(json):
@@ -197,7 +198,13 @@ def generate_report(output_dir, gen_json_data, target_json_data, ref_json_data,
     html_objects['num_failed'] = num_failed
     html_objects['num_unav'] = num_unav
     html_objects['total_instr'] = total_instr
-
+    generator_count = {}
+    for i in test_dict:
+        if test_dict[i]['generator'] not in generator_count:
+            generator_count[test_dict[i]['generator']] = 1
+        else:
+            generator_count[test_dict[i]['generator']] += 1
+    html_objects['generator_count'] = generator_count
     if not os.path.exists(report_dir):
         os.makedirs(report_dir)
 
@@ -413,7 +420,7 @@ def rivercore_generate(config_file, verbosity, filter_testgen):
 
 
 def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
-                      ref_flags, compare, process_count, timeout):
+                      ref_flags, compare, process_count, timeout, comparestartpc):
     '''
 
         Function to compile generated assembly programs using the plugin as configured in the config.ini.
@@ -446,6 +453,7 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
 
         :type compare: bool 
     '''
+    
     logger.level(verbosity)
     config = configparser.ConfigParser()
     config.read(config_file)
@@ -627,6 +635,8 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
 
         ## Comparing Dumps
         if compare:
+            global startpc
+            startpc = comparestartpc
             test_dict = utils.load_yaml(test_list)
             gen_json_data = []
             target_json_data = []
@@ -653,7 +663,6 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 failed_dict_file = output_dir+'/failed_list.yaml'
                 logger.error(f'Saving failed list of tests in {failed_dict_file}')
                 utils.save_yaml(failed_dict, failed_dict_file)
-
             # Start checking things after running the commands
             # Report generation starts here
             # Target
@@ -741,6 +750,116 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
                 return 1
         if not success:
             raise SystemExit(1)
+    
+def rivercore_comparison( test_list,output_dir, process_count, timeout, comparestartpc):
+    '''
+
+        Function to compile generated assembly programs using the plugin as configured in the config.ini.
+
+        :param config_file: Config.ini file for generation
+
+        :param test_list: Test List exported from generate sub-command 
+
+        :param coverage: Enable coverage merge and stats from the reports 
+
+        :param verbosity: Verbosity level for the framework
+
+        :param dut_flags: Verbosity level for the framework
+
+        :param ref_flags: Verbosity level for the framework
+
+        :param compare: Verbosity level for the framework
+
+        :type config_file: click.Path
+
+        :type test_list: click.Path
+
+        :type coverage: bool 
+
+        :type verbosity: str
+
+        :type dut_flags: click.Choice 
+
+        :type ref_flags: click.Choice 
+
+        :type compare: bool 
+    '''
+
+    logger.info('****** Compilation Mode ******')
+
+    logger.info(
+        "The river_core is currently configured to run with following parameters"
+    )
+    logger.info("The Output Directory (work_dir) : {0}".format(output_dir))
+
+    # Set default values:
+    target_json = None
+    ref_json = None
+    # Load coverage stats
+    if True:
+        logger.level("info")
+        ## Comparing Dumps
+        if True:
+            global startpc
+            startpc = comparestartpc
+            test_dict = utils.load_yaml(test_list)
+            # parallelized
+            success = True
+            items = test_dict.items()
+            #start = time.time()
+            with Pool(processes = process_count) as process_pool:
+                output = process_pool.map(logcomparison, items) #Collecting the return values from each process in the Pool
+            #stop = time.time()
+            #logger.warn(stop - start)
+            #Updating values
+            for i in output:
+                success = success and i[0]
+                test_dict[i[1]]['result'] = i[2]
+                test_dict[i[1]]['log'] = i[3]
+                test_dict[i[1]]['num_instr'] = i[4]
+            utils.save_yaml(test_dict, output_dir+'/result_list.yaml')
+            failed_dict = {}
+            for test, attr in test_dict.items():
+                if attr['result'] == 'Failed' or 'Unavailable' in attr['result']:
+                    failed_dict[test] = attr
+
+            if len(failed_dict) != 0:
+                logger.error(f'Total Tests that Failed :{len(failed_dict)}')
+                failed_dict_file = output_dir+'/failed_list.yaml'
+                logger.error(f'Saving failed list of tests in {failed_dict_file}')
+                utils.save_yaml(failed_dict, failed_dict_file)
+
+        if not success:
+            raise SystemExit(1)
+    
+
+#Helper function for parallel processing
+#Returns success,test,attr['result'],attr['log'],attr['numinstr']
+def logcomparison(item):
+    test, attr = item
+    test_wd = attr['work_dir']
+    is_self_checking = attr['self_checking']
+    if not is_self_checking:
+        if not os.path.isfile(test_wd + '/dut.dump'):
+            logger.error(f'{test:<30} : DUT dump is missing')
+            return False, test, 'Unavailable', "DUT dump is missing", None
+        if not os.path.isfile(test_wd + '/ref.dump'):
+            logger.error(f'{test:<30} : REF dump is missing')
+            return False, test, 'Unavailable', 'REF dump is missing', None
+        compare_start_pc = str(startpc) if str(startpc)!='-1' else ''
+        result, log, insnsize = utils.compare_dumps(test_wd + '/dut.dump', test_wd + '/ref.dump',compare_start_pc)
+    else:
+        if not os.path.isfile(test_wd + '/dut.signature'):
+            logger.error(f'{test:<30} : DUT signature is missing')
+            return False, test, 'Unavailable',"DUT signature is missing", None
+        result, log = utils.self_check(test_wd + '/dut.signature')
+        insnsize = utils.get_file_size(test_wd + '/dut.dump')
+    if result == 'Passed':
+        logger.info(f"{test:<30} : TEST {result.upper()}")
+        return True, test, result, log, insnsize
+    else:
+        logger.error(f"{test:<30} : TEST {result.upper()}")
+        return False, test, result, log, insnsize
 
 
 def rivercore_merge(verbosity, db_folders, output, config_file):
@@ -943,32 +1062,6 @@ def rivercore_merge(verbosity, db_folders, output, config_file):
         except:
             logger.info("Couldn't open the browser")
 
-#Helper function for parallel processing
-#Returns success,test,attr['result'],attr['log'],attr['numinstr']
-def logcomparison(item):
-    test, attr = item
-    test_wd = attr['work_dir']
-    is_self_checking = attr['self_checking']
-    if not is_self_checking:
-        if not os.path.isfile(test_wd + '/dut.dump'):
-            logger.error(f'{test:<30} : DUT dump is missing')
-            return False, test, 'Unavailable', "DUT dump is missing", None
-        if not os.path.isfile(test_wd + '/ref.dump'):
-            logger.error(f'{test:<30} : REF dump is missing')
-            return False, test, 'Unavailable', 'REF dump is missing', None
-        result, log, insnsize = utils.compare_dumps(test_wd + '/dut.dump', test_wd + '/ref.dump')
-    else:
-        if not os.path.isfile(test_wd + '/dut.signature'):
-            logger.error(f'{test:<30} : DUT signature is missing')
-            return False, test, 'Unavailable',"DUT signature is missing", None
-        result, log = utils.self_check(test_wd + '/dut.signature')
-        insnsize = utils.get_file_size(test_wd + '/dut.dump')
-    if result == 'Passed':
-        logger.info(f"{test:<30} : TEST {result.upper()}")
-        return True, test, result, log, insnsize
-    else:
-        logger.error(f"{test:<30} : TEST {result.upper()}")
-        return False, test, result, log, insnsize
 def rivercore_setup(config, dut, gen, ref, verbosity):
     '''
         Function to generate sample plugins 

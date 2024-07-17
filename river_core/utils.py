@@ -44,7 +44,7 @@ def get_file_size(file):
       rcount = len(fd.readlines())
     return rcount
 
-def compare_dumps(file1, file2):
+def compare_dumps(file1, file2, start_hex=''):
     '''
         Function to check whether two dump files are equivalent. This funcion ucore\s*(?P<coreid>\d):\s*(?P<priv>\d)\s*(?P<pc>.*?)\s+\((?P<instr>.*?)\)(?P<change>.*?)$ses the
         :param file1: The path to the first signature.
@@ -57,10 +57,13 @@ def compare_dumps(file1, file2):
     if not os.path.exists(file1) :
         logger.error('Signature file : ' + file1 + ' does not exist')
         raise SystemExit(1)
-    cmd = f'diff -iw {file1} {file2}'
+    if start_hex == '':
+        cmd = f'diff -iw {file1} {file2}'
+    else:
+        cmd = f"diff -iw <(sed -n '/{start_hex}/,$p' {file1}) <(sed -n '/{start_hex}/,$p' {file2})"
     errcode, rout, rerr = sys_command(cmd, logging=False)
 
-    if errcode != 0:
+    if errcode != 0 and rout!='':
 
         rout += '\nMismatch infos:'
 
@@ -127,7 +130,141 @@ def compare_dumps(file1, file2):
       rcount = len(fd.readlines())
 
     return status, rout, rcount
-    
+
+
+def compare_dumps_bash(file1, file2, start_hex = ''):
+    '''
+    Function to check whether two dump files are equivalent. This function uses
+    the diff command in bash and processes the output.
+    :param file1: The path to the first signature.
+    :param file2: The path to the second signature.
+    :type file1: str
+    :type file2: str
+    :return: A string indicating whether the test "Passed" (if files are the same)
+             or "Failed" (if the files are different) and the diff of the files.
+    '''
+    if not os.path.exists(file1):
+        raise FileNotFoundError(f'Signature file : {file1} does not exist')
+    if start_hex=='':
+        cmd = f'''
+        diff -iw {file1} {file2} | grep -E '^[<>]' | awk -v file1="{file1}" -v file2="{file2}" '
+        BEGIN {{
+            status = "Passed";
+            output = "";
+        }}
+        /^[<]/ {{
+            sub(/^< /, "", $0);
+            split($0, file1_dat, /: | /);
+        }}
+        /^[>]/ {{
+            sub(/^> /, "", $0);
+            split($0, file2_dat, /: | /);
+
+            if (file1_dat[4] != file2_dat[4] || file1_dat[5] != file2_dat[5] || file1_dat[6] != file2_dat[6]) {{
+                output = output "\\nBM: " file1 " at PC: " file1_dat[6] " and " file2 " at PC: " file2_dat[6];
+                status = "Failed";
+            }} else {{
+                for (i=(length(file1_dat));i>=8;i=i-1){{
+                if (file1_dat[i]!=""){{
+                    change1[file1_dat[i]] = 0;
+                    }}
+                }}
+                for (i=(length(file2_dat));i>=8;i=i-1){{
+                if (file2_dat[i]!=""){{
+                    change2[file2_dat[i]] = 0;
+                    }}
+                }}
+                if (length(change1) % 2) {{
+                    delete change1["mem"];
+                }}
+                
+                if (length(change1) != length(change2)) {{
+                    output = output "\\nSM: at PC: " file1_dat[6];
+                    status = "Failed";
+                }} else {{
+                    for (i in change1) {{
+                        if (!(i in change2)){{
+                        output = output "\\nSM: at PC: " file1_dat[6];
+                        status = "Failed";
+                        break;
+                        }}
+                    }}
+                }}
+            }}
+        }}
+        END {{
+            print status;
+            print output;
+        }}'
+        '''
+    else:
+        cmd = f'''
+        diff -iw <(sed -n '/{start_hex}/,$p' {file1}) <(sed -n '/{start_hex}/,$p' {file2}) | grep -E '^[<>]' | awk -v file1="{file1}" -v file2="{file2}" '
+        BEGIN {{
+            status = "Passed";
+            output = "";
+        }}
+        /^[<]/ {{
+            sub(/^< /, "", $0);
+            split($0, file1_dat, /: | /);
+        }}
+        /^[>]/ {{
+            sub(/^> /, "", $0);
+            split($0, file2_dat, /: | /);
+
+            if (file1_dat[4] != file2_dat[4] || file1_dat[5] != file2_dat[5] || file1_dat[6] != file2_dat[6]) {{
+                output = output "\\nBM: " file1 " at PC: " file1_dat[6] " and " file2 " at PC: " file2_dat[6];
+                status = "Failed";
+            }} else {{
+                for (i=(length(file1_dat));i>=8;i=i-1){{
+                if (file1_dat[i]!=""){{
+                    change1[file1_dat[i]] = 0;
+                    }}
+                }}
+                for (i=(length(file2_dat));i>=8;i=i-1){{
+                if (file2_dat[i]!=""){{
+                    change2[file2_dat[i]] = 0;
+                    }}
+                }}
+                if (length(change1) % 2) {{
+                    delete change1["mem"];
+                }}
+                
+                if (length(change1) != length(change2)) {{
+                    output = output "\\nSM: at PC: " file1_dat[6];
+                    status = "Failed";
+                }} else {{
+                    for (i in change1) {{
+                        if (!(i in change2)){{
+                        output = output "\\nSM: at PC: " file1_dat[6];
+                        status = "Failed";
+                        break;
+                        }}
+                    }}
+                }}
+            }}
+        }}
+        END {{
+            print status;
+            print output;
+        }}'
+        '''
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    stdout, stderr = process.communicate()
+    if process.returncode != 0:
+        status = "Failed"
+        rout = stderr
+    else:
+        lines = stdout.strip().split('\n')
+        status = lines[0]
+        rout = '\n'.join(lines[1:])
+
+    # get number of instructions executed
+    with open(file1, 'r') as fd:
+        rcount = len(fd.readlines())
+
+    return status, rout, rcount
+
 def compare_signature(file1, file2):
     '''
         Function to check whether two signature files are equivalent. This funcion uses the

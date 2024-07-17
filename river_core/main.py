@@ -3,7 +3,7 @@
 import click
 import os
 from river_core.log import *
-from river_core.rivercore import rivercore_clean, rivercore_compile, rivercore_generate, rivercore_merge, rivercore_setup
+from river_core.rivercore import rivercore_clean, rivercore_compile, rivercore_generate, rivercore_merge, rivercore_setup, rivercore_comparison
 from river_core.__init__ import __version__
 import river_core.constants as constants
 import river_core.utils as utils
@@ -151,9 +151,14 @@ def setup(config, dut, gen, ref, verbosity):
     default = -1,
     help = 'Timeout period for tests'
 )
+@click.option(
+    '--comparestartpc',
+    default = '-1',
+    help = 'Start pc value in Hex for log comparisons'
+)
 @cli.command()
 def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
-            compare, nproc, timeout):
+            compare, nproc, timeout, comparestartpc):
     '''
         subcommand to compile generated programs.
     '''
@@ -183,7 +188,38 @@ def compile(config, test_list, coverage, verbosity, dut_stage, ref_stage,
                     'Compare is enabled\nThis will be generating incomplete reports'
                 )
     rivercore_compile(config, test_list, coverage, verbosity, dut_stage,
-                      ref_stage, compare, nproc, timeout)
+                      ref_stage, compare, nproc, timeout,comparestartpc)
+@click.option('-t',
+              '--test_list',
+              type=click.Path(dir_okay=False, exists=True),
+              help='Test List file to pass',
+              required=True)
+@click.option('-o',
+              '--output_dir',
+              type=click.Path(dir_okay=True, exists=True),
+              help='Output directory',
+              required=True)
+@click.option(
+    '--nproc',
+    default=1,
+    help='Number of processes dedicated to rivercore framework')
+@click.option(
+    '--timeout',
+    default = -1,
+    help = 'Timeout period for tests'
+)
+@click.option(
+    '--comparestartpc',
+    default = '-1',
+    help = 'Start pc value in Hex for log comparisons'
+)
+@cli.command()
+def comparison(test_list, output_dir, nproc, timeout, comparestartpc):
+    '''
+        subcommand to compare compiled test logs.
+    '''
+    logger.info(constants.header_temp.format(__version__))  
+    rivercore_comparison(test_list, output_dir, nproc, timeout,comparestartpc)
     
 @click.option('-t',
               '--test_list',

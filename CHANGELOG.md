@@ -1,6 +1,11 @@
 # CHANGELOG
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.9.0] - 2024-07-10
+- added --comparestartpc to river_core compile api
+- added river_core comparison command to perform log comparisons without compilation
+- added a table to report.html displaying the number of tests from each generator 
+
 ## [1.8.0] - 2024-06-06
 - added river_core enquire command
 - added --timeout to the river_core compile api
