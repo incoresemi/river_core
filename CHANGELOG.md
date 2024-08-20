@@ -1,6 +1,10 @@
 # CHANGELOG
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.9.1] - 2024-07-20
+- fixed compare_dump functions to take care of missing entries in dumps
+
 ## [1.9.0] - 2024-07-10
 - added --comparestartpc to river_core compile api
 - added river_core comparison command to perform log comparisons without compilation
