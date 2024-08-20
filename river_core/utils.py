@@ -67,16 +67,21 @@ def compare_dumps(file1, file2, start_hex=''):
 
         rout += '\nMismatch infos:'
 
+        status = ''
+
         # get lines that start with < or >
         mismatch_str_lst = list(filter(lambda x: x[0] in ['<', '>'], rout.split('\n')))
 
         # for each mismatched strings
         start_val = -1
+        flag_found_corr_file1 = False
         for i in range(len(mismatch_str_lst)):
             
             file1_str = mismatch_str_lst[i]
             if file1_str[0] != '<':
                 continue
+            else:
+                flag_found_corr_file1 = True
 
             try:
                 file1_dat = dump_regex.findall(file1_str)[0]
@@ -130,6 +135,10 @@ def compare_dumps(file1, file2, start_hex=''):
             if not flag_found_corr_file2:
                 status = 'Failed'
                 rout = rout + f'\nBM: {file1} at PC: {file1_dat[2]} and missing in {file2}'
+        
+        if not flag_found_corr_file1:
+            status = 'Failed'
+            rout = rout + f'\nBM: Mising entry in {file1} '
     else:
         status = 'Passed'
     
