@@ -131,11 +131,13 @@ def compare_dumps(file1, file2, start_hex=''):
                         rout = rout + f'\nSM: at PC: {file1_dat[2]}'
                         status = 'Failed'
                 break
-
+            
+            # if corresponding diff is not found, report fail
             if not flag_found_corr_file2:
                 status = 'Failed'
                 rout = rout + f'\nBM: {file1} at PC: {file1_dat[2]} and missing in {file2}'
         
+        # if corresponding diff is not found, report fail
         if not flag_found_corr_file1:
             status = 'Failed'
             rout = rout + f'\nBM: Mising entry in {file1} '
