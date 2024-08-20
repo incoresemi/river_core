@@ -67,8 +67,6 @@ def compare_dumps(file1, file2, start_hex=''):
 
         rout += '\nMismatch infos:'
 
-        status = ''
-
         # get lines that start with < or >
         mismatch_str_lst = list(filter(lambda x: x[0] in ['<', '>'], rout.split('\n')))
 
