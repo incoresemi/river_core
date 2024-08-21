@@ -67,31 +67,38 @@ def compare_dumps(file1, file2, start_hex=''):
 
         rout += '\nMismatch infos:'
 
-        # initial status
-        status = 'Passed'
-
         # get lines that start with < or >
         mismatch_str_lst = list(filter(lambda x: x[0] in ['<', '>'], rout.split('\n')))
 
         # for each mismatched strings
         start_val = -1
+        flag_found_corr_file1 = False
         for i in range(len(mismatch_str_lst)):
             
             file1_str = mismatch_str_lst[i]
             if file1_str[0] != '<':
                 continue
+            else:
+                flag_found_corr_file1 = True
+
+            try:
+                file1_dat = dump_regex.findall(file1_str)[0]
+            except IndexError:
+                status = 'Failed'
+                break
             
+            flag_found_corr_file2 = False
             for j in range(start_val + 1, len(mismatch_str_lst)):
                 
-                file2_str = mismatch_str_lst[j] 
+                file2_str = mismatch_str_lst[j]
                 if file2_str[0] != '>':
                     continue
                 else:
+                    flag_found_corr_file2 = True
                     start_val = j
 
                 # get regex strings
                 try:
-                    file1_dat = dump_regex.findall(file1_str)[0]
                     file2_dat = dump_regex.findall(file2_str)[0]
                 except IndexError:
                     status = 'Failed'
@@ -122,6 +129,16 @@ def compare_dumps(file1, file2, start_hex=''):
                         rout = rout + f'\nSM: at PC: {file1_dat[2]}'
                         status = 'Failed'
                 break
+            
+            # if corresponding diff is not found, report fail
+            if not flag_found_corr_file2:
+                status = 'Failed'
+                rout = rout + f'\nBM: {file1} at PC: {file1_dat[2]} and missing in {file2}'
+        
+        # if corresponding diff is not found, report fail
+        if not flag_found_corr_file1:
+            status = 'Failed'
+            rout = rout + f'\nBM: Mising entry in {file1} '
     else:
         status = 'Passed'
     
