@@ -60,8 +60,27 @@ def compare_dumps(file1, file2, start_hex=''):
     if start_hex == '':
         cmd = f'diff -iw {file1} {file2}'
     else:
-        cmd = f"diff -iw <(sed -n '/{start_hex}/,$p' {file1}) <(sed -n '/{start_hex}/,$p' {file2})"
+        trim_cmd = "sed -n \'/{start_hex} (/,$p\' {file}"
+
+        file1_trimmed = file1 + '_trimmed'
+        file2_trimmed = file2 + '_trimmed'
+
+        cmd1 = trim_cmd.format(start_hex = start_hex, file=file1)
+        code = sys_command_file(cmd1, filename=file1_trimmed)
+        if code[0]:    
+            assert False, f"{cmd1} has failed with code {code}"
+
+        cmd2 = trim_cmd.format(start_hex = start_hex, file=file2)
+        code = sys_command_file(cmd2, filename=file2_trimmed)
+        if code[0]:
+            assert False, f"{cmd2} has failed with code {code}"
+        
+        cmd = f'diff -iw {file1_trimmed} {file2_trimmed}'
+
     errcode, rout, rerr = sys_command(cmd, logging=False)
+
+    if errcode:
+        assert False, f"{cmd} has failed with\n{rerr}"
 
     if errcode != 0 and rout!='':
 
@@ -464,22 +483,20 @@ def sys_command_file(command, filename, timeout=500):
         :rtype: list
 
     '''
-    cmd = command.split(' ')
-    cmd = [x.strip(' ') for x in cmd]
-    cmd = [i for i in cmd if i]
-    logger.warning('$ {0} > {1}'.format(' '.join(cmd), filename))
-    fp = open(filename, 'w')
-    x = subprocess.Popen(cmd, stdout=fp, stderr=fp)
-    timer = Timer(timeout, x.kill)
-    try:
-        timer.start()
-        stdout, stderr = x.communicate()
-    finally:
-        timer.cancel()
+    cmd = shlex.split(command)
+    
+    logger.debug('$ {0} > {1}'.format(' '.join(cmd), filename))
+    
+    with open(filename, 'w') as fp:
+        with subprocess.Popen(cmd, stdout=fp, stderr=fp) as process:
+            timer = Timer(timeout, process.kill)
+            try:
+                timer.start()
+                stdout, stderr = process.communicate()
+            finally:
+                timer.cancel()
 
-    fp.close()
-
-    return (x.returncode, None, None)
+    return (process.returncode, None, None)
 
 
 class makeUtil():
