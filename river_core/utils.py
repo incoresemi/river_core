@@ -66,14 +66,21 @@ def compare_dumps(file1, file2, start_hex=''):
         file2_trimmed = file2 + '_trimmed'
 
         cmd1 = trim_cmd.format(start_hex = start_hex, file=file1)
-        sys_command_file(cmd1, filename=file1_trimmed)
+        code = sys_command_file(cmd1, filename=file1_trimmed)
+        if code[0]:    
+            assert False, f"{cmd1} has failed with code {code}"
 
         cmd2 = trim_cmd.format(start_hex = start_hex, file=file2)
-        sys_command_file(cmd2, filename=file2_trimmed)
+        code = sys_command_file(cmd2, filename=file2_trimmed)
+        if code[0]:
+            assert False, f"{cmd2} has failed with code {code}"
         
         cmd = f'diff -iw {file1_trimmed} {file2_trimmed}'
 
     errcode, rout, rerr = sys_command(cmd, logging=False)
+
+    if errcode:
+        assert False, f"{cmd} has failed with\n{rerr}"
 
     if errcode != 0 and rout!='':
 
