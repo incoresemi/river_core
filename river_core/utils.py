@@ -79,9 +79,6 @@ def compare_dumps(file1, file2, start_hex=''):
 
     errcode, rout, rerr = sys_command(cmd, logging=False)
 
-    if errcode:
-        assert False, f"{cmd} has failed with\n{rerr}"
-
     if errcode != 0 and rout!='':
 
         rout += '\nMismatch infos:'
