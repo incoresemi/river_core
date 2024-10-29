@@ -79,18 +79,14 @@ def compare_dumps(file1, file2, start_hex=''):
 
     errcode, rout, rerr = sys_command(cmd, logging=False)
 
-    if errcode != 0 and rout!='':
-
+    status = 'Passed'
+    if errcode != 0 and rout != '':
+        logger.warning(f"Possible Differences found in {file1} and {file2}")
         rout += '\nMismatch infos:'
-
-        # get lines that start with < or >
         mismatch_str_lst = list(filter(lambda x: x[0] in ['<', '>'], rout.split('\n')))
-
-        # for each mismatched strings
         start_val = -1
         flag_found_corr_file1 = False
         for i in range(len(mismatch_str_lst)):
-            
             file1_str = mismatch_str_lst[i]
             if file1_str[0] != '<':
                 continue
@@ -99,13 +95,14 @@ def compare_dumps(file1, file2, start_hex=''):
 
             try:
                 file1_dat = dump_regex.findall(file1_str)[0]
+                logger.debug(f"-- Processing line from {os.path.basename(file1)}: {file1_dat}")
             except IndexError:
                 status = 'Failed'
+                logger.debug(f"-- Failed to parse line from {os.path.basename(file1)}: {file1_str}")
                 break
-            
+
             flag_found_corr_file2 = False
             for j in range(start_val + 1, len(mismatch_str_lst)):
-                
                 file2_str = mismatch_str_lst[j]
                 if file2_str[0] != '>':
                     continue
@@ -113,55 +110,53 @@ def compare_dumps(file1, file2, start_hex=''):
                     flag_found_corr_file2 = True
                     start_val = j
 
-                # get regex strings
                 try:
                     file2_dat = dump_regex.findall(file2_str)[0]
+                    logger.debug(f"-- Processing line from {os.path.basename(file2)}: {file2_dat}")
                 except IndexError:
                     status = 'Failed'
+                    logger.debug(f"-- Failed to parse line from {os.path.basename(file2)}: {file2_str}")
                     break
-
-                # ensure commit message exists in same line number else fail
-                # if any of coreid, priv, pc or instr encoding fails, the diff has failed
-                if file1_dat[0:3] != file2_dat[0:3]:
-                    rout = rout + f'\nBM: {file1} at PC: {file1_dat[2]} and {file2} at PC: {file2_dat[2]}'
+                logger.debug(f"-- Comparing {os.path.basename(file1)}:{file1_dat[0]} {file1_dat[1]} {file1_dat[2]} {file1_dat[3]} vs "
+                             f"{os.path.basename(file2)}:{file2_dat[0]} {file2_dat[1]} {file2_dat[2]} {file2_dat[3]}")
+                
+                if file1_dat[0:4] != file2_dat[0:4]:
+                    rout += f'\nBM: {file1} at PC: {file1_dat[2]} and {file2} at PC: {file2_dat[2]}'
                     status = 'Failed'
+                    logger.debug(f"-- Mismatch in coreid, priv, pc or instruction between {file1} and {file2}")
                 else:
-
-                    # some cleanup
-                    change1 = file1_dat[-1].split() 
-
-                    # if odd number, it's a store
+                    change1 = file1_dat[-1].split()
                     if len(change1) % 2:
                         change1.remove('mem')
 
-                    # check if the architectural change is the same
                     file1dat_iter = iter(change1)
                     file2dat_iter = iter(file2_dat[-1].split())
-
                     file1_change = dict(zip(file1dat_iter, file1dat_iter))
                     file2_change = dict(zip(file2dat_iter, file2dat_iter))
 
                     if file1_change != file2_change:
-                        rout = rout + f'\nSM: at PC: {file1_dat[2]}'
+                        rout += f'\nSM: at PC: {file1_dat[2]}'
                         status = 'Failed'
+                        logger.debug(f"-- Mismatch in architectural change at PC: {file1_dat[2]}")
+                    
+                    rout += f'\nBM: Strings Match at PC: {file1_dat[2]}'
+
                 break
-            
-            # if corresponding diff is not found, report fail
+
             if not flag_found_corr_file2:
                 status = 'Failed'
-                rout = rout + f'\nBM: {file1} at PC: {file1_dat[2]} and missing in {file2}'
-        
-        # if corresponding diff is not found, report fail
+                rout += f'\nBM: {file1} at PC: {file1_dat[2]} and missing in {file2}'
+                logger.debug(f"-- Missing corresponding entry in {file2} for PC: {file1_dat[2]}")
+
         if not flag_found_corr_file1:
             status = 'Failed'
-            rout = rout + f'\nBM: Mising entry in {file1} '
-    else:
-        status = 'Passed'
+            rout += f'\nBM: Missing entry in {file1}'
+            logger.debug(f"-- Missing corresponding entry in {file1}")
     
     # get number of instructions executed
     with open(f'{file1}','r') as fd:
       rcount = len(fd.readlines())
-
+    
     return status, rout, rcount
 
 
