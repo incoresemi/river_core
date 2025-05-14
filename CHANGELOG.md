@@ -2,6 +2,9 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.5] - 2025-05-14
+- removed unwanted modules in requirements.txt
+
 ## [1.9.4] - 2024-10-29
 - adding default value of status variable
 
