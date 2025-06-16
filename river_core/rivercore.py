@@ -700,18 +700,24 @@ def rivercore_compile(config_file, test_list, coverage, verbosity, dut_flags,
             try:
                 logger.info(
                     "Checking for a generator json to create final report")
-                json_files = glob.glob(output_dir + '/.json/{0}*.json'.format(
-                    config['river_core']['generator']))
+                generators = [g.strip() for g in config['river_core']['generator'].split(',')]
+                json_files = []
+                for gen in generators:
+                    matched_files = glob.glob(os.path.join(
+                        output_dir, '.json', f'{gen}_*.json'))
+                    json_files.extend(matched_files)
                 logger.debug(
                     "Detected generated JSON Files: {0}".format(json_files))
-
                 # Can only get one file back
-                gen_json_file = max(json_files, key=os.path.getctime)
-                json_file = open(gen_json_file, 'r')
-                target_json_list = json_file.readlines()
-                json_file.close()
-                for line in target_json_list:
-                    gen_json_data.append(json.loads(line))
+                if json_files:
+                    gen_json_file = max(json_files, key=os.path.getctime) # Get the most recent one
+                    with open(gen_json_file, 'r') as json_file:
+                        for line in json_file:
+                            gen_json_data.append(json.loads(line))
+                else:
+                    logger.warning(
+                        "No JSON files matched the specified generators")
+                    gen_json_file = []
 
             except:
                 logger.warning("Couldn't find a generator JSON file")

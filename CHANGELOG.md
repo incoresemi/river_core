@@ -2,6 +2,9 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.7] - 2025-06-13
+- fixed generator.json searching functionality
+
 ## [1.9.6] - 2025-05-14
 - bumped python version for CI job
 
